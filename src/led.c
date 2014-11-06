@@ -37,22 +37,21 @@ void ledSetMode(uchar ledMode)
 	// 	& _0004_TAU_CH2_OUTPUT_ENABLE
 	// 	& _0008_TAU_CH3_OUTPUT_ENABLE
 	// 	& _0010_TAU_CH4_OUTPUT_ENABLE );
+	ledAllOff();
 	switch(sLed.ledMode)
 	{
 		default:
 		case LED_M_OFF:
 			R_TAU0_Channel0_Stop();
-			ledAllOff();
+			TO0 |= _0002_TAU_CH1_OUTPUT_VALUE_1
+				| _0004_TAU_CH2_OUTPUT_VALUE_1
+				| _0008_TAU_CH3_OUTPUT_VALUE_1
+				| _0010_TAU_CH4_OUTPUT_VALUE_1;
 		break;
 
 		case LED_M_MQ:
 		case LED_M_BREATHE:
-			pwmMClkOn();
-			*(_PWM[0])=1;
-			*(_PWM[1])=1;
-			*(_PWM[2])=1;
-			*(_PWM[3])=1;
-			ledAllOff();
+			R_TAU0_Channel0_Start();
 		break;
 
 		case LED_M_FLASHALL:
@@ -60,41 +59,30 @@ void ledSetMode(uchar ledMode)
 		case LED_M_SWING:
 		case LED_M_POWER:
 		case LED_M_RANDOM:
-			pwmMClkOn();
-			*(_PWM[0])=PWM50;
-			*(_PWM[1])=PWM50;
-			*(_PWM[2])=PWM50;
-			*(_PWM[3])=PWM50;
-			ledAllOff();
+			R_TAU0_Channel0_Start();
 		break;
 	}
 }
 
 int ledRise(uchar ledNo,uchar var)
 {
-	TOE0|=(1<<(ledNo+1));
-	if(sLed.pwmDC[ledNo]<PWM50) {
-		sLed.pwmDC[ledNo]+=var;
-		*(_PWM[ledNo])=sLed.pwmDC[ledNo];
+	// TOE0|=(1<<(ledNo+1));
+	if((*_PWM[ledNo])<PWM50) {
+		(*_PWM[ledNo])+=var;
 		return 0;
 	} else {
-		sLed.pwmDC[ledNo]=PWM50;
-		*(_PWM[ledNo])=sLed.pwmDC[ledNo];
+		*(_PWM[ledNo])=PWM50;
 		return 1;
 	}
 }
 
 int ledFall(uchar ledNo,uchar var)
 {
-	if(sLed.pwmDC[ledNo]>var) {
-		sLed.pwmDC[ledNo]-=var;
-		*(_PWM[ledNo])=sLed.pwmDC[ledNo];
+	if((*_PWM[ledNo])>var) {
+		*(_PWM[ledNo])-=var;
 		return 0;
 	} else {
-		sLed.pwmDC[ledNo]=1;
-		*(_PWM[ledNo])=sLed.pwmDC[ledNo];
-		TOE0&=0xffff^(1<<(ledNo+1));
-		TO0 |=(1<<(ledNo+1));
+		*(_PWM[ledNo])=0;
 		return 1;
 	}
 }
@@ -106,15 +94,20 @@ int ledFall(uchar ledNo,uchar var)
 #include "r_cg_timer.h"
 void ledAllOff(void)
 {
-	TOE0 &= 0xffff ^ ( _0002_TAU_CH1_OUTPUT_ENABLE
-		& _0004_TAU_CH2_OUTPUT_ENABLE
-		& _0008_TAU_CH3_OUTPUT_ENABLE
-		& _0010_TAU_CH4_OUTPUT_ENABLE );
+	*(_PWM[0])=0;
+	*(_PWM[1])=0;
+	*(_PWM[2])=0;
+	*(_PWM[3])=0;
 
-	TO0 |= _0002_TAU_CH1_OUTPUT_VALUE_1
-		| _0004_TAU_CH2_OUTPUT_VALUE_1
-		| _0008_TAU_CH3_OUTPUT_VALUE_1
-		| _0010_TAU_CH4_OUTPUT_VALUE_1;
+	// TOE0 &= 0xffff ^ ( _0002_TAU_CH1_OUTPUT_ENABLE
+	// 	& _0004_TAU_CH2_OUTPUT_ENABLE
+	// 	& _0008_TAU_CH3_OUTPUT_ENABLE
+	// 	& _0010_TAU_CH4_OUTPUT_ENABLE );
+
+	// TO0 |= _0002_TAU_CH1_OUTPUT_VALUE_1
+	// 	| _0004_TAU_CH2_OUTPUT_VALUE_1
+	// 	| _0008_TAU_CH3_OUTPUT_VALUE_1
+	// 	| _0010_TAU_CH4_OUTPUT_VALUE_1;
 }
 
 void ledNext(void)
@@ -142,10 +135,10 @@ void led_heartBeat(void)
 		led4On();
 	}else if(sLed.ledCount==900){
 		ledAllOff();
-		*(_PWM[0])=PWM50;
-		*(_PWM[1])=PWM50;
-		*(_PWM[2])=PWM50;
-		*(_PWM[3])=PWM50;
+		// *(_PWM[0])=PWM50;
+		// *(_PWM[1])=PWM50;
+		// *(_PWM[2])=PWM50;
+		// *(_PWM[3])=PWM50;
 	}else if(sLed.ledCount==300){
 		sLed.pwmStatu[0]=PWM_FALL;
 		sLed.pwmStatu[1]=PWM_FALL;
@@ -334,7 +327,7 @@ void led_power(void)
 
 void led_random(void)
 {
-	if(sLed.ledCount<1000){
+	if(sLed.ledCount<1100){
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
