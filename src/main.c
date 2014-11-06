@@ -32,7 +32,7 @@ void afterBoot(void)
 void iMain(void)
 {
 	afterBoot();
-	fifoInit(sMsgFifo,msgQueue);
+	fifoInit(&sMsgFifo,msgQueue);
 	fifoFlush();
 	// R_TAU0_Channel0_Start();
 	ledSetMode(LED_M_OFF);
@@ -59,7 +59,7 @@ void fRtc2Hz(void)
 	switch(count)
 	{
 		case 4:
-		ledSetMode(LED_M_SWING);
+		ledSetMode(LED_M_HERATBEAT);
 		break;
 
 		case 16:
@@ -75,7 +75,7 @@ void fRtc2Hz(void)
 		break;
 
 		case 52:
-		ledSetMode(LED_M_HERATBEAT);
+		ledSetMode(LED_M_SWING);
 		break;
 
 		case 62:

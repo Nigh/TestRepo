@@ -121,7 +121,7 @@ void ledNext(void)
 
 void led_heartBeat(void)
 {
-	if(sLed.ledCount<900){
+	if(sLed.ledCount<1200){
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
@@ -130,28 +130,32 @@ void led_heartBeat(void)
 	if(sLed.ledCount==1){
 		led2On();
 		led3On();
-	}else if(sLed.ledCount==100){
-		led1On();
+	}else if(sLed.ledCount==250){
 		led4On();
-	}else if(sLed.ledCount==900){
-		ledAllOff();
-		// *(_PWM[0])=PWM50;
-		// *(_PWM[1])=PWM50;
-		// *(_PWM[2])=PWM50;
-		// *(_PWM[3])=PWM50;
-	}else if(sLed.ledCount==300){
-		sLed.pwmStatu[0]=PWM_FALL;
+	}else if(sLed.ledCount==330){
+		led1On();
 		sLed.pwmStatu[1]=PWM_FALL;
 		sLed.pwmStatu[2]=PWM_FALL;
+	}else if(sLed.ledCount==400){
+		sLed.pwmStatu[0]=PWM_FALL;
 		sLed.pwmStatu[3]=PWM_FALL;
 	}
 
 	if(sLed.pwmStatu[0]==PWM_FALL){
-		if(ledFall(0,PWM50/550))
+		if(ledFall(0,PWM50/800))
 			sLed.pwmStatu[0]=PWM_HOLD;
-		ledFall(1,PWM50/550);
-		ledFall(2,PWM50/550);
-		ledFall(3,PWM50/550);
+	}
+	if(sLed.pwmStatu[1]==PWM_FALL){
+		if(ledFall(1,PWM50/800))
+			sLed.pwmStatu[1]=PWM_HOLD;
+	}
+	if(sLed.pwmStatu[2]==PWM_FALL){
+		if(ledFall(2,PWM50/800))
+			sLed.pwmStatu[2]=PWM_HOLD;
+	}
+	if(sLed.pwmStatu[3]==PWM_FALL){
+		if(ledFall(3,PWM50/800))
+			sLed.pwmStatu[3]=PWM_HOLD;
 	}
 }
 
