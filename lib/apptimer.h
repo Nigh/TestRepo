@@ -1,7 +1,7 @@
 #ifndef _APPTIMER_H_
 #define _APPTIMER_H_
 
-// #include "gvar.h"
+// #include "r_cg_userdefine.h"
 
 // extern uchar timer(sAPPTIMER* apptimer);
 

@@ -1,10 +1,10 @@
 #ifndef _LED_H_
 #define _LED_H_
-#include "gvar.h"
+#include "r_cg_userdefine.h"
 #include "typedef.h"
 #include "r_cg_macrodriver.h"
 
-#define LED_M_OFF		(0xf)
+#define LED_M_OFF		(0xffff)
 #define LED_M_HERATBEAT (0)
 #define LED_M_BREATHE	(1)
 #define LED_M_MQ		(2)
@@ -47,7 +47,7 @@ typedef struct
 } sLED;
 extern sLED sLed;
 
-void ledSetMode(uchar);
+void ledSetMode(uint);
 
 void led_heartBeat(void);
 void led_breathe(void);

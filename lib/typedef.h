@@ -20,6 +20,13 @@ typedef struct
 	iFUNC* tArray[16];
 } s32HZTASK;
 
+typedef struct
+{
+	uchar L1;
+	uchar L2;
+	uchar L3;
+	uchar L4;
+} sUTCS;
 
 typedef struct
 {

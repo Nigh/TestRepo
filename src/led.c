@@ -1,7 +1,7 @@
 #include "led.h"
 #include "r_cg_timer.h"
 
-#define OSC_FREQ (32000)
+#define OSC_FREQ (8000)
 #define PWM50 (OSC_FREQ/2)
 
 static void pwmMClkOn(void);
@@ -23,7 +23,7 @@ fFUNC ledMode[]={led_heartBeat,
 				led_power,
 				led_random};
 
-void ledSetMode(uchar ledMode)
+void ledSetMode(uint ledMode)
 {
 	uint* ptr=&sLed;
 
@@ -132,7 +132,7 @@ void led_heartBeat(void)
 		led3On();
 	}else if(sLed.ledCount==250){
 		led4On();
-	}else if(sLed.ledCount==330){
+	}else if(sLed.ledCount==310){
 		led1On();
 		sLed.pwmStatu[1]=PWM_FALL;
 		sLed.pwmStatu[2]=PWM_FALL;
