@@ -2,8 +2,8 @@
 #ifndef _TYPEDEF_H_
 #define _TYPEDEF_H_
 
-// #include "time.h"
-typedef unsigned long time_t;
+#include "time.h"
+// typedef unsigned long time_t;
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
