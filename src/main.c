@@ -26,6 +26,7 @@ sMSG gMsg={0,0};	//global message
 
 void afterBoot(void)
 {
+	sUtcs.lTime=0;
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 }
@@ -247,8 +248,10 @@ void set3DHEx(uchar addr,uchar value)
 void init3DH(void)
 {
 	startHClk();
-	set3DHEx(0x20,0x4f);	//50 Hz
-	set3DHEx(0x23,0x80);
+	// set3DHEx(0x20,0x4f);	//50 Hz and Low power
+	set3DHEx(0x20,0x47);	//50 Hz
+	// set3DHEx(0x23,0x80);	//Block update mode
+	set3DHEx(0x23,0x88);	//Block update and High resolution mode
 	set3DHEx(0x2e,0x00);
 	set3DHEx(0x24,0x40);
 	set3DHEx(0x2e,0x8f);

@@ -1,7 +1,7 @@
 #include "r_cg_userdefine.h"
 
 sSELF sSelf={0,0,0,0};
-sUTCS sUtcs={0,0,0,0};
+sUTCS sUtcs;
 
 void startHClk(void)
 {

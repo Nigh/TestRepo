@@ -2,6 +2,8 @@
 #ifndef _TYPEDEF_H_
 #define _TYPEDEF_H_
 
+// #include "time.h"
+typedef unsigned long time_t;
 
 typedef unsigned char uchar;
 typedef unsigned int uint;
@@ -20,12 +22,16 @@ typedef struct
 	iFUNC* tArray[16];
 } s32HZTASK;
 
-typedef struct
+typedef union
 {
-	uchar L1;
-	uchar L2;
-	uchar L3;
-	uchar L4;
+	time_t lTime;
+	struct
+	{
+		uchar L1;
+		uchar L2;
+		uchar L3;
+		uchar L4;
+	}uTime;
 } sUTCS;
 
 typedef struct
