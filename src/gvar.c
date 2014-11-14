@@ -16,7 +16,7 @@ void startHClk(void)
 		NOP();
 		NOP();
 		NOP();
-		P2.3=0;
+		// P2.3=0;
 	}
 }
 
@@ -27,14 +27,14 @@ void stopHClk(void)
 	{
 		CSS = 1;
 		HIOSTOP = 1;
-		P2.3=1;
-		P2.3=0;
+		// P2.3=1;
+		// P2.3=0;
 		while(i++<7){
 			NOP();
 		}
 		TDR05=200;
 		TS0=0x0020;
-		P2.3=1;
+		// P2.3=1;
 	}
 }
 

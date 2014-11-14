@@ -13,7 +13,7 @@ static uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
 
 sLED sLed={{0,0,0,0},
 		0,LED_M_OFF,
-		{PWM_HOLD,PWM_HOLD,PWM_HOLD,PWM_HOLD}};
+		{PWM_HOLD,PWM_HOLD,PWM_HOLD,PWM_HOLD},0};
 
 fFUNC ledMode[]={led_heartBeat,
 				led_breathe,
@@ -29,7 +29,7 @@ void ledSetMode(uint ledMode)
 
 	*ptr++=0;*ptr++=0;*ptr++=0;*ptr++=0;
 	*ptr++=0;*ptr++=ledMode;
-	*ptr++=0;*ptr=0;
+	*ptr++=0;*ptr++=0;*ptr=0xFFFF;
 
 	// pwmMClkOn();
 	// R_TAU0_Channel0_Start();
@@ -125,6 +125,7 @@ void led_heartBeat(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	if(sLed.ledCount==1){
@@ -165,6 +166,7 @@ void led_breathe(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	switch(sLed.ledCount){
@@ -208,6 +210,7 @@ void led_mq(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	switch(sLed.ledCount){
@@ -279,6 +282,7 @@ void led_flashAll(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	if(sLed.ledCount==1){
@@ -297,6 +301,7 @@ void led_swing(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	if(sLed.ledCount==1){
@@ -312,12 +317,14 @@ void led_swing(void)
 	}
 }
 
+extern uint batteryLevel;
 void led_power(void)
 {
 	if(sLed.ledCount<1000){
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
 	}
 
 	if(sLed.ledCount==1){
@@ -335,7 +342,8 @@ void led_random(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-	}	
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+	}
 
 	switch(sLed.ledCount)
 	{

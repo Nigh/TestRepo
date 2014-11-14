@@ -1,5 +1,6 @@
 #include "main.h"
 #include "r_cg_userdefine.h"
+#include "NeckAlgorithm.h"
 
 #define VECTOR(vec) vec
 
@@ -10,7 +11,7 @@ fFUNC const msgHandler[]={		// No
 	VECTOR(fTimerPro),			// 3
 	VECTOR(fBLEPro),			// 4
 	VECTOR(fTransPro),				// 5
-	VECTOR(_nop_Ex),				// 6
+	VECTOR(fSysPro),				// 6
 	VECTOR(_nop_Ex),				// 7
 	VECTOR(_nop_Ex),				// 8
 	VECTOR(_nop_Ex),				// 9
@@ -64,54 +65,23 @@ void fReset(void)
 
 // ***************************************
 // ***************************************
-
 uchar test[9]={'#',0x03,0x06,0xea,0xaa,4,3,2,1};
 
 void fRtc2Hz(void)
 {
 	static uint count=0;
+	sGACC sGAcc={-11582,2,-11611};
+	tEULER* tEu;
+	startHClk();
+	P2.3=0;
+	tEu=calcRulerA(&sGAcc);
+	P2.3=1;
+	
 	count++;
 
-	uartBufWrite(test,5);
-	uartSend(5);
-	// switch(count)
-	// {
-	// 	case 4:
-	// 	ledSetMode(LED_M_HERATBEAT);
-	// 	break;
+	// uartBufWrite(test,5);
+	// uartSend(5);
 
-	// 	case 16:
-	// 	ledSetMode(LED_M_BREATHE);
-	// 	break;
-
-	// 	case 32:
-	// 	ledSetMode(LED_M_MQ);
-	// 	break;
-
-	// 	case 42:
-	// 	ledSetMode(LED_M_POWER);
-	// 	break;
-
-	// 	case 52:
-	// 	ledSetMode(LED_M_SWING);
-	// 	break;
-
-	// 	case 62:
-	// 	ledSetMode(LED_M_FLASHALL);
-	// 	break;
-
-	// 	case 72:
-	// 	ledSetMode(LED_M_RANDOM);
-	// 	break;
-
-	// 	case 82:
-	// 	ledSetMode(LED_M_OFF);
-	// 	break;
-
-	// 	case 84:
-	// 	count=0;
-	// 	break;
-	// }
 }
 
 void fRtc5Hz(void)
@@ -227,6 +197,29 @@ fFUNC const transHandler[]={		// No
 void fTransPro(void)
 {
 	transHandler[gMsg.content]();
+}
+// ***************************************
+// ***************************************
+void fAdcEnd(void)
+{
+	NOP();
+}
+
+fFUNC const sysHandler[]={		// No
+	VECTOR(_nop_Ex),				// 0
+	VECTOR(fAdcEnd),				// 1
+	VECTOR(_nop_Ex),				// 2
+	VECTOR(_nop_Ex),				// 3
+	VECTOR(_nop_Ex),				// 4
+	VECTOR(_nop_Ex),				// 5
+	VECTOR(_nop_Ex),				// 6
+	VECTOR(_nop_Ex),				// 7
+	VECTOR(_nop_Ex),				// 8
+};
+
+void fSysPro(void)
+{
+	sysHandler[gMsg.content]();
 }
 // ***************************************
 // ***************************************

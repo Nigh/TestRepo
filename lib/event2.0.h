@@ -11,6 +11,7 @@
 #define M_TYPE_TIMER 3
 #define M_TYPE_BLE 4
 #define M_TYPE_TRANS 5
+#define M_TYPE_SYS 6
 #define M_TYPE_SYSRESET 15
 
 //clock event content
@@ -45,6 +46,8 @@
 //trans event content
 #define M_C_UARTSENDEND 1
 
+//system event content
+#define M_C_ADCEND 1
 
 #define BUF_SIZE 0x10
 #define BUF_SIZE_MASK 0xF

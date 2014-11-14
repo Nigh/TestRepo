@@ -64,13 +64,6 @@ typedef struct
 
 typedef struct
 {
-	unsigned char en;
-	unsigned int count;
-	fFUNC func;
-} sAPPTIMER;
-
-typedef struct
-{
 	uchar connect;	// 0:not connect 1:connected 2:broadcasting 3:reconnect
 	uchar count;	// reconnect timer
 } sBLE;

@@ -44,6 +44,7 @@ typedef struct
 	uint ledCount;	//1000hz count
 	uint ledMode;
 	uchar pwmStatu[4];
+	uint times;	//execute times (1~16) (0xff for infinite loop)
 } sLED;
 extern sLED sLed;
 

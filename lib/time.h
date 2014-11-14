@@ -12,7 +12,9 @@
 *
 *******************************************************************************/
 
+#ifndef NC30
 #define NC30
+#endif
 #if defined(NC30)		/* NCxx */
 	/* dummy */
 #elif defined(NC77)
