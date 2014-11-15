@@ -60,6 +60,7 @@ void read3DHCount(void)
 
 tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
 extern void set3DHEx(uchar addr,uchar value);
+uchar dClick=0;
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
@@ -69,7 +70,7 @@ void _3DH5Hz(void)
 	char temp[3];
 	sGACC* sGAcc;
 	tEULER* tEu;
-	tNECK* tNeck=Neck;
+	tNECK* tNeck=&Neck;
 
 	read3DHCount();
 	if(receiveMax==0)
@@ -80,8 +81,14 @@ void _3DH5Hz(void)
 		temp[0]=pBuf[1];
 		temp[1]=pBuf[3];
 		temp[2]=pBuf[5];
+		if(dClick) dClick++;
 		if(IsClick(temp)==1){
-			echo();
+			if(dClick==0)
+				dClick=1;
+			else if(dClick>25)
+				dClick=1;
+			else
+				echo();
 			staticCount=0;
 		}
 		_=CalculateStep(temp);

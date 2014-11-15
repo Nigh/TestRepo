@@ -70,6 +70,7 @@ uchar test[9]={'#',0x03,0x06,0xea,0xaa,4,3,2,1};
 
 extern int spiRevBuf[48];
 extern uchar receiveMax;
+extern void read3DHCount(void);
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -77,7 +78,7 @@ void fRtc2Hz(void)
 	static uchar gOld[3]={0};
 
 	count++;
-	if(count&0x1==0)
+	if((count&0x1)==0)
 	{
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
@@ -89,9 +90,9 @@ void fRtc2Hz(void)
 
 				if(gOld[0]-pBuf[1]>10 and gOld[0]-pBuf[1]<240)
 					g_Statu=G_INACTIVE;
-				if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
+				else if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
 					g_Statu=G_INACTIVE;
-				if(gOld[2]-pBuf[5]>10 and gOld[2]-pBuf[5]<240)
+				else if(gOld[2]-pBuf[5]>10 and gOld[2]-pBuf[5]<240)
 					g_Statu=G_INACTIVE;
 				if(g_Statu!=G_SLEEP){
 					R_TAU0_Channel5_Start();
