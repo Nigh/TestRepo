@@ -125,7 +125,7 @@ void led_heartBeat(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -166,7 +166,7 @@ void led_breathe(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount){
@@ -210,7 +210,7 @@ void led_mq(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount){
@@ -282,7 +282,7 @@ void led_flashAll(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -301,7 +301,7 @@ void led_swing(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -324,7 +324,7 @@ void led_power(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -342,7 +342,7 @@ void led_random(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount)

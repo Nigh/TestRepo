@@ -83,7 +83,7 @@ void fRtc2Hz(void)
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();
-			P2.3=0;
+			// P2.3=0;
 			read3DHCount();
 			if(receiveMax>0){
 				read3DH();
@@ -99,7 +99,7 @@ void fRtc2Hz(void)
 					set3DHEx(0x20,0x47);
 				}
 			}
-			P2.3=1;
+			// P2.3=1;
 		}
 	}
 	// uartBufWrite(test,5);

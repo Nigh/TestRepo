@@ -15,10 +15,12 @@ uchar g_Statu=G_INACTIVE;
 
 void echo(void)
 {
+	P2.3=0;
 	sLed.ledMode++;
 	if(sLed.ledMode>LED_M_RANDOM)
 		sLed.ledMode=LED_M_OFF;
-	ledSetMode(sLed.ledMode,1);
+	ledSetMode(sLed.ledMode,0xFFFF);
+	P2.3=1;
 }
 
 int spiRevBuf[48]={0};
@@ -87,8 +89,10 @@ void _3DH5Hz(void)
 				dClick=1;
 			else if(dClick>25)
 				dClick=1;
-			else
+			else{
+				dClick=0;
 				echo();
+			}
 			staticCount=0;
 		}
 		_=CalculateStep(temp);
