@@ -23,13 +23,13 @@ fFUNC ledMode[]={led_heartBeat,
 				led_power,
 				led_random};
 
-void ledSetMode(uint ledMode)
+void ledSetMode(uint ledMode,uint times)
 {
 	uint* ptr=&sLed;
 
 	*ptr++=0;*ptr++=0;*ptr++=0;*ptr++=0;
 	*ptr++=0;*ptr++=ledMode;
-	*ptr++=0;*ptr++=0;*ptr=0xFFFF;
+	*ptr++=0;*ptr++=0;*ptr=times;
 
 	// pwmMClkOn();
 	// R_TAU0_Channel0_Start();
@@ -115,7 +115,7 @@ void ledNext(void)
 	if(sLed.ledMode<=6)
 		ledMode[sLed.ledMode]();
 	else
-		ledSetMode(LED_M_OFF);
+		ledSetMode(LED_M_OFF,1);
 }
 
 
@@ -125,7 +125,7 @@ void led_heartBeat(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -166,7 +166,7 @@ void led_breathe(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount){
@@ -210,7 +210,7 @@ void led_mq(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount){
@@ -282,7 +282,7 @@ void led_flashAll(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -301,7 +301,7 @@ void led_swing(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -324,7 +324,7 @@ void led_power(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	if(sLed.ledCount==1){
@@ -342,7 +342,7 @@ void led_random(void)
 		sLed.ledCount++;
 	}else{
 		sLed.ledCount=0;
-		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF);
+		if(sLed.times<0x100 && sLed.times--==0) ledSetMode(LED_M_OFF,1);
 	}
 
 	switch(sLed.ledCount)

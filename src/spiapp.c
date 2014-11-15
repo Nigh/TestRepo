@@ -6,6 +6,9 @@
 #include "r_cg_serial.h"
 #include "spiapp.h"
 
+
+uchar g_Statu=G_INACTIVE;
+
 // __interrupt static void intUartSend(void) {}
 
 // __interrupt static void intUartRecev(void) {}
@@ -15,11 +18,10 @@ void echo(void)
 	sLed.ledMode++;
 	if(sLed.ledMode>LED_M_RANDOM)
 		sLed.ledMode=LED_M_OFF;
-	ledSetMode(sLed.ledMode);
+	ledSetMode(sLed.ledMode,1);
 }
 
-
-char spiRevBuf[48]={0};
+int spiRevBuf[48]={0};
 uchar spiSendBuf[16]={0};
 uchar nullvar=0;
 uchar receiveMax=0,receiveMax3=0;
@@ -31,17 +33,12 @@ void read3DH(void)
 	enable_3dh();
 	SIO00=(0x28|0xc0);
 	while(CSIIF00==0);CSIIF00=0;
-	// while(SSR00&0x0040);
-	// while(SSR00&0x0040!=0);
 	while(1){
 		SIO00=0xFF;
 		while(CSIIF00==0);CSIIF00=0;
-		// while(SSR00&0x0040);
-		// while(SSR00&0x0040!=0);
+		*pBuf++=SIO00;
 		SIO00=0xFF;
 		while(CSIIF00==0);CSIIF00=0;
-		// while(SSR00&0x0040);
-		// while(SSR00&0x0040!=0);
 		*pBuf++=SIO00;
 		if(receiveCount++>=receiveMax3Local)
 			break;
@@ -49,40 +46,64 @@ void read3DH(void)
 	disable_3dh();
 }
 
-void _3DH5Hz(void)
+void read3DHCount(void)
 {
-	uchar calcCount=0;
-	uchar *pBuf=spiRevBuf;
-	char temp[3];
-
 	enable_3dh();
 	SIO00=(0x2f|0x80);
 	while(CSIIF00==0);CSIIF00=0;
-	// while(SSR00&0x0040);
-	// while(SSR00&0x0040!=0);
 	SIO00=0xff;
 	while(CSIIF00==0);CSIIF00=0;
-	// while(SSR00&0x0040);
-	// while(SSR00&0x0040!=0);
 	receiveMax=(SIO00&0x1f);
 	receiveMax3=receiveMax*3;
 	disable_3dh();
+}
 
+tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
+extern void set3DHEx(uchar addr,uchar value);
+void _3DH5Hz(void)
+{
+	// static char oldG[3];
+	static uchar staticCount=0,inactiveCount=0;
+	uchar calcCount=0,_;
+	uchar* pBuf=spiRevBuf;
+	char temp[3];
+	sGACC* sGAcc;
+	tEULER* tEu;
+	tNECK* tNeck=Neck;
+
+	read3DHCount();
 	if(receiveMax==0)
 		return;
-
 	read3DH();
 
-	// read3DH();
-
 	while(calcCount++<receiveMax){
-		temp[0]=pBuf[0];
-		temp[1]=pBuf[1];
-		temp[2]=pBuf[2];
+		temp[0]=pBuf[1];
+		temp[1]=pBuf[3];
+		temp[2]=pBuf[5];
 		if(IsClick(temp)==1){
 			echo();
+			staticCount=0;
 		}
-		pBuf+=3;
+		_=CalculateStep(temp);
+		if(_) {staticCount=0;g_Statu=G_ACTIVE;}
+		steps+=_;
+		pBuf+=6;
+	}
+
+	if(g_Statu==G_INACTIVE){
+		sGAcc=spiRevBuf;
+		tEu=calcRulerA(sGAcc);
+		tNeck->PositionID=HEAD_DOWN;
+		tNeck->StartTime=time2();
+		NeckActivityAlgorithm(tEu,tNeck);
+	}
+
+	if(++staticCount>250){
+		g_Statu=G_SLEEP;
+		set3DHEx(0x20,0x1f);
+		R_TAU0_Channel5_Stop();
+	}else if(staticCount>25){
+		g_Statu=G_INACTIVE;
 	}
 }
 
@@ -94,7 +115,6 @@ void spiStart(void)
 	SOE0 |= _0001_SAU_CH0_OUTPUT_ENABLE;           /* enable CSI00 output */
 	SS0 |= _0001_SAU_CH0_START_TRG_ON;             /* enable CSI00 */
 	CSIIF00 = 0U;    /* clear INTCSI00 interrupt flag */
-
 }
 
 void spiStop(void)

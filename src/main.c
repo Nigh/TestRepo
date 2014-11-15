@@ -32,17 +32,18 @@ void afterBoot(void)
 	fifoInit(&sMsgFifo,msgQueue);
 }
 
+void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
 void iMain(void)
 {
 	afterBoot();
-	ledSetMode(LED_M_OFF);
+	ledSetMode(LED_M_OFF,1);
 	EI();
 	HALT();
 	NOP();
 	HALT();
 	fifoFlush();
-	ledSetMode(LED_M_MQ);
+	ledSetMode(LED_M_MQ,3);
 
 	init3DH();
 	R_TAU0_Channel5_Start();
@@ -67,18 +68,39 @@ void fReset(void)
 // ***************************************
 uchar test[9]={'#',0x03,0x06,0xea,0xaa,4,3,2,1};
 
+extern int spiRevBuf[48];
+extern uchar receiveMax;
 void fRtc2Hz(void)
 {
 	static uint count=0;
-	sGACC sGAcc={-11582,2,-11611};
-	tEULER* tEu;
-	startHClk();
-	P2.3=0;
-	tEu=calcRulerA(&sGAcc);
-	P2.3=1;
-	
-	count++;
+	static uchar* const pBuf=spiRevBuf;
+	static uchar gOld[3]={0};
 
+	count++;
+	if(count&0x1==0)
+	{
+		sUtcs.lTime++;
+		if(g_Statu==G_SLEEP){
+			startHClk();
+			P2.3=0;
+			read3DHCount();
+			if(receiveMax>0){
+				read3DH();
+
+				if(gOld[0]-pBuf[1]>10 and gOld[0]-pBuf[1]<240)
+					g_Statu=G_INACTIVE;
+				if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
+					g_Statu=G_INACTIVE;
+				if(gOld[2]-pBuf[5]>10 and gOld[2]-pBuf[5]<240)
+					g_Statu=G_INACTIVE;
+				if(g_Statu!=G_SLEEP){
+					R_TAU0_Channel5_Start();
+					set3DHEx(0x20,0x47);
+				}
+			}
+			P2.3=1;
+		}
+	}
 	// uartBufWrite(test,5);
 	// uartSend(5);
 
@@ -229,12 +251,8 @@ void set3DHEx(uchar addr,uchar value)
 	enable_3dh();
 	SIO00=addr;
 	while(CSIIF00==0);CSIIF00=0;
-	// while(SSR00&0x0040);
-	// while(SSR00&0x0040!=0);
 	SIO00=value;
 	while(CSIIF00==0);CSIIF00=0;
-	// while(SSR00&0x0040);
-	// while(SSR00&0x0040!=0);
 	disable_3dh();
 }
 
@@ -243,8 +261,8 @@ void init3DH(void)
 	startHClk();
 	// set3DHEx(0x20,0x4f);	//50 Hz and Low power
 	set3DHEx(0x20,0x47);	//50 Hz
-	// set3DHEx(0x23,0x80);	//Block update mode
-	set3DHEx(0x23,0x88);	//Block update and High resolution mode
+	set3DHEx(0x23,0x80);	//Block update mode
+	// set3DHEx(0x23,0x88);	//Block update and High resolution mode
 	set3DHEx(0x2e,0x00);
 	set3DHEx(0x24,0x40);
 	set3DHEx(0x2e,0x8f);

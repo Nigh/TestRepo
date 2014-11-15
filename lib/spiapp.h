@@ -3,8 +3,14 @@
 
 #include "r_cg_userdefine.h"
 
-extern char spiRevBuf[];
+#define G_SLEEP (1)
+#define G_INACTIVE (2)
+#define G_ACTIVE (3)
+
+extern int spiRevBuf[];
 extern uchar spiSendBuf[];
+extern uchar g_Statu;
+extern uint steps;
 
 #define enable_3dh() P2.2=0;spiStart()
 #define disable_3dh() P2.2=1;spiStop()

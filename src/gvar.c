@@ -2,6 +2,12 @@
 
 sSELF sSelf={0,0,0,0};
 sUTCS sUtcs;
+uint steps=0;
+
+time_t time2(void)
+{
+	return (time_t)sUtcs.lTime;
+}
 
 void startHClk(void)
 {

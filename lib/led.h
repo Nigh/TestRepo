@@ -48,7 +48,7 @@ typedef struct
 } sLED;
 extern sLED sLed;
 
-void ledSetMode(uint);
+void ledSetMode(uint,uint);
 
 void led_heartBeat(void);
 void led_breathe(void);
