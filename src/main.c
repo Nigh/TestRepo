@@ -28,6 +28,7 @@ sMSG gMsg={0,0};	//global message
 void afterBoot(void)
 {
 	sUtcs.lTime=0;
+	sAlarmTime.lTime=0xffffffff;
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 }
@@ -115,9 +116,7 @@ void fRtc5Hz(void)
 
 
 extern sTIMERTASK sTimerTask;
-
 extern void taskDelete(uint ptr);
-
 void fRtc64Hz(void)
 {
 	uint i=0;
@@ -196,19 +195,83 @@ void fTimerPro(void)
 // ***************************************
 void fTimeSync(void)
 {
+	uchar* ptr1=&uartRevBuf[3];
+	uchar* ptr2=&sUtcs;
+	*ptr2++=*ptr1++;
+	*ptr2++=*ptr1++;
+	*ptr2++=*ptr1++;
+	*ptr2=*ptr1;
+}
+
+void fSetAlarm(void)
+{
+	uchar* ptr1=&uartRevBuf[3];
+	uchar* ptr2=&sAlarmTime;
+	*ptr2++=*ptr1++;
+	*ptr2++=*ptr1++;
+	*ptr2++=*ptr1++;
+	*ptr2=*ptr1;
+}
+
+void fMotorCtl(void)
+{
 
 }
 
+void fLEDCtl(void)
+{
+	uint ledMode;
+	switch(uartRevBuf[3]&0xf)
+	{
+		case 1: ledMode=LED_M_FLASHALL;break;
+		case 2: ledMode=LED_M_MQ;break;
+		case 3: ledMode=LED_M_BREATHE;break;
+		case 4: ledMode=LED_M_SWING;break;
+		case 5: ledMode=LED_M_HERATBEAT;break;
+		case 6: 
+		case 7:
+		case 8:
+		case 9: ledMode=LED_M_POWER;break;
+		case 10: ledMode=LED_M_RANDOM;break;
+		default: ledMode=LED_M_OFF;break;
+	}
+	ledSetMode(ledMode,uartRevBuf[3]>>4);
+}
+
+void fFormatFlash(void)
+{
+
+}
+
+void fGsensorAcc(void)
+{
+	if(uartRevBuf[3]){
+		directGEn=1;
+		if(g_Statu==G_SLEEP){
+			R_TAU0_Channel5_Start();
+			set3DHEx(0x20,0x47);
+		}
+	}else{
+		directGEn=0;
+	}
+}
+
+void fDataReqest(void)
+{
+
+}
+
+
 fFUNC const bleHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
-	VECTOR(fTimeSync),				// 1
-	VECTOR(_nop_Ex),				// 2
-	VECTOR(_nop_Ex),				// 3
-	VECTOR(_nop_Ex),				// 4
-	VECTOR(_nop_Ex),				// 5
-	VECTOR(_nop_Ex),				// 6
-	VECTOR(_nop_Ex),				// 7
-	VECTOR(_nop_Ex),				// 8
+	VECTOR(_nop_Ex),				// 1
+	VECTOR(fTimeSync),				// 2
+	VECTOR(fSetAlarm),				// 3
+	VECTOR(fMotorCtl),				// 4
+	VECTOR(fLEDCtl),				// 5
+	VECTOR(fFormatFlash),				// 6
+	VECTOR(fGsensorAcc),				// 7
+	VECTOR(fDataReqest),				// 8
 };
 
 void fBLEPro(void)

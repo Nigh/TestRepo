@@ -9,9 +9,6 @@
 
 uchar g_Statu=G_INACTIVE;
 
-// __interrupt static void intUartSend(void) {}
-
-// __interrupt static void intUartRecev(void) {}
 
 void echo(void)
 {
@@ -87,10 +84,10 @@ void _3DH5Hz(void)
 		if(IsClick(temp)==1){
 			if(dClick==0)
 				dClick=1;
-			else if(dClick>30)
+			else if(dClick>55)
 				dClick=1;
 			else{
-				if(dClick>3){
+				if(dClick>6){
 					echo();
 				}
 				dClick=0;
@@ -111,12 +108,15 @@ void _3DH5Hz(void)
 		NeckActivityAlgorithm(tEu,tNeck);
 	}
 
-	if(++staticCount>250){
+	if(++staticCount>300){
 		g_Statu=G_SLEEP;
 		set3DHEx(0x20,0x1f);
 		R_TAU0_Channel5_Stop();
-	}else if(staticCount>25){
+		staticCount=0;
+	}else if(staticCount>50){
 		g_Statu=G_INACTIVE;
+		if(directGEn)
+			staticCount=0;
 	}
 }
 

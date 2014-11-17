@@ -1,8 +1,10 @@
 #include "r_cg_userdefine.h"
 
 sSELF sSelf={0,0,0,0};
-sUTCS sUtcs;
+sUTCS sUtcs,sAlarmTime;
 uint steps=0;
+uchar directGEn=0;
+
 
 time_t time2(void)
 {
