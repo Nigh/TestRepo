@@ -87,11 +87,13 @@ void _3DH5Hz(void)
 		if(IsClick(temp)==1){
 			if(dClick==0)
 				dClick=1;
-			else if(dClick>25)
+			else if(dClick>30)
 				dClick=1;
 			else{
+				if(dClick>3){
+					echo();
+				}
 				dClick=0;
-				echo();
 			}
 			staticCount=0;
 		}
