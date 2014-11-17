@@ -2,6 +2,7 @@
 #define _APPTIMER_H_
 
 #include "r_cg_userdefine.h"
+#include "typedef.h"
 
 typedef struct
 {
@@ -10,10 +11,19 @@ typedef struct
 	fFUNC func;
 } sAPPTIMER;
 
-// extern uchar timer(sAPPTIMER* apptimer);
+typedef struct
+{
+	uint maxIndex;
+	iFUNC* tArray[16];
+} sTIMERTASK;
+
+extern sTIMERTASK sTimerTask;
+
+extern uchar timer(sAPPTIMER* apptimer);
 
 // extern sAPPTIMER stopBuzzerTimer;
 // extern sAPPTIMER stopVibrateTimer;
 // extern sAPPTIMER BLEResetTimer;
+void stopVibrate(void);
 
 #endif

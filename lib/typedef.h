@@ -16,12 +16,6 @@ typedef unsigned long u32;
 typedef void (*fFUNC)(void);
 typedef int iFUNC(void);
 
-typedef struct
-{
-	uint maxIndex;
-	iFUNC* tArray[16];
-} s32HZTASK;
-
 typedef union
 {
 	time_t lTime;

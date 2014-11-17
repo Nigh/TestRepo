@@ -114,12 +114,32 @@ void fRtc5Hz(void)
 }
 
 
+extern sTIMERTASK sTimerTask;
+
+extern void taskDelete(uint ptr);
+
+void fRtc64Hz(void)
+{
+	uint i=0;
+	if(sTimerTask.maxIndex>0){
+		while(i<sTimerTask.maxIndex){
+			if(sTimerTask.tArray[i]()==0){
+				taskDelete(i);
+			}else{
+				i++;
+			}
+		}
+	}else{
+		R_TAU0_Channel6_Stop();
+	}
+}
+
 fFUNC const rtcHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
 	VECTOR(_nop_Ex),				// 1
 	VECTOR(fRtc2Hz),				// 2
 	VECTOR(fRtc5Hz),				// 3
-	VECTOR(_nop_Ex),				// 4
+	VECTOR(fRtc64Hz),				// 4
 	VECTOR(_nop_Ex),				// 5
 	VECTOR(_nop_Ex),				// 6
 	VECTOR(_nop_Ex),				// 7
