@@ -6,7 +6,7 @@
 #include "r_cg_serial.h"
 #include "spiapp.h"
 
-
+extern float absf(float);
 uchar g_Statu=G_INACTIVE;
 
 
@@ -20,7 +20,8 @@ void echo(void)
 	P2.3=1;
 }
 
-int spiRevBuf[48]={0};
+// int spiRevBuf[48]={0};	// 5/16 used
+int spiRevBuf[96]={0};		// 32 for safe
 uchar spiSendBuf[16]={0};
 uchar nullvar=0;
 uchar receiveMax=0,receiveMax3=0;
@@ -58,16 +59,19 @@ void read3DHCount(void)
 }
 
 tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
+sNECKLOGLONG currentNeckLog={0,0,0,0,0,1};
+uint currentNeckLogSec=0;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
-	static uchar staticCount=0,inactiveCount=0;
+	static int staticCount=0,inactiveCount=0;
+	int iTemp;
 	uchar calcCount=0,_;
 	uchar* pBuf=spiRevBuf;
 	char temp[3];
-	sGACC* sGAcc;
+	sGACC sGAcc;
 	tEULER* tEu;
 	tNECK* tNeck=&Neck;
 
@@ -101,11 +105,48 @@ void _3DH5Hz(void)
 	}
 
 	if(g_Statu==G_INACTIVE){
-		sGAcc=spiRevBuf;
-		tEu=calcRulerA(sGAcc);
-		tNeck->PositionID=HEAD_DOWN;
-		tNeck->StartTime=time2();
-		NeckActivityAlgorithm(tEu,tNeck);
+		sGAcc.x=spiRevBuf[0]/4+spiRevBuf[3]/4+spiRevBuf[6]/4+spiRevBuf[9]/4;
+		sGAcc.y=spiRevBuf[1]/4+spiRevBuf[4]/4+spiRevBuf[7]/4+spiRevBuf[10]/4;
+		sGAcc.z=spiRevBuf[2]/4+spiRevBuf[5]/4+spiRevBuf[8]/4+spiRevBuf[11]/4;
+		// sGAcc=spiRevBuf;
+		tEu=calcRulerA(&sGAcc);
+		if(absf(tEu->Pitch)>absf(tEu->Roll)){
+			if(tEu->Pitch>5 and tEu->Pitch<50)
+				tNeck->PositionID=HEAD_UP;
+			else if(tEu->Pitch<-5 and tEu->Pitch>-50)
+				tNeck->PositionID=HEAD_DOWN;
+			else
+				tNeck->PositionID=0x0;
+		}else{
+			if(tEu->Roll>5 and tEu->Roll<50)
+				tNeck->PositionID=HEAD_LEFT;
+			else if(tEu->Roll<-5 and tEu->Roll>-50)
+				tNeck->PositionID=HEAD_RIGHT;
+			else
+				tNeck->PositionID=0x0;
+		}
+		if(tNeck->PositionID){
+			tNeck->StartTime=time2();
+			iTemp=NeckActivityAlgorithm(tEu,tNeck);
+			if(iTemp){
+				currentNeckLog.neckMove+=iTemp;
+			}else{
+				switch(tNeck->PositionID){
+				case HEAD_UP:
+					currentNeckLog.upTime++;
+					break;
+				case HEAD_DOWN:
+					currentNeckLog.downTime++;
+					break;
+				case HEAD_LEFT:
+					currentNeckLog.leftTime++;
+					break;
+				case HEAD_RIGHT:
+					currentNeckLog.rightTime++;
+					break;
+				}
+			}
+		}
 	}
 
 	if(++staticCount>300){
@@ -119,6 +160,35 @@ void _3DH5Hz(void)
 			staticCount=0;
 	}
 }
+
+
+void memsetUser(uchar* ptr,const uchar ch,const size_t length)
+{
+	size_t i=0;
+	while(i++<length)
+		*ptr++=ch;
+}
+
+// 缓存颈动量时清理longLog
+// 触发颈动量时配置longLog.UTC
+static sNECKLOG neckLog[16];
+void neckLogCache(void)
+{
+	uchar i=0;
+	while(neckLog[i++].UTC!=0);
+	i-=1;
+	neckLog[i].UTC=currentNeckLog.UTC;
+	neckLog[i].neckMove=currentNeckLog.neckMove;
+
+	neckLog[i].leftTime=currentNeckLog.leftTime/10;
+	neckLog[i].rightTime=currentNeckLog.rightTime/10;
+	neckLog[i].upTime=currentNeckLog.upTime/10;
+	neckLog[i].downTime=currentNeckLog.downTime/10;
+
+	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
+
+}
+
 
 void spiStart(void)
 {

@@ -16,6 +16,26 @@ typedef unsigned long u32;
 typedef void (*fFUNC)(void);
 typedef int iFUNC(void);
 
+typedef struct
+{
+	uint neckMove;
+	uchar leftTime;
+	uchar rightTime;
+	uchar upTime;
+	uchar downTime;
+	time_t UTC;
+} sNECKLOG;
+
+typedef struct
+{
+	uint neckMove;
+	uint leftTime;
+	uint rightTime;
+	uint upTime;
+	uint downTime;
+	time_t UTC;
+} sNECKLOGLONG;
+
 typedef union
 {
 	time_t lTime;

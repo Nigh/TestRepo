@@ -19,5 +19,6 @@ void read3DH(void);
 void spiStart(void);
 void spiStop(void);
 void _3DH5Hz(void);
+void neckLogCache(void);
 
 #endif

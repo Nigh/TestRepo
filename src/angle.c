@@ -20,7 +20,7 @@ float axisTan(int k,int m)
 {
 	float kAbs=absi(k),mAbs=absi(m),temp;
 	if(k==0 && k==m)
-        return 0;
+		return 0;
 	if(kAbs>mAbs){
 		temp=(float)(mAbs/kAbs);
 		temp=userATan(temp);
@@ -57,12 +57,23 @@ float axisTan(int k,int m)
 
 tEULER* calcRulerA(sGACC* sGAcc)
 {
+	static char isUpsideDown=0;
 	static tEULER tEular;
 	//float xAbs=absf(sGAcc->x),yAbs=absf(sGAcc->y),zAbs=absf(sGAcc->z);
-	float temp;
-	tEular.Pitch=axisTan(sGAcc->x,sGAcc->z);
-	tEular.Roll=axisTan(sGAcc->y,sGAcc->z);
-	tEular.Yaw=axisTan(sGAcc->y,sGAcc->x);
+	
+	if(isUpsideDown){
+		if(sGAcc->x<-8000)
+			isUpsideDown=0;
+		tEular.Pitch=axisTan(-sGAcc->z,-sGAcc->x)*57.29577951308232;
+		tEular.Roll=axisTan(-sGAcc->y,-sGAcc->x)*57.29577951308232;
+		tEular.Yaw=axisTan(-sGAcc->y,-sGAcc->z)*57.29577951308232;
+	}else{
+		if(sGAcc->x>8000)
+			isUpsideDown=1;
+		tEular.Pitch=axisTan(sGAcc->z,sGAcc->x)*57.29577951308232;
+		tEular.Roll=axisTan(sGAcc->y,sGAcc->x)*57.29577951308232;
+		tEular.Yaw=axisTan(sGAcc->y,sGAcc->z)*57.29577951308232;
+	}
 	return &tEular;
 }
 

@@ -72,6 +72,8 @@ uchar test[9]={'#',0x03,0x06,0xea,0xaa,4,3,2,1};
 extern int spiRevBuf[48];
 extern uchar receiveMax;
 extern void read3DHCount(void);
+extern uint currentNeckLogSec;
+extern sNECKLOGLONG currentNeckLog;
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -81,6 +83,14 @@ void fRtc2Hz(void)
 	count++;
 	if((count&0x1)==0)
 	{
+		// startAD();
+		// if(!(count&0x7))
+		// 	setVibrate(&sV1);
+		currentNeckLogSec++;
+		if(currentNeckLogSec>=300){
+			currentNeckLogSec=0;
+			neckLogCache();
+		}
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();
@@ -88,7 +98,6 @@ void fRtc2Hz(void)
 			read3DHCount();
 			if(receiveMax>0){
 				read3DH();
-
 				if(gOld[0]-pBuf[1]>10 and gOld[0]-pBuf[1]<240)
 					g_Statu=G_INACTIVE;
 				else if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
@@ -120,17 +129,10 @@ extern void taskDelete(uint ptr);
 void fRtc64Hz(void)
 {
 	uint i=0;
-	if(sTimerTask.maxIndex>0){
-		while(i<sTimerTask.maxIndex){
-			if(sTimerTask.tArray[i]()==0){
-				taskDelete(i);
-			}else{
-				i++;
-			}
-		}
-	}else{
-		R_TAU0_Channel6_Stop();
-	}
+	if(sTimerTask.maxIndex>0)
+		while(i<sTimerTask.maxIndex){if(sTimerTask.tArray[i]()==0) taskDelete(i); else i++; }
+	else
+		R_IT_Stop();
 }
 
 fFUNC const rtcHandler[]={		// No
