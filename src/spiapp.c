@@ -12,12 +12,12 @@ uchar g_Statu=G_INACTIVE;
 
 void echo(void)
 {
-	P2.3=0;
-	sLed.ledMode++;
-	if(sLed.ledMode>LED_M_RANDOM)
-		sLed.ledMode=LED_M_OFF;
-	ledSetMode(sLed.ledMode,0xFFFF);
-	P2.3=1;
+	// P2.3=0;
+	// sLed.ledMode++;
+	// if(sLed.ledMode>LED_M_RANDOM)
+		// sLed.ledMode=LED_M_OFF;
+	ledSetMode(LED_M_POWER,3);
+	// P2.3=1;
 }
 
 // int spiRevBuf[48]={0};	// 5/16 used
@@ -91,7 +91,7 @@ void _3DH5Hz(void)
 			else if(dClick>55)
 				dClick=1;
 			else{
-				if(dClick>6){
+				if(dClick>3){
 					echo();
 				}
 				dClick=0;
