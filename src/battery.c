@@ -4,10 +4,21 @@
 #include "r_cg_adc.h"
 
 #include "battery.h"
-uint batteryLevel=0xffff;
+int batteryLevel=0xffff;
 
 static uchar adcCount=0;
-static uint adcValue[4];
+uint adcValue[4];
+uchar powerLevel=4;
+
+void ADPro(void)
+{
+	if(sVibrate.en==0){
+		startAD();
+		setADTimer(600);
+	}else{
+		setADTimer(10);
+	}
+}
 
 void startAD(void)
 {
@@ -26,6 +37,13 @@ void stopAD(void)
 	ADCE = 0U;
 }
 
+sAPPTIMER adTimer={0,0,&ADPro};
+void setADTimer(uint time)
+{
+	adTimer.en=1;
+	adTimer.count=time;
+}
+
 __interrupt static void intADC(void)
 {
 	static const sMSG sMsg={M_TYPE_SYS,M_C_ADCEND};
@@ -35,7 +53,7 @@ __interrupt static void intADC(void)
 		R_ADC_Start();
 	else{
 		stopAD();
-		batteryLevel=(adcValue[0]>>2)+(adcValue[1]>>2)+(adcValue[2]>>2)+(adcValue[3]>>2);
 		fifoPut4ISR(sMsg);
 	}
 }
+

@@ -311,11 +311,14 @@ void fTransPro(void)
 void fAdcEnd(void)
 {
 	uint temp;
-	NOP();
-	temp=batteryLevel;
-	batteryLevel=0;
-	NOP();
-	batteryLevel=temp;
+	if(sVibrate.en)
+	{
+		setADTimer(10);
+		return;
+	}
+	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
+	batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
+	powerLevel=batteryLevel/27;
 }
 
 fFUNC const sysHandler[]={		// No
