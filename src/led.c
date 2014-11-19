@@ -317,7 +317,8 @@ void led_swing(void)
 	}
 }
 
-extern uint batteryLevel;
+extern int batteryLevel;
+extern uchar powerLevel;
 void led_power(void)
 {
 	if(sLed.ledCount<1000){
@@ -328,11 +329,21 @@ void led_power(void)
 	}
 
 	if(sLed.ledCount==1){
-		led1On();
-		led2On();
-		led3On();
+		switch(powerLevel){
+			default:
+			case 5: case 4: led4On();
+			case 3: led3On();
+			case 2: led2On();
+			case 1: case 0: led1On();
+		}
 	}else if(sLed.ledCount==500){
-		led3Off();
+		switch(powerLevel){
+			default:
+			case 5: case 4: led4Off();break;
+			case 3: led3Off();break;
+			case 2: led2Off();break;
+			case 1: case 0: led1Off();break;
+		}
 	}
 }
 
