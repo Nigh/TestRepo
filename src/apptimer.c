@@ -7,15 +7,8 @@ sAPPTIMER stopVibrateTimer={0,0,&stopVibrate};
 // sAPPTIMER BLEResetTimer={0,0,&_nop_Ex};
 
 sTIMERTASK sTimerTask={0};
-
-void stopVibrate(void)
-{
-	stopVibrateTimer.en=0;
-	// sVibrate.en=0;
-	VibrateOff();
-}
-
-
+sVIBRATE sVibrate={0,3,{1,4,26},0,1};
+const sVIBRATE sV1={1,3,{1,4,14},0,1};
 
 // possible improvement:task至少应包含自身的函数指针以及一个状态标记
 // 以便在insert task时作为判断，则可选择相同task是否能在一次调用中
@@ -25,6 +18,8 @@ void taskInsert(iFUNC* task)	// 代码量12
 {
 	sTimerTask.tArray[sTimerTask.maxIndex]=task;
 	sTimerTask.maxIndex++;
+	if(!(ITMC&0x8000))
+		R_IT_Start();
 }
 
 void taskDelete(uint ptr)	// 代码量23
@@ -37,6 +32,7 @@ void taskDelete(uint ptr)	// 代码量23
 	(*_max)--;
 }
 
+
 uchar apptimerTaskEn=0;
 int apptimerTask(void)
 {
@@ -46,25 +42,33 @@ int apptimerTask(void)
 	return refCount;
 }
 
-// int vibrateTask(void)
-// {
-// 	static uchar vibrate32HzCount=0;
-// 	if(sVibrate.en==1){
-// 		if(vibrate32HzCount>=sVibrate.array[sVibrate.count]) {
-// 			if(sVibrate.count%2==0 && sVibrate.count!=sVibrate.length-1){
-// 				VibrateOn();
-// 			} else {
-// 				VibrateOff();
-// 			}
-// 			sVibrate.count=(sVibrate.count+1)%sVibrate.length;
-// 			vibrate32HzCount=0;
-// 		}
-// 		vibrate32HzCount++;
-// 		return 1;
-// 	}
-// 	vibrate32HzCount=0;
-// 	return 0;
-// }
+int vibrateTask(void)
+{
+	static uchar vibrate32HzCount=0;
+	if(sVibrate.en==1){
+		if(vibrate32HzCount>=sVibrate.array[sVibrate.ptr]) {
+			if(sVibrate.ptr%2==0 && sVibrate.ptr!=sVibrate.length-1){
+				VibrateOff();
+			} else {
+				startHClk();
+				VibrateOn();
+			}
+			if(sVibrate.ptr==0){
+				if(sVibrate.count--==0){
+					sVibrate.en=0;
+					return 0;
+				}
+			}
+			sVibrate.ptr=(sVibrate.ptr+1)%sVibrate.length;
+			vibrate32HzCount=0;
+		}
+		vibrate32HzCount++;
+		return 1;
+	}
+	vibrate32HzCount=0;
+	sVibrate.en=0;
+	return 0;
+}
 
 void setTimer64Hz(sAPPTIMER* apptimer,uint period)
 {
@@ -74,7 +78,6 @@ void setTimer64Hz(sAPPTIMER* apptimer,uint period)
 	}
 	apptimer->count=period;
 	apptimer->en=1;	
-	R_TAU0_Channel6_Start();
 }
 
 void functionX(void)
@@ -94,3 +97,25 @@ uchar timer(sAPPTIMER* apptimer)
 	}
 	return 0;
 }
+
+
+
+
+void stopVibrate(void)
+{
+	sVibrate.en=0;
+	VibrateOff();
+}
+
+void setVibrate(sVIBRATE* sV)
+{
+	uchar* ptr1=&sVibrate;
+	uchar* ptr2=sV;
+	uchar i=0;
+	if(sVibrate.en==0)
+		taskInsert(&vibrateTask);
+	while(i++<sizeof(sVIBRATE)){
+		*ptr1++=*ptr2++;
+	}
+}
+

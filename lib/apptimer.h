@@ -17,6 +17,7 @@ typedef struct
 	iFUNC* tArray[16];
 } sTIMERTASK;
 
+extern sVIBRATE sVibrate;
 extern sTIMERTASK sTimerTask;
 
 extern uchar timer(sAPPTIMER* apptimer);
@@ -25,5 +26,8 @@ extern uchar timer(sAPPTIMER* apptimer);
 // extern sAPPTIMER stopVibrateTimer;
 // extern sAPPTIMER BLEResetTimer;
 void stopVibrate(void);
+void setVibrate(sVIBRATE* sV);
+
+extern const sVIBRATE sV1;
 
 #endif

@@ -18,7 +18,7 @@
 #define M_C_CLOCK1HZ 1
 #define M_C_CLOCK2HZ 2
 #define M_C_CLOCK5HZ 3
-#define M_C_CLOCK8HZ 4
+#define M_C_CLOCK64HZ 4
 #define M_C_CLOCK32HZ 5
 #define M_C_CLOCK1MIN 6
 #define M_C_CLOCK1HOUR 7

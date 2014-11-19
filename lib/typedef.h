@@ -62,11 +62,13 @@ typedef struct
 	uchar count;	// reconnect timer
 } sBLE;
 
+// 注意，结构更改，与上版本不同
 typedef struct
 {
 	uchar en:1;
 	uchar length:7;
 	uchar array[10];
+	uchar ptr;
 	uchar count;
 } sVIBRATE;
 
