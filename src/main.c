@@ -308,7 +308,12 @@ void fTransPro(void)
 // ***************************************
 void fAdcEnd(void)
 {
+	uint temp;
 	NOP();
+	temp=batteryLevel;
+	batteryLevel=0;
+	NOP();
+	batteryLevel=temp;
 }
 
 fFUNC const sysHandler[]={		// No

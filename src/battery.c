@@ -29,8 +29,8 @@ void stopAD(void)
 __interrupt static void intADC(void)
 {
 	static const sMSG sMsg={M_TYPE_SYS,M_C_ADCEND};
-	if(adcCount!=0)
-		adcValue[adcCount++-1]=ADCR;
+	if(adcCount++!=0)
+		adcValue[adcCount-2]=ADCR;
 	if(adcCount<5)
 		R_ADC_Start();
 	else{
