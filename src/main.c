@@ -86,7 +86,8 @@ void fRtc2Hz(void)
 	if((count&0x1)==0)
 	{
 		if(batteryStatu!=BAT_NORMAL){
-			
+			if(batteryStatu==BAT_CHARGE)
+				ledSetMode(LED_M_POWER,2);
 		}
 		if(timer(&adTimer))
 			adTimer.func();
@@ -116,12 +117,8 @@ void fRtc2Hz(void)
 					set3DHEx(0x20,0x47);
 				}
 			}
-			// P2.3=1;
 		}
 	}
-	// uartBufWrite(test,5);
-	// uartSend(5);
-
 }
 
 void fRtc5Hz(void)
@@ -358,7 +355,8 @@ void fAdcEnd(void)
 	uartSend(5);
 }
 
-void fChargeInt(void)
+
+void chargeScan(void)
 {
 	if(P7.0==0)
 		batteryStatu|=BAT_CHARGE;
@@ -369,6 +367,23 @@ void fChargeInt(void)
 	else
 		batteryStatu&=0xff^BAT_FULL;
 }
+
+sAPPTIMER chargeScanTimer={0,0,&chargeScan};
+
+void fChargeInt(void)
+{
+	if(P7.0==0)
+		batteryStatu|=BAT_CHARGE;
+	else
+		batteryStatu&=0xff^BAT_CHARGE;
+	if(P7.1==0)
+		batteryStatu|=BAT_FULL;
+	else
+		batteryStatu&=0xff^BAT_FULL;
+
+	setTimer64Hz(&chargeScanTimer,16);
+}
+
 
 fFUNC const sysHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0

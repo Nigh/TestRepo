@@ -27,6 +27,7 @@ extern uchar timer(sAPPTIMER* apptimer);
 // extern sAPPTIMER BLEResetTimer;
 void stopVibrate(void);
 void setVibrate(sVIBRATE* sV);
+extern void setTimer64Hz(sAPPTIMER* apptimer,uint period);
 
 extern const sVIBRATE sV1;
 
