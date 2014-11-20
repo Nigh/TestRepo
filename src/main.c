@@ -31,6 +31,7 @@ void afterBoot(void)
 	sAlarmTime.lTime=0xffffffff;
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
+	setADTimer(10);
 }
 
 void set3DHEx(uchar addr,uchar value);
@@ -74,6 +75,7 @@ extern uchar receiveMax;
 extern void read3DHCount(void);
 extern uint currentNeckLogSec;
 extern sNECKLOGLONG currentNeckLog;
+extern sAPPTIMER adTimer;
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -83,6 +85,11 @@ void fRtc2Hz(void)
 	count++;
 	if((count&0x1)==0)
 	{
+		if(batteryStatu!=BAT_NORMAL){
+			
+		}
+		if(timer(&adTimer))
+			adTimer.func();
 		// startAD();
 		// if(!(count&0x7))
 		// 	setVibrate(&sV1);
@@ -203,6 +210,9 @@ void fTimeSync(void)
 	*ptr2++=*ptr1++;
 	*ptr2++=*ptr1++;
 	*ptr2=*ptr1;
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fSetAlarm(void)
@@ -213,11 +223,17 @@ void fSetAlarm(void)
 	*ptr2++=*ptr1++;
 	*ptr2++=*ptr1++;
 	*ptr2=*ptr1;
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fMotorCtl(void)
 {
 
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fLEDCtl(void)
@@ -238,11 +254,17 @@ void fLEDCtl(void)
 		default: ledMode=LED_M_OFF;break;
 	}
 	ledSetMode(ledMode,uartRevBuf[3]>>4);
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fFormatFlash(void)
 {
 
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fGsensorAcc(void)
@@ -256,6 +278,9 @@ void fGsensorAcc(void)
 	}else{
 		directGEn=0;
 	}
+
+	uartBufWrite(data_transSuccess,5);
+	uartSend(5);
 }
 
 void fDataReqest(void)
@@ -288,12 +313,19 @@ void fUartSendEnd(void)
 {
 	NOP();
 	sUart.statu=UART_IDLE;
+	P2.0=1;
+}
+
+void fUartRevReq(void)
+{
+	startHClk();
+	sUart.statu=UART_REV;
 }
 
 fFUNC const transHandler[]={		// No
-	VECTOR(fUartSendEnd),				// 0
-	VECTOR(_nop_Ex),				// 1
-	VECTOR(_nop_Ex),				// 2
+	VECTOR(_nop_Ex),				// 0
+	VECTOR(fUartSendEnd),				// 1
+	VECTOR(fUartRevReq),				// 2
 	VECTOR(_nop_Ex),				// 3
 	VECTOR(_nop_Ex),				// 4
 	VECTOR(_nop_Ex),				// 5
@@ -319,12 +351,29 @@ void fAdcEnd(void)
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
 	batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
 	powerLevel=batteryLevel/27;
+
+	uartBufWrite(data_batteryLevel,3);
+	uartSendBuf[3]=powerLevel*25;
+	calcSendBufSum();
+	uartSend(5);
+}
+
+void fChargeInt(void)
+{
+	if(P7.0==0)
+		batteryStatu|=BAT_CHARGE;
+	else
+		batteryStatu&=0xff^BAT_CHARGE;
+	if(P7.1==0)
+		batteryStatu|=BAT_FULL;
+	else
+		batteryStatu&=0xff^BAT_FULL;
 }
 
 fFUNC const sysHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
 	VECTOR(fAdcEnd),				// 1
-	VECTOR(_nop_Ex),				// 2
+	VECTOR(fChargeInt),				// 2
 	VECTOR(_nop_Ex),				// 3
 	VECTOR(_nop_Ex),				// 4
 	VECTOR(_nop_Ex),				// 5

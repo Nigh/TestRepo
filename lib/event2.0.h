@@ -44,10 +44,12 @@
 #define M_C_BLESTATU 0x9
 
 //trans event content
-#define M_C_UARTSENDEND 1
+#define M_C_UARTSENDEND 0x1
+#define M_C_UARTREVREQ 0x2
 
 //system event content
 #define M_C_ADCEND 1
+#define M_C_CHARGEINT 2
 
 #define BUF_SIZE 0x10
 #define BUF_SIZE_MASK 0xF

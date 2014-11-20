@@ -4,6 +4,7 @@ sSELF sSelf={0,0,0,0};
 sUTCS sUtcs,sAlarmTime;
 uint steps=0;
 uchar directGEn=0;
+uchar batteryStatu=BAT_NORMAL;
 
 
 time_t time2(void)

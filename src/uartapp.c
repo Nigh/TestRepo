@@ -4,6 +4,17 @@
 #include "r_cg_dmac.h"
 #include "uartapp.h"
 
+
+const uchar data_transSuccess[5]={'#',0x03,0x01,0x01,0x02};
+const uchar data_transFail[5]={'#',0x03,0x01,0xFF,0x00};
+
+const uchar data_neckLog[3]={'#',0x16,0x10};
+const uchar data_stepLog[3]={'#',0x16,0x16};
+const uchar data_logCount[3]={'#',0x06,0x12};
+const uchar data_axisDirect[3]={'#',0x08,0x13};
+const uchar data_batteryLevel[3]={'#',0x03,0x14};
+const uchar data_bleCtrl[3]={'#',0x03,0x15};
+
 uchar uartSendBuf[32]={1,2,3,4,5,6,7,8,9,1,2,3};
 uchar uartRevBuf[32];
 
@@ -56,7 +67,7 @@ void uartInit(void)
 	SRMK1 = 0U;    /* enable INTSR1 interrupt */
 }
 
-void uartBufInit(uchar len)
+static void uartBufInit(uchar len)
 {
 	DEN1 = 1;
 	DSA1 = 0x44;
@@ -72,6 +83,7 @@ void uartBufWrite(uchar *wPtr,uchar len)
 	uchar i=0;
 	uchar* bPtr=uartSendBuf;
 	len&=0x1f;
+	uartBufInit(len);
 	while(i++<len){
 		*bPtr++=*wPtr++;
 	}
@@ -86,10 +98,21 @@ void wait5msTimer(void)
 
 void uartSend(uchar len)
 {
-	uartBufInit(len);
+	if(sUart.statu!=UART_IDLE)
+		return;
 	sUart.statu=UART_WAIT;
+	P2.0=0;
 	// sUart.count=0;
 	// sUart.time=0;
 	wait5msTimer();
 }
 
+void calcSendBufSum(void)
+{
+	uchar len=uartSendBuf[1];
+	uchar sum=0,i=2;
+	while(i<=len){
+		sum+=uartSendBuf[i++];
+	}
+	uartSendBuf[i]=sum;
+}
