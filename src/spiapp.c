@@ -76,74 +76,75 @@ void _3DH5Hz(void)
 	tNECK* tNeck=&Neck;
 
 	read3DHCount();
-	if(receiveMax==0)
-		return;
-	read3DH();
 
-	while(calcCount++<receiveMax){
-		temp[0]=pBuf[1];
-		temp[1]=pBuf[3];
-		temp[2]=pBuf[5];
-		if(dClick) dClick++;
-		if(IsClick(temp)==1){
-			if(dClick==0)
-				dClick=1;
-			else if(dClick>55)
-				dClick=1;
-			else{
-				if(dClick>3){
-					echo();
+	if(receiveMax!=0){
+		read3DH();
+
+		while(calcCount++<receiveMax){
+			temp[0]=pBuf[1];
+			temp[1]=pBuf[3];
+			temp[2]=pBuf[5];
+			if(dClick) dClick++;
+			if(IsClick(temp)==1){
+				if(dClick==0)
+					dClick=1;
+				else if(dClick>55)
+					dClick=1;
+				else{
+					if(dClick>3){
+						echo();
+					}
+					dClick=0;
 				}
-				dClick=0;
+				staticCount=0;
 			}
-			staticCount=0;
+			_=CalculateStep(temp);
+			if(_) {staticCount=0;g_Statu=G_ACTIVE;}
+			steps+=_;
+			pBuf+=6;
 		}
-		_=CalculateStep(temp);
-		if(_) {staticCount=0;g_Statu=G_ACTIVE;}
-		steps+=_;
-		pBuf+=6;
-	}
 
-	if(g_Statu==G_INACTIVE){
-		sGAcc.x=spiRevBuf[0]/4+spiRevBuf[3]/4+spiRevBuf[6]/4+spiRevBuf[9]/4;
-		sGAcc.y=spiRevBuf[1]/4+spiRevBuf[4]/4+spiRevBuf[7]/4+spiRevBuf[10]/4;
-		sGAcc.z=spiRevBuf[2]/4+spiRevBuf[5]/4+spiRevBuf[8]/4+spiRevBuf[11]/4;
-		// sGAcc=spiRevBuf;
-		tEu=calcRulerA(&sGAcc);
-		if(absf(tEu->Pitch)>absf(tEu->Roll)){
-			if(tEu->Pitch>5 and tEu->Pitch<50)
-				tNeck->PositionID=HEAD_UP;
-			else if(tEu->Pitch<-5 and tEu->Pitch>-50)
-				tNeck->PositionID=HEAD_DOWN;
-			else
-				tNeck->PositionID=0x0;
-		}else{
-			if(tEu->Roll>5 and tEu->Roll<50)
-				tNeck->PositionID=HEAD_LEFT;
-			else if(tEu->Roll<-5 and tEu->Roll>-50)
-				tNeck->PositionID=HEAD_RIGHT;
-			else
-				tNeck->PositionID=0x0;
-		}
-		if(tNeck->PositionID){
-			tNeck->StartTime=time2();
-			iTemp=NeckActivityAlgorithm(tEu,tNeck);
-			if(iTemp){
-				currentNeckLog.neckMove+=iTemp;
+		if(g_Statu==G_INACTIVE){
+			sGAcc.x=spiRevBuf[0]/4+spiRevBuf[3]/4+spiRevBuf[6]/4+spiRevBuf[9]/4;
+			sGAcc.y=spiRevBuf[1]/4+spiRevBuf[4]/4+spiRevBuf[7]/4+spiRevBuf[10]/4;
+			sGAcc.z=spiRevBuf[2]/4+spiRevBuf[5]/4+spiRevBuf[8]/4+spiRevBuf[11]/4;
+			// sGAcc=spiRevBuf;
+			tEu=calcRulerA(&sGAcc);
+			if(absf(tEu->Pitch)>absf(tEu->Roll)){
+				if(tEu->Pitch>5 and tEu->Pitch<50)
+					tNeck->PositionID=HEAD_UP;
+				else if(tEu->Pitch<-5 and tEu->Pitch>-50)
+					tNeck->PositionID=HEAD_DOWN;
+				else
+					tNeck->PositionID=0x0;
 			}else{
-				switch(tNeck->PositionID){
-				case HEAD_UP:
-					currentNeckLog.upTime++;
-					break;
-				case HEAD_DOWN:
-					currentNeckLog.downTime++;
-					break;
-				case HEAD_LEFT:
-					currentNeckLog.leftTime++;
-					break;
-				case HEAD_RIGHT:
-					currentNeckLog.rightTime++;
-					break;
+				if(tEu->Roll>5 and tEu->Roll<50)
+					tNeck->PositionID=HEAD_LEFT;
+				else if(tEu->Roll<-5 and tEu->Roll>-50)
+					tNeck->PositionID=HEAD_RIGHT;
+				else
+					tNeck->PositionID=0x0;
+			}
+			if(tNeck->PositionID){
+				tNeck->StartTime=time2();
+				iTemp=NeckActivityAlgorithm(tEu,tNeck);
+				if(iTemp){
+					currentNeckLog.neckMove+=iTemp;
+				}else{
+					switch(tNeck->PositionID){
+					case HEAD_UP:
+						currentNeckLog.upTime++;
+						break;
+					case HEAD_DOWN:
+						currentNeckLog.downTime++;
+						break;
+					case HEAD_LEFT:
+						currentNeckLog.leftTime++;
+						break;
+					case HEAD_RIGHT:
+						currentNeckLog.rightTime++;
+						break;
+					}
 				}
 			}
 		}

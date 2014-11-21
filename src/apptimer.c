@@ -33,11 +33,13 @@ void taskDelete(uint ptr)	// 代码量23
 }
 
 
+extern sAPPTIMER chargeScanTimer;
 uchar apptimerTaskEn=0;
 int apptimerTask(void)
 {
 	uchar refCount=0;
 	refCount+=timer(&stopVibrateTimer);
+	refCount+=timer(&chargeScanTimer);
 	apptimerTaskEn=refCount;
 	return refCount;
 }
@@ -92,6 +94,7 @@ uchar timer(sAPPTIMER* apptimer)
 		apptimer->count--;
 		if(apptimer->count==0){	//count
 			apptimer->en=0;	//en
+			apptimer->func();
 			return 1;
 		}
 	}

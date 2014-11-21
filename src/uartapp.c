@@ -83,7 +83,6 @@ void uartBufWrite(uchar *wPtr,uchar len)
 	uchar i=0;
 	uchar* bPtr=uartSendBuf;
 	len&=0x1f;
-	uartBufInit(len);
 	while(i++<len){
 		*bPtr++=*wPtr++;
 	}
@@ -101,7 +100,9 @@ void uartSend(uchar len)
 	if(sUart.statu!=UART_IDLE)
 		return;
 	sUart.statu=UART_WAIT;
+	uartBufInit(len);
 	P2.0=0;
+	startHClk();
 	// sUart.count=0;
 	// sUart.time=0;
 	wait5msTimer();

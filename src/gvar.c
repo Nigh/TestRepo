@@ -59,3 +59,4 @@ void _halt_Ex(void)
 	HALT();
 	NOP();
 }
+

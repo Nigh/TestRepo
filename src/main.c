@@ -27,6 +27,8 @@ sMSG gMsg={0,0};	//global message
 
 void afterBoot(void)
 {
+	P2.0=1;
+	R_INTC0_Start();
 	sUtcs.lTime=0;
 	sAlarmTime.lTime=0xffffffff;
 	R_UART1_Start();
@@ -89,8 +91,7 @@ void fRtc2Hz(void)
 			if(batteryStatu==BAT_CHARGE)
 				ledSetMode(LED_M_POWER,2);
 		}
-		if(timer(&adTimer))
-			adTimer.func();
+		timer(&adTimer);
 		// startAD();
 		// if(!(count&0x7))
 		// 	setVibrate(&sV1);
@@ -227,8 +228,6 @@ void fSetAlarm(void)
 
 void fMotorCtl(void)
 {
-
-
 	uartBufWrite(data_transSuccess,5);
 	uartSend(5);
 }
@@ -310,13 +309,11 @@ void fUartSendEnd(void)
 {
 	NOP();
 	sUart.statu=UART_IDLE;
-	P2.0=1;
 }
 
 void fUartRevReq(void)
 {
 	startHClk();
-	sUart.statu=UART_REV;
 }
 
 fFUNC const transHandler[]={		// No
@@ -356,6 +353,7 @@ void fAdcEnd(void)
 }
 
 
+extern sAPPTIMER chargeScanTimer;
 void chargeScan(void)
 {
 	if(P7.0==0)
@@ -366,6 +364,7 @@ void chargeScan(void)
 		batteryStatu|=BAT_FULL;
 	else
 		batteryStatu&=0xff^BAT_FULL;
+	setTimer64Hz(&chargeScanTimer,16);
 }
 
 sAPPTIMER chargeScanTimer={0,0,&chargeScan};
@@ -382,6 +381,7 @@ void fChargeInt(void)
 		batteryStatu&=0xff^BAT_FULL;
 
 	setTimer64Hz(&chargeScanTimer,16);
+
 }
 
 
