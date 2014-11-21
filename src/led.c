@@ -8,7 +8,8 @@ static void pwmMClkOn(void);
 static void pwmMClkOff(void);
 void ledAllOff(void);
 
-static uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
+// static uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
+static uint* const _PWM[4]={&TDR01,&TDR02,&TDR04,&TDR03};	//调换3,4位置
 
 
 sLED sLed={{0,0,0,0},

@@ -70,8 +70,6 @@ void fReset(void)
 
 // ***************************************
 // ***************************************
-uchar test[9]={'#',0x03,0x06,0xea,0xaa,4,3,2,1};
-
 extern int spiRevBuf[48];
 extern uchar receiveMax;
 extern void read3DHCount(void);
@@ -228,6 +226,18 @@ void fSetAlarm(void)
 
 void fMotorCtl(void)
 {
+	uint ledMode;
+	switch(uartRevBuf[3]&0xf)
+	{
+		case 1: setVibrate(&sV1);break;
+		case 2: setVibrate(&sV2);break;
+		case 3: setVibrate(&sV3);break;
+		case 4: setVibrate(&sV4);break;
+		case 5: setVibrate(&sV5);break;
+		case 6: setVibrate(&sV6);break;
+		default: break;
+	}
+	sVibrate.count=uartRevBuf[3]>>4;
 	uartBufWrite(data_transSuccess,5);
 	uartSend(5);
 }

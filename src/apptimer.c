@@ -8,7 +8,13 @@ sAPPTIMER stopVibrateTimer={0,0,&stopVibrate};
 
 sTIMERTASK sTimerTask={0};
 sVIBRATE sVibrate={0,3,{1,4,26},0,1};
-const sVIBRATE sV1={1,3,{1,4,14},0,1};
+const sVIBRATE sV1={1,3,{1,4,3},0,1};	//duty 50%
+const sVIBRATE sV2={1,3,{1,6,1},0,1};	//duty 75%
+const sVIBRATE sV3={1,2,{1,7},0,1};	//duty 100%
+
+const sVIBRATE sV4={1,3,{1,32,31},0,1};	//duty 50% 1Hz
+const sVIBRATE sV5={1,5,{1,16,16,16,15},0,1};	//duty 50% 2Hz
+const sVIBRATE sV6={1,9,{1,8,8,8,8,8,8,8,7},0,1};	//duty 50% 4Hz
 
 // possible improvement:task至少应包含自身的函数指针以及一个状态标记
 // 以便在insert task时作为判断，则可选择相同task是否能在一次调用中

@@ -30,5 +30,10 @@ void setVibrate(sVIBRATE* sV);
 extern void setTimer64Hz(sAPPTIMER* apptimer,uint period);
 
 extern const sVIBRATE sV1;
+extern const sVIBRATE sV2;
+extern const sVIBRATE sV3;
+extern const sVIBRATE sV4;
+extern const sVIBRATE sV5;
+extern const sVIBRATE sV6;
 
 #endif
