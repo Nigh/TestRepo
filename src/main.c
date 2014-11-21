@@ -80,7 +80,7 @@ void fRtc2Hz(void)
 {
 	static uint count=0;
 	static uchar* const pBuf=spiRevBuf;
-	static uchar gOld[3]={0};
+	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
 
 	count++;
 	if((count&0x1)==0)
@@ -105,13 +105,22 @@ void fRtc2Hz(void)
 			read3DHCount();
 			if(receiveMax>0){
 				read3DH();
-				if(gOld[0]-pBuf[1]>10 and gOld[0]-pBuf[1]<240)
-					g_Statu=G_INACTIVE;
-				else if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
-					g_Statu=G_INACTIVE;
-				else if(gOld[2]-pBuf[5]>10 and gOld[2]-pBuf[5]<240)
-					g_Statu=G_INACTIVE;
+				if(flag){
+					if(gOld[0]-pBuf[1]>10 and gOld[0]-pBuf[1]<240)
+						g_Statu=G_INACTIVE;
+					else if(gOld[1]-pBuf[3]>10 and gOld[1]-pBuf[3]<240)
+						g_Statu=G_INACTIVE;
+					else if(gOld[2]-pBuf[5]>10 and gOld[2]-pBuf[5]<240)
+						g_Statu=G_INACTIVE;
+				}else{
+					gOld[0]=pBuf[1];
+					gOld[1]=pBuf[3];
+					gOld[2]=pBuf[5];
+					flag=1;
+				}
+
 				if(g_Statu!=G_SLEEP){
+					flag=0;
 					R_TAU0_Channel5_Start();
 					set3DHEx(0x20,0x47);
 				}

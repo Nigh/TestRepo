@@ -16,7 +16,7 @@ void fifoInit(sFIFO *p_fifo, sMSG *p_buf_head)
 	p_fifo->read_pos = 0;
 	p_fifo->write_pos = 0;
 	p_fifo->remain_size = BUF_SIZE;
-};
+}
 
 int fifoPut4ISR(sMSG msg)
 {
