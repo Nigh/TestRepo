@@ -212,6 +212,8 @@ void fTimerPro(void)
 
 // ***************************************
 // ***************************************
+
+extern const uchar data_transSuccess[5];
 void fTimeSync(void)
 {
 	uchar* ptr1=&uartRevBuf[3];
@@ -390,6 +392,8 @@ void fTransPro(void)
 }
 // ***************************************
 // ***************************************
+
+extern const uchar data_batteryLevel[3];
 void fAdcEnd(void)
 {
 	uint temp;

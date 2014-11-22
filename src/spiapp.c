@@ -9,6 +9,7 @@
 extern float absf(float);
 uchar g_Statu=G_INACTIVE;
 
+extern time_t time2(void);
 
 void echo(void)
 {
