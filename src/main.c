@@ -335,12 +335,36 @@ void fUartRevReq(void)
 	startHClk();
 }
 
+
+void fFlashOpStart(void)
+{
+	static const sMSG sMsg={M_TYPE_TRANS,M_C_FLASHFINISH};
+	// if(isFlashAwake())
+	// 	return;
+	// flashAwake();
+	if(isFlashIdle()){
+		DI();
+		fifoPut4ISR(sMsg);
+		EI();
+	}
+}
+
+void fFlashOpFinish(void)
+{
+	sFLASHOP op=flashOpGet();
+	if(op.opType==0){
+		// flashSleep();
+	}else{
+		fFlashOp[op.opType]();
+	}
+}
+
 fFUNC const transHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
 	VECTOR(fUartSendEnd),				// 1
 	VECTOR(fUartRevReq),				// 2
-	VECTOR(_nop_Ex),				// 3
-	VECTOR(_nop_Ex),				// 4
+	VECTOR(fFlashOpStart),				// 3
+	VECTOR(fFlashOpFinish),				// 4
 	VECTOR(_nop_Ex),				// 5
 	VECTOR(_nop_Ex),				// 6
 	VECTOR(_nop_Ex),				// 7

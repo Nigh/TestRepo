@@ -46,6 +46,9 @@
 //trans event content
 #define M_C_UARTSENDEND 0x1
 #define M_C_UARTREVREQ 0x2
+#define M_C_FLASHSTART 0x3
+#define M_C_FLASHFINISH 0x4
+
 
 //system event content
 #define M_C_ADCEND 1

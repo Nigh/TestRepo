@@ -28,6 +28,8 @@ extern uchar timer(sAPPTIMER* apptimer);
 void stopVibrate(void);
 void setVibrate(sVIBRATE* sV);
 extern void setTimer64Hz(sAPPTIMER* apptimer,uint period);
+extern void taskInsert(iFUNC* task);
+extern void taskDelete(uint ptr);
 
 extern const sVIBRATE sV1;
 extern const sVIBRATE sV2;
