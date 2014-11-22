@@ -109,7 +109,7 @@ void uartSendDirect(uchar len)
 
 void uartSend(uchar len)
 {
-	if(sUart.statu!=UART_IDLE)
+	if(sUart.statu==UART_SEND)
 		return;
 	sUart.statu=UART_WAIT;
 	uartBufInit(len);
