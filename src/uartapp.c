@@ -95,6 +95,18 @@ void wait5msTimer(void)
 	TS0 |= _0040_TAU_CH6_START_TRG_ON;
 }
 
+void uartSendDirect(uchar len)
+{
+	startHClk();
+	uartBufInit(len);
+	P2.0=0;
+	sUart.statu=UART_SEND;
+	sUart.count=0;
+	sUart.time=0;
+	R_DMAC1_Start();
+	STG1 = 1U;
+}
+
 void uartSend(uchar len)
 {
 	if(sUart.statu!=UART_IDLE)

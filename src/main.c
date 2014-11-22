@@ -27,12 +27,15 @@ sMSG gMsg={0,0};	//global message
 
 void afterBoot(void)
 {
+	unsigned long x=0;
+	while(x++<100000);
 	P2.0=1;
 	R_INTC0_Start();
 	sUtcs.lTime=0;
 	sAlarmTime.lTime=0xffffffff;
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
+	flashQueueInit(&sFlashQueue);
 	setADTimer(10);
 }
 
@@ -90,9 +93,11 @@ void fRtc2Hz(void)
 				ledSetMode(LED_M_POWER,2);
 		}
 		timer(&adTimer);
-		// startAD();
-		// if(!(count&0x7))
-		// 	setVibrate(&sV1);
+		// if((count&0xF)==0)	//DEBUG
+		// {
+		// 	uartBufWrite(data_transSuccess,5);
+		// 	uartSend(5);
+		// }
 		currentNeckLogSec++;
 		if(currentNeckLogSec>=300){
 			currentNeckLogSec=0;
@@ -217,7 +222,7 @@ void fTimeSync(void)
 	*ptr2=*ptr1;
 
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fSetAlarm(void)
@@ -230,7 +235,7 @@ void fSetAlarm(void)
 	*ptr2=*ptr1;
 
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fMotorCtl(void)
@@ -248,7 +253,7 @@ void fMotorCtl(void)
 	}
 	sVibrate.count=uartRevBuf[3]>>4;
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fLEDCtl(void)
@@ -271,7 +276,7 @@ void fLEDCtl(void)
 	ledSetMode(ledMode,uartRevBuf[3]>>4);
 
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fFormatFlash(void)
@@ -279,7 +284,7 @@ void fFormatFlash(void)
 
 
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fGsensorAcc(void)
@@ -295,12 +300,19 @@ void fGsensorAcc(void)
 	}
 
 	uartBufWrite(data_transSuccess,5);
-	uartSend(5);
+	uartSendDirect(5);
 }
 
 void fDataReqest(void)
 {
 
+}
+
+void fDEBUG(void)
+{
+	TDR06=uartRevBuf[3]*4000;
+	uartBufWrite(data_transSuccess,5);
+	uartSendDirect(5);
 }
 
 
@@ -314,6 +326,7 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fFormatFlash),				// 6
 	VECTOR(fGsensorAcc),				// 7
 	VECTOR(fDataReqest),				// 8
+	VECTOR(fDEBUG),				// 9
 };
 
 void fBLEPro(void)

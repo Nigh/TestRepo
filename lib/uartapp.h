@@ -33,5 +33,6 @@ extern sUART sUart;
 extern void calcSendBufSum(void);
 extern void uartBufWrite(uchar *wPtr,uchar len);
 extern void uartSend(uchar len);
+extern void uartSendDirect(uchar len);
 
 #endif
