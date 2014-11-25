@@ -58,7 +58,8 @@ void read3DHCount(void)
 
 tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
 sNECKLOGLONG currentNeckLog={0,0,0,0,0,1};
-uint currentNeckLogSec=0;
+sNECKMOVESTATU sNeckMoveStatu={0};
+uint currentStepLogSec=0;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
 void _3DH5Hz(void)
@@ -126,14 +127,20 @@ void _3DH5Hz(void)
 			if(tNeck->PositionID){
 				tNeck->StartTime=time2();
 				iTemp=NeckActivityAlgorithm(tEu,tNeck);
-				if(iTemp){
-					currentNeckLog.neckMove+=iTemp;
-				}else{
-					switch(tNeck->PositionID){
-					case HEAD_UP: currentNeckLog.upTime++; break;
-					case HEAD_DOWN: currentNeckLog.downTime++; break;
-					case HEAD_LEFT: currentNeckLog.leftTime++; break;
-					case HEAD_RIGHT: currentNeckLog.rightTime++; break;
+				if(!sNeckMoveStatu.statu and iTemp){
+					sNeckMoveStatu.statu=1;
+					currentNeckLog.UTC=sUtcs.lTime;
+				}
+				if(sNeckMoveStatu.statu){
+					if(iTemp){
+						currentNeckLog.neckMove+=iTemp;
+					}else{
+						switch(tNeck->PositionID){
+						case HEAD_UP: currentNeckLog.upTime++; break;
+						case HEAD_DOWN: currentNeckLog.downTime++; break;
+						case HEAD_LEFT: currentNeckLog.leftTime++; break;
+						case HEAD_RIGHT: currentNeckLog.rightTime++; break;
+						}
 					}
 				}
 			}

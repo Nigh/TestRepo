@@ -37,6 +37,7 @@ void afterBoot(void)
 	R_INTC0_Start();
 	sUtcs.lTime=0;
 	sAlarmTime.lTime=0xffffffff;
+	currentStepLog.UTC=sUtcs.lTime;
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 	flashQueueInit(&sFlashQueue);
@@ -45,6 +46,7 @@ void afterBoot(void)
 
 #include "bootmain.h"
 extern int isFlashIdle(void); 
+extern void R_PCLBUZ0_Start(void);
 void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
 void iMain(void)
@@ -86,16 +88,15 @@ void fReset(void)
 extern int spiRevBuf[48];
 extern uchar receiveMax;
 extern void read3DHCount(void);
-extern uint currentNeckLogSec;
+extern sNECKMOVESTATU sNeckMoveStatu;
 extern sNECKLOGLONG currentNeckLog;
-extern sSTEPLONGLOG currentStepLog;
 extern sAPPTIMER adTimer;
 void fRtc2Hz(void)
 {
 	static uint count=0;
 	static uchar* const pBuf=spiRevBuf;
 	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
-
+	static uint currentStepLogSec=0;
 	count++;
 	if((count&0x1)==0)
 	{
@@ -105,11 +106,21 @@ void fRtc2Hz(void)
 		}
 		timer(&adTimer);
 
-		currentNeckLogSec++;
-		if(currentNeckLogSec>=300){
-			currentNeckLogSec=0;
-			neckLogCache();
+		if(sNeckMoveStatu.statu){
+			sNeckMoveStatu.timeCount++;
+			if(sNeckMoveStatu.timeCount>=300){
+				sNeckMoveStatu.timeCount=0;
+				sNeckMoveStatu.statu=0;
+				neckLogCache();
+			}
 		}
+
+		currentStepLogSec++;
+		if(currentStepLogSec>=300){
+			currentStepLogSec=0;
+			stepLogCache();
+		}
+
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();

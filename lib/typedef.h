@@ -16,6 +16,13 @@ typedef unsigned long u32;
 typedef void (*fFUNC)(void);
 typedef int iFUNC(void);
 
+
+typedef struct
+{
+	uint timeCount;
+	uchar statu;
+} sNECKMOVESTATU;
+
 typedef struct
 {
 	uint steps[8];

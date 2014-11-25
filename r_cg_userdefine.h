@@ -79,6 +79,7 @@ extern uchar directGEn;
 extern uint step;
 
 extern uchar batteryStatu;
+extern sSTEPLONGLOG currentStepLog;
 
 extern void _nop_Ex(void);
 extern void _halt_Ex(void);
