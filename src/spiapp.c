@@ -5,6 +5,8 @@
 #include "r_cg_macrodriver.h"
 #include "r_cg_serial.h"
 #include "spiapp.h"
+#include "flashapp.h"
+#include "flashfunc.h"
 
 extern float absf(float);
 uchar g_Statu=G_INACTIVE;
@@ -13,12 +15,7 @@ extern time_t time2(void);
 
 void echo(void)
 {
-	// P2.3=0;
-	// sLed.ledMode++;
-	// if(sLed.ledMode>LED_M_RANDOM)
-		// sLed.ledMode=LED_M_OFF;
 	ledSetMode(LED_M_POWER,3);
-	// P2.3=1;
 }
 
 // int spiRevBuf[48]={0};	// 5/16 used
@@ -133,18 +130,10 @@ void _3DH5Hz(void)
 					currentNeckLog.neckMove+=iTemp;
 				}else{
 					switch(tNeck->PositionID){
-					case HEAD_UP:
-						currentNeckLog.upTime++;
-						break;
-					case HEAD_DOWN:
-						currentNeckLog.downTime++;
-						break;
-					case HEAD_LEFT:
-						currentNeckLog.leftTime++;
-						break;
-					case HEAD_RIGHT:
-						currentNeckLog.rightTime++;
-						break;
+					case HEAD_UP: currentNeckLog.upTime++; break;
+					case HEAD_DOWN: currentNeckLog.downTime++; break;
+					case HEAD_LEFT: currentNeckLog.leftTime++; break;
+					case HEAD_RIGHT: currentNeckLog.rightTime++; break;
 					}
 				}
 			}
@@ -173,7 +162,11 @@ void memsetUser(uchar* ptr,const uchar ch,const size_t length)
 
 // 缓存颈动量时清理longLog
 // 触发颈动量时配置longLog.UTC
-static sNECKLOG neckLog[16];
+// 写入flash后，清Log.UTC
+static const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
+static const sFLASHOP opFlashNeckErase={FLASH_F_BLOCKERASE,FLASH_S_NECK};
+static const sFLASHOP opFlashNeckSave={FLASH_F_WRITE,FLASH_S_NECK};
+sNECKLOG neckLog[16];
 void neckLogCache(void)
 {
 	uchar i=0;
@@ -188,9 +181,55 @@ void neckLogCache(void)
 	neckLog[i].downTime=currentNeckLog.downTime/10;
 
 	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
-
+	if(i>=10)
+	{
+		flashOpPut(opFlashWait);
+		if(needErase(i*sizeof(sNECKLOG),neckFlash.endAddr)){
+			flashOpPut(opFlashNeckErase);
+			flashOpPut(opFlashWait);
+		}
+		flashOpPut(opFlashNeckSave);
+		flashOpFin();
+	}
 }
 
+
+static uchar isStepLogEmpty(void);
+static const sFLASHOP opFlashStepErase={FLASH_F_BLOCKERASE,FLASH_S_STEP};
+static const sFLASHOP opFlashStepSave={FLASH_F_WRITE,FLASH_S_STEP};
+extern sSTEPLONGLOG currentStepLog;
+sSTEPLOG stepLog;
+void stepLogCache(void)
+{
+	currentStepLog.steps[currentStepLog.logCount++]=steps;
+	if(currentStepLog.logCount>8)
+	{
+		memcpy(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
+		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
+		currentStepLog.UTC=sUtcs.lTime;
+		if(!isStepLogEmpty())
+		{
+			flashOpPut(opFlashWait);
+			if(needErase(sizeof(sSTEPLOG),stepFlash.endAddr)){
+				flashOpPut(opFlashStepErase);
+				flashOpPut(opFlashWait);
+			}
+			flashOpPut(opFlashStepSave);
+			flashOpFin();
+		}
+	}
+}
+
+uchar isStepLogEmpty(void)
+{
+	uchar i=0;
+	while(i<=8){
+		if(currentStepLog.steps[i]>0)
+			return 0;
+		i++;
+	}
+	return 1;
+}
 
 void spiStart(void)
 {
@@ -208,4 +247,15 @@ void spiStop(void)
 	ST0 |= _0001_SAU_CH0_STOP_TRG_ON;        /* disable CSI00 */
 	SOE0 &= ~_0001_SAU_CH0_OUTPUT_ENABLE;    /* disable CSI00 output */
 	CSIIF00 = 0U;    /* clear INTCSI00 interrupt flag */
+}
+
+void dddebug(void)
+{
+	flashOpPut(opFlashWait);
+	if(needErase(3*sizeof(sNECKLOG),neckFlash.endAddr)){
+		flashOpPut(opFlashNeckErase);
+		flashOpPut(opFlashWait);
+	}
+	flashOpPut(opFlashNeckSave);
+	flashOpFin();
 }

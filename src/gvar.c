@@ -2,10 +2,12 @@
 
 sSELF sSelf={0,0,0,0};
 sUTCS sUtcs,sAlarmTime;
+
 uint steps=0;
+sSTEPLONGLOG currentStepLog={0};
 uchar directGEn=0;
 uchar batteryStatu=BAT_NORMAL;
-
+sFLASHOP gOP;
 
 time_t time2(void)
 {

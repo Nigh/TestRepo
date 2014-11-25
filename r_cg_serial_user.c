@@ -200,6 +200,7 @@ __interrupt static void int_uartSend(void)
 	else{
 		R_DMAC1_Stop();
 		P2.0=1;
+		sUart.statu&=0xFF^UART_SEND;
 	}
 }
 

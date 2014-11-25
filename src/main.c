@@ -1,3 +1,4 @@
+#include "flashbranch.h"
 #include "main.h"
 #include "r_cg_userdefine.h"
 #include "NeckAlgorithm.h"
@@ -25,6 +26,9 @@ fFUNC const msgHandler[]={		// No
 
 sMSG gMsg={0,0};	//global message
 
+
+extern void dddebug(void);
+
 void afterBoot(void)
 {
 	unsigned long x=0;
@@ -39,6 +43,8 @@ void afterBoot(void)
 	setADTimer(10);
 }
 
+#include "bootmain.h"
+extern int isFlashIdle(void); 
 void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
 void iMain(void)
@@ -50,12 +56,16 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
-	ledSetMode(LED_M_MQ,3);
 
 	init3DH();
 	R_TAU0_Channel5_Start();
+	// dddebug();
 
+	ledSetMode(LED_M_MQ,3);
+	R_PCLBUZ0_Start();
 	while(1){
+		if(sUart.statu!=UART_IDLE)
+			startHClk();
 		DI();
 		gMsg=fifoGet();
 		EI();
@@ -78,6 +88,7 @@ extern uchar receiveMax;
 extern void read3DHCount(void);
 extern uint currentNeckLogSec;
 extern sNECKLOGLONG currentNeckLog;
+extern sSTEPLONGLOG currentStepLog;
 extern sAPPTIMER adTimer;
 void fRtc2Hz(void)
 {
@@ -93,11 +104,7 @@ void fRtc2Hz(void)
 				ledSetMode(LED_M_POWER,2);
 		}
 		timer(&adTimer);
-		// if((count&0xF)==0)	//DEBUG
-		// {
-		// 	uartBufWrite(data_transSuccess,5);
-		// 	uartSend(5);
-		// }
+
 		currentNeckLogSec++;
 		if(currentNeckLogSec>=300){
 			currentNeckLogSec=0;
@@ -222,6 +229,9 @@ void fTimeSync(void)
 	*ptr2++=*ptr1++;
 	*ptr2++=*ptr1++;
 	*ptr2=*ptr1;
+
+	currentStepLog.UTC=sUtcs.lTime;
+	currentNeckLog.UTC=sUtcs.lTime;
 
 	uartBufWrite(data_transSuccess,5);
 	uartSendDirect(5);
@@ -364,13 +374,14 @@ void fFlashOpStart(void)
 	}
 }
 
+extern sFLASHOP gOP;
 void fFlashOpFinish(void)
 {
-	sFLASHOP op=flashOpGet();
-	if(op.opType==0){
+	gOP=flashOpGet();
+	if(gOP.opType==0){
 		// flashSleep();
 	}else{
-		fFlashOp[op.opType]();
+		fFlashOp[gOP.opType]();
 	}
 }
 

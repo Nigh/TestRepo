@@ -9,7 +9,6 @@
 #define FLASHQUEUE_SIZEMASK 0x7
 
 
-
 typedef struct
 {
 	uchar opType;
@@ -26,16 +25,20 @@ typedef struct
 } sFLASHQUEUE;
 
 
-#define FLASH_F_STEPSAVE 1
-#define FLASH_F_NECKSAVE 2
+#define FLASH_S_STEP 0xF1
+#define FLASH_S_NECK 0xF2
+
+#define FLASH_F_IDLEWAIT 1
+#define FLASH_F_WRITE 2
 #define FLASH_F_BLOCKERASE 3
-#define FLASH_F_READSTEPLOG 4
-#define FLASH_F_READNECKLOG 5
-#define FLASH_F_IDLEWAIT 6
+
+#define FLASH_F_READ 4
 
 extern fFUNC fFlashOp[];
 extern sFLASHQUEUE sFlashQueue;
 
+void fFlashWrite(void);
+void fFlashRead(void);
 void fStepSave(void);
 void fNeckSave(void);
 void fBlockErase(void);
@@ -43,12 +46,11 @@ void fReadStepLog(void);
 void fReadNeckLog(void);
 void fIdleWait(void);
 
-
 extern void flashQueueInit(sFLASHQUEUE *p_fifo);
 extern int flashOpPut(sFLASHOP op);
 extern sFLASHOP flashOpGet(void);
 extern int flashIdleWaitTask(void);
-extern int isFlashIdle(void);
+extern void flashOpFin(void);
 
 
 #endif

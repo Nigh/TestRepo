@@ -112,9 +112,9 @@ void uartSend(uchar len)
 	if(sUart.statu==UART_SEND)
 		return;
 	sUart.statu=UART_WAIT;
-	uartBufInit(len);
 	P2.0=0;
 	startHClk();
+	uartBufInit(len);
 	// sUart.count=0;
 	// sUart.time=0;
 	wait5msTimer();

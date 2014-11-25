@@ -18,6 +18,20 @@ typedef int iFUNC(void);
 
 typedef struct
 {
+	uint steps[8];
+	time_t UTC;
+} sSTEPLOG;
+
+
+typedef struct
+{
+	uint steps[8];
+	time_t UTC;
+	uchar logCount;
+} sSTEPLONGLOG;
+
+typedef struct
+{
 	uint neckMove;
 	uchar leftTime;
 	uchar rightTime;

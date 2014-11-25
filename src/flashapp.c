@@ -1,61 +1,103 @@
 #include "flashapp.h"
+#include "flashfunc.h"
 
 sFLASHOP flashQueue[FLASHQUEUE_SIZE] = {0};
 sFLASHQUEUE sFlashQueue;
 
 
 static const sMSG sFlashFinishMsg={M_TYPE_TRANS,M_C_FLASHFINISH};
-fFUNC fFlashOp[]={_nop_Ex,fStepSave,fNeckSave,fBlockErase,fReadStepLog,fReadNeckLog,fIdleWait};
+// fFUNC fFlashOp[]={_nop_Ex,fStepSave,fNeckSave,fBlockErase,fReadStepLog,fReadNeckLog,fIdleWait};
 
-int isFlashIdle(void)
+fFUNC fFlashOp[]={_nop_Ex,fIdleWait,fFlashWrite,fBlockErase,fFlashRead};
+
+extern sFLASHOP gOP;
+
+
+void fFlashWrite(void)
 {
-	return 1;
+	if(gOP.detail==FLASH_S_STEP){
+		fStepSave();
+	}else if(gOP.detail==FLASH_S_NECK){
+		fNeckSave();
+	}
 }
 
+void fFlashRead(void)
+{
+	if(gOP.detail==FLASH_S_STEP){
+
+	}else if(gOP.detail==FLASH_S_NECK){
+		
+	}
+}
+
+void flashOpFin(void)
+{
+	DI();
+	fifoPut4ISR(sFlashFinishMsg);
+	EI();
+}
+
+// extern _sFlash sFlash;
+extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
+void neckDataSave(uchar* ptr,uchar len)
+{
+	flashWrite(ptr, len, neckFlash.startAddr);
+}
+
+void stepDataSave(uchar* ptr,uchar len)
+{
+	flashWrite(ptr, len, stepFlash.startAddr);
+}
+
+void progDataSave(uchar* ptr,uchar len)
+{
+	flashWrite(ptr, len, programFlash.startAddr);
+}
+
+extern sSTEPLOG stepLog;
 void fStepSave(void){
-	
-	DI();
-	fifoPut4ISR(sFlashFinishMsg);
-	EI();
+	stepDataSave(&stepLog,sizeof(sSTEPLOG));
+	flashSeek(sizeof(sSTEPLOG),stepFlash.endAddr);
+	flashOpFin();
 }
 
+extern void memsetUser(uchar* ptr,const uchar ch,const size_t length);
+extern sNECKLOG neckLog[16];
 void fNeckSave(void){
-	
-	DI();
-	fifoPut4ISR(sFlashFinishMsg);
-	EI();
+	uchar i=0;
+	while(neckLog[i++].UTC!=0);
+	i-=1;	//i 为记录条数
+	if(!i) return;
+	neckDataSave(&neckLog,i*sizeof(sNECKLOG));
+	memsetUser(&neckLog,0,16*sizeof(sNECKLOG));
+	flashSeek(i*sizeof(sNECKLOG),neckFlash.endAddr);
+	flashOpFin();
 }
 
 void fBlockErase(void){
 	
-	DI();
-	fifoPut4ISR(sFlashFinishMsg);
-	EI();
+	flashOpFin();
 }
 
 void fReadStepLog(void){
 	
-	DI();
-	fifoPut4ISR(sFlashFinishMsg);
-	EI();
+	flashOpFin();
 }
 
 void fReadNeckLog(void){
 	
-	DI();
-	fifoPut4ISR(sFlashFinishMsg);
-	EI();
+	flashOpFin();
 }
 
 int flashIdleWaitTask(void)
 {
 	static uchar count=0;
 	if(!(count&0x4) and isFlashIdle()){
-		DI();
-		fifoPut4ISR(sFlashFinishMsg);
-		EI();
+		flashOpFin();
 		return 0;
 	}
+	count++;
 	return 1;
 }
 
@@ -90,7 +132,7 @@ int flashOpPut(sFLASHOP op)
 sFLASHOP flashOpGet(void)
 {
 	register uchar *ptr=&sFlashQueue.remain_size;
-	static sFLASHOP *const pmsgQueue=msgQueue;
+	static sFLASHOP *const pmsgQueue=flashQueue;
 	sFLASHOP op;
 
 	if(*ptr++<FLASHQUEUE_SIZE) {
