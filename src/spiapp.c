@@ -62,6 +62,7 @@ sNECKMOVESTATU sNeckMoveStatu={0};
 uint currentStepLogSec=0;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
+extern const uchar data_axisDirect[3];
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
@@ -145,6 +146,14 @@ void _3DH5Hz(void)
 				}
 			}
 		}
+	}
+
+	if(directGEn)
+	{
+		uartBufWrite(data_axisDirect,3);
+		memcpy(sGAcc,&uartSendBuf[3],6);
+		calcSendBufSum();
+		uartSend(5);
 	}
 
 	if(++staticCount>300){
