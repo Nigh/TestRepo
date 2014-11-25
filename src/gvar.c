@@ -56,8 +56,10 @@ void _nop_Ex(void)
 
 void _halt_Ex(void)
 {
-	if(sUart.statu==UART_IDLE && sLed.ledMode==LED_M_OFF && sVibrate.en==0)
+	if(sLed.ledMode==LED_M_OFF && sVibrate.en==0 && sUart.statu==UART_IDLE)
 		stopHClk();
+	else
+		startHClk();
 	HALT();
 	NOP();
 }
