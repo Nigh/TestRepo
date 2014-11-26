@@ -47,7 +47,7 @@ extern _sFlashRang programFlash;
 
 
 void writeToFlashBytes(unsigned char *datapoint, unsigned char dataLength, unsigned long flashAddr);
-unsigned char readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
+void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
 void delayMS(unsigned short millisec);
 void flashWriteFunc(void);
 void delay10Nop(void);

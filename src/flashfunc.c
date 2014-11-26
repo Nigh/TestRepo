@@ -148,7 +148,6 @@ writeEnd:
 }
 
 
-
 void flashSeek(unsigned short dataLength, unsigned long flashAddr)
 {
 	unsigned long block;
@@ -277,44 +276,28 @@ unsigned char needErase(unsigned short dataLength, unsigned long flashAddr)
 // 				 flashAddr: the flash address the data writing
 //return Value : None
 //*********************************************************************************************************************/
-unsigned char readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr)
+void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr)
 {
 	unsigned ret, flashReg;
 	unsigned short i;
 
-	// read the flash register
 	enable_flash();
-	FlashCommand(RDSR_FLASH, 0);
-	SIO00=0xFF;
-	while(CSIIF00==0);
-	CSIIF00=0;
-	flashReg = SIO00;
-	disable_flash();
-	delay10Nop();
-
-	if((flashReg == 0xFF) || ((flashReg & 0x01) == 0x01)) {
-		ret = 0xff;
-	} else {
-		ret = 0x00;
-		enable_flash();
-		FlashCommand(READ_FLASH, flashAddr);
-		for(i = 0; i < dataLength; i++) {
-			SIO00=0xFF;
-			while(CSIIF00==0);
-			CSIIF00=0;
-			rxbufPointer[i] = SIO00;
-			flashAddr++;
-			if((flashAddr % 256) == 0 && (sFlash.datacnt < sFlash.length)) {
-				delay10Nop();
-				disable_flash();
-				delay10Nop();
-				enable_flash();
-				FlashCommand(READ_FLASH, flashAddr);
-			}
+	FlashCommand(READ_FLASH, flashAddr);
+	for(i = 0; i < dataLength; i++) {
+		SIO00=0xFF;
+		while(CSIIF00==0);
+		CSIIF00=0;
+		rxbufPointer[i] = SIO00;
+		flashAddr++;
+		if((flashAddr % 256) == 0 && (sFlash.datacnt < sFlash.length)) {
+			delay10Nop();
+			disable_flash();
+			delay10Nop();
+			enable_flash();
+			FlashCommand(READ_FLASH, flashAddr);
 		}
-		disable_flash();
 	}
-	return ret;
+	disable_flash();
 }
 
 
@@ -438,41 +421,41 @@ void saveProgramData(unsigned char *dataP, unsigned char dataLength)
 //return Value : 0x00: success
 //				 0xff: fail
 //*********************************************************************************************************************/
-unsigned char readProgramData(unsigned char *datap, unsigned char length)
-{
-	unsigned char ret;
-	if(programFlash.endAddr != programFlash.startAddr) {
-		ret = readFromFlashBytes(datap, length, programFlash.startAddr);
-		if(ret == 0x00) {
-			programFlash.startAddr += length;
-		}
-	} else {
-		ret = 0xff;
-	}
-	return ret;
-}
+// unsigned char readProgramData(unsigned char *datap, unsigned char length)
+// {
+// 	unsigned char ret;
+// 	if(programFlash.endAddr != programFlash.startAddr) {
+// 		ret = readFromFlashBytes(datap, length, programFlash.startAddr);
+// 		if(ret == 0x00) {
+// 			programFlash.startAddr += length;
+// 		}
+// 	} else {
+// 		ret = 0xff;
+// 	}
+// 	return ret;
+// }
 
 //**********************************************************************************************************************
 //Arguments    : data point and the length
 //return Value : 0x00: success
 //				 0xff: fail
 //*********************************************************************************************************************/
-unsigned char readNeckData(unsigned char *datap, unsigned char length)
-{
-	unsigned char ret;
-	if(neckFlash.endAddr != neckFlash.startAddr) {
-		ret = readFromFlashBytes(datap, length, neckFlash.startAddr);
-		if(ret == 0x00) {
-			neckFlash.startAddr += length;
-			if(neckFlash.startAddr >= NECKRANGEND) {
-				neckFlash.startAddr = 0;
-			}
-		}
-	} else {
-		ret = 0xff;
-	}
-	return ret;
-}
+// unsigned char readNeckData(unsigned char *datap, unsigned char length)
+// {
+// 	unsigned char ret;
+// 	if(neckFlash.endAddr != neckFlash.startAddr) {
+// 		ret = readFromFlashBytes(datap, length, neckFlash.startAddr);
+// 		if(ret == 0x00) {
+// 			neckFlash.startAddr += length;
+// 			if(neckFlash.startAddr >= NECKRANGEND) {
+// 				neckFlash.startAddr = 0;
+// 			}
+// 		}
+// 	} else {
+// 		ret = 0xff;
+// 	}
+// 	return ret;
+// }
 
 
 //**********************************************************************************************************************
@@ -480,22 +463,22 @@ unsigned char readNeckData(unsigned char *datap, unsigned char length)
 //return Value : 0x00: success
 //				 0xff: fail
 //*********************************************************************************************************************/
-unsigned char readStepData(unsigned char *datap, unsigned char length)
-{
-	unsigned char ret;
-	if(stepFlash.endAddr != stepFlash.startAddr) {
-		ret = readFromFlashBytes(datap, length, stepFlash.startAddr);
-		if(ret == 0x00) {
-			stepFlash.startAddr += length;
-			if(stepFlash.startAddr >= STEPRANGEND) {
-				stepFlash.startAddr = 0;
-			}
-		}
-	} else {
-		ret = 0xff;
-	}
-	return ret;
-}
+// unsigned char readStepData(unsigned char *datap, unsigned char length)
+// {
+// 	unsigned char ret;
+// 	if(stepFlash.endAddr != stepFlash.startAddr) {
+// 		ret = readFromFlashBytes(datap, length, stepFlash.startAddr);
+// 		if(ret == 0x00) {
+// 			stepFlash.startAddr += length;
+// 			if(stepFlash.startAddr >= STEPRANGEND) {
+// 				stepFlash.startAddr = 0;
+// 			}
+// 		}
+// 	} else {
+// 		ret = 0xff;
+// 	}
+// 	return ret;
+// }
 
 
 //**********************************************************************************************************************

@@ -8,6 +8,7 @@ sSTEPLONGLOG currentStepLog={0};
 uchar directGEn=0;
 uchar batteryStatu=BAT_NORMAL;
 sFLASHOP gOP;
+sUPLOAD sUpload={0};
 
 time_t time2(void)
 {

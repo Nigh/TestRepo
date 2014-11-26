@@ -1,5 +1,6 @@
 #include "flashapp.h"
 #include "flashfunc.h"
+#include "typedef.h"
 
 sFLASHOP flashQueue[FLASHQUEUE_SIZE] = {0};
 sFLASHQUEUE sFlashQueue;
@@ -25,9 +26,9 @@ void fFlashWrite(void)
 void fFlashRead(void)
 {
 	if(gOP.detail==FLASH_S_STEP){
-
+		fReadStepLog();
 	}else if(gOP.detail==FLASH_S_NECK){
-		
+		fReadNeckLog();
 	}
 }
 
@@ -80,13 +81,28 @@ void fBlockErase(void){
 	flashOpFin();
 }
 
+uchar logCache[20]={0};
+extern const uchar data_neckLog[3];
+extern const uchar data_stepLog[3];
 void fReadStepLog(void){
-	
+	uchar i;
+	readFromFlashBytes(logCache,sizeof(sSTEPLOG),stepFlash.startAddr);
+	uartBufWrite(data_stepLog,3);
+	for(i=0;i<sizeof(sSTEPLOG);i++)
+		uartSendBuf[i]=logCache[i-3];
+	calcSendBufSum();
+	uartSend(sizeof(sSTEPLOG)+4);
 	flashOpFin();
 }
 
 void fReadNeckLog(void){
-	
+	uchar i;
+	readFromFlashBytes(logCache,sizeof(sNECKLOG),neckFlash.startAddr);
+	uartBufWrite(data_neckLog,3);
+	for(i=0;i<sizeof(sNECKLOG);i++)
+		uartSendBuf[i]=logCache[i-3];
+	calcSendBufSum();
+	uartSend(sizeof(sNECKLOG)+4);
 	flashOpFin();
 }
 

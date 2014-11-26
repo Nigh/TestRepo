@@ -26,6 +26,8 @@ fFUNC const msgHandler[]={		// No
 
 sMSG gMsg={0,0};	//global message
 
+uint calcStepLogNum(void);
+uint calcNeckLogNum(void);
 
 extern void dddebug(void);
 
@@ -98,6 +100,14 @@ void fRtc2Hz(void)
 	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
 	static uint currentStepLogSec=0;
 	count++;
+
+	if(sUpload.statu!=UPLOAD_IDLE)
+	{
+		if(sUpload.timeOut++>6){
+			sUpload.statu=UPLOAD_IDLE;
+		}
+	}
+
 	if((count&0x1)==0)
 	{
 		if(batteryStatu!=BAT_NORMAL){
@@ -230,6 +240,58 @@ void fTimerPro(void)
 
 // ***************************************
 // ***************************************
+static const sFLASHOP opFlashNeckRead={FLASH_F_READ,FLASH_S_NECK};
+static const sFLASHOP opFlashStepRead={FLASH_F_READ,FLASH_S_STEP};
+extern const sFLASHOP opFlashWait;
+void dataReadSend(void)
+{
+	flashOpPut(opFlashWait);
+	if(sUpload.statu==UPLOAD_NECK)
+		flashOpPut(opFlashNeckRead);
+	if(sUpload.statu==UPLOAD_STEP)
+		flashOpPut(opFlashStepRead);
+	flashOpFin();
+}
+
+#include "flashfunc.h"
+void flashReadSeek(void)
+{
+	if(sUpload.statu==UPLOAD_NECK){
+		neckFlash.startAddr+=sizeof(sNECKLOG);
+		if(neckFlash.startAddr>NECKRANGEND){
+			neckFlash.startAddr-=NECKRANGEND;
+		}
+	} else if(sUpload.statu==UPLOAD_STEP){
+		stepFlash.startAddr+=sizeof(sSTEPLOG);
+		if(stepFlash.startAddr>STEPRANGEND){
+			stepFlash.startAddr-=STEPRANGEND;
+		}
+	}
+}
+
+extern const uchar data_logCount[3];
+void fBLEConfirm(void)
+{
+	union{uchar temp[4];uint iTemp[2];}uTemp;
+	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A) and sUpload.statu!=UPLOAD_IDLE){
+		flashReadSeek();
+		sUpload.packageRemain--;
+		if(sUpload.packageRemain<=0){
+			sUpload.statu=UPLOAD_IDLE;
+			uTemp.iTemp[0]=calcNeckLogNum();
+			uTemp.iTemp[1]=calcStepLogNum();
+			uartBufWrite(data_logCount,3);
+			uartSendBuf[3]=uTemp.temp[0];
+			uartSendBuf[4]=uTemp.temp[1];
+			uartSendBuf[5]=uTemp.temp[2];
+			uartSendBuf[6]=uTemp.temp[3];
+			calcSendBufSum();
+			uartSend(4+4);
+			return;
+		}
+		dataReadSend();
+	}
+}
 
 extern const uchar data_transSuccess[5];
 void fTimeSync(void)
@@ -326,9 +388,45 @@ void fGsensorAcc(void)
 	uartSendDirect(5);
 }
 
+
+uint calcStepLogNum(void)
+{
+	unsigned long temp;
+	if(stepFlash.startAddr>stepFlash.endAddr){
+		temp=STEPRANGEND-stepFlash.startAddr+stepFlash.endAddr;
+		return temp/sizeof(sSTEPLOG);
+	}else if(stepFlash.startAddr<stepFlash.endAddr){
+		temp=stepFlash.endAddr-stepFlash.startAddr;
+		return temp/sizeof(sSTEPLOG);
+	}else
+		return 0;
+}
+
+uint calcNeckLogNum(void)
+{
+	unsigned long temp;
+	if(neckFlash.startAddr>neckFlash.endAddr){
+		temp=NECKRANGEND-neckFlash.startAddr+neckFlash.endAddr;
+		return temp/sizeof(sNECKLOG);
+	}else if(neckFlash.startAddr<neckFlash.endAddr){
+		temp=neckFlash.endAddr-neckFlash.startAddr;
+		return temp/sizeof(sNECKLOG);
+	}else
+		return 0;
+}
+
+
 void fDataReqest(void)
 {
-
+	if(sUpload.statu!=UPLOAD_IDLE)
+		return;
+	if(uartRevBuf[3]==0x1){	//neck_log
+		sUpload.statu=UPLOAD_NECK;
+		sUpload.packageRemain=calcNeckLogNum();
+	}else if(uartRevBuf[3]==0x2){	//step_log
+		sUpload.statu=UPLOAD_STEP;
+		sUpload.packageRemain=calcStepLogNum();
+	}
 }
 
 void fDEBUG(void)
@@ -341,7 +439,7 @@ void fDEBUG(void)
 
 fFUNC const bleHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
-	VECTOR(_nop_Ex),				// 1
+	VECTOR(fBLEConfirm),				// 1
 	VECTOR(fTimeSync),				// 2
 	VECTOR(fSetAlarm),				// 3
 	VECTOR(fMotorCtl),				// 4

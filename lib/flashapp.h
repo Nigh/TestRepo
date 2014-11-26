@@ -39,8 +39,10 @@ extern sFLASHQUEUE sFlashQueue;
 
 void fFlashWrite(void);
 void fFlashRead(void);
+
 void fStepSave(void);
 void fNeckSave(void);
+
 void fBlockErase(void);
 void fReadStepLog(void);
 void fReadNeckLog(void);

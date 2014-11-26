@@ -64,15 +64,20 @@ User definitions
 #define M_NORMAL 1
 #define M_CHARGE 2
 
-#define BAT_NORMAL 0x0
-#define BAT_CHARGE 0x1
-#define BAT_FULL 0x2
+#define BAT_NORMAL (0x0)
+#define BAT_CHARGE (0x1)
+#define BAT_FULL (0x2)
+
+#define UPLOAD_IDLE (0)
+#define UPLOAD_NECK (1)
+#define UPLOAD_STEP (2)
 
 #define VibrateOn() P5.0=1
 #define VibrateOff() P5.0=0
 
 extern sSELF sSelf;
 extern sUTCS sUtcs,sAlarmTime;
+extern sUPLOAD sUpload;
 
 extern uchar directGEn;
 

@@ -19,6 +19,13 @@ typedef int iFUNC(void);
 
 typedef struct
 {
+	uchar statu;	//UPLOAD_IDLE,UPLOAD_NECK,UPLOAD_STEP
+	uchar timeOut;
+	int packageRemain;
+} sUPLOAD;
+
+typedef struct
+{
 	uint timeCount;
 	uchar statu;
 } sNECKMOVESTATU;

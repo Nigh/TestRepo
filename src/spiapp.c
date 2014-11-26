@@ -179,7 +179,7 @@ void memsetUser(uchar* ptr,const uchar ch,const size_t length)
 // 缓存颈动量时清理longLog
 // 触发颈动量时配置longLog.UTC
 // 写入flash后，清Log.UTC
-static const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
+const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
 static const sFLASHOP opFlashNeckErase={FLASH_F_BLOCKERASE,FLASH_S_NECK};
 static const sFLASHOP opFlashNeckSave={FLASH_F_WRITE,FLASH_S_NECK};
 sNECKLOG neckLog[16];
