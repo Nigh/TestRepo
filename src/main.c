@@ -494,13 +494,32 @@ void fFlashOpFinish(void)
 	}
 }
 
+
+
+void memcpyUser(uchar* src,uchar* dst,const size_t length)
+{
+	size_t i=0;
+	while(i++<length)
+		*dst++=*src++;
+}
+
+extern const uchar data_axisDirect[3];
+extern sGACC sGAcc;
+void fAccUpload(void)
+{
+	uartBufWrite(data_axisDirect,3);
+	memcpyUser(&sGAcc,&uartSendBuf[3],6);
+	calcSendBufSum();
+	uartSend(10);
+}
+
 fFUNC const transHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
 	VECTOR(fUartSendEnd),				// 1
 	VECTOR(fUartRevReq),				// 2
 	VECTOR(fFlashOpStart),				// 3
 	VECTOR(fFlashOpFinish),				// 4
-	VECTOR(_nop_Ex),				// 5
+	VECTOR(fAccUpload),				// 5
 	VECTOR(_nop_Ex),				// 6
 	VECTOR(_nop_Ex),				// 7
 	VECTOR(_nop_Ex),				// 8
