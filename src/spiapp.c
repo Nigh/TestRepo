@@ -62,7 +62,8 @@ sNECKMOVESTATU sNeckMoveStatu={0};
 uint currentStepLogSec=0;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
-extern const uchar data_axisDirect[3];
+sGACC sGAcc;
+static const sMSG sAccUpload={M_TYPE_TRANS,M_C_ACCUPLOAD};
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
@@ -71,7 +72,6 @@ void _3DH5Hz(void)
 	uchar calcCount=0,_;
 	uchar* pBuf=spiRevBuf;
 	char temp[3];
-	sGACC sGAcc;
 	tEULER* tEu;
 	tNECK* tNeck=&Neck;
 
@@ -148,12 +148,15 @@ void _3DH5Hz(void)
 		}
 	}
 
-	if(directGEn)
+	if(directGEn && sUart.statu!=UART_SEND)
 	{
-		uartBufWrite(data_axisDirect,3);
-		memcpy(sGAcc,&uartSendBuf[3],6);
-		calcSendBufSum();
-		uartSend(5);
+		DI();
+		fifoPut4ISR(sAccUpload);
+		EI();
+		// uartBufWrite(data_axisDirect,3);
+		// memcpy(sGAcc,&uartSendBuf[3],6);
+		// calcSendBufSum();
+		// uartSend(10);
 	}
 
 	if(++staticCount>300){
@@ -214,13 +217,14 @@ static uchar isStepLogEmpty(void);
 static const sFLASHOP opFlashStepErase={FLASH_F_BLOCKERASE,FLASH_S_STEP};
 static const sFLASHOP opFlashStepSave={FLASH_F_WRITE,FLASH_S_STEP};
 extern sSTEPLONGLOG currentStepLog;
+extern void memcpyUser(uchar* src,uchar* dst,const size_t length);
 sSTEPLOG stepLog;
 void stepLogCache(void)
 {
 	currentStepLog.steps[currentStepLog.logCount++]=steps;
 	if(currentStepLog.logCount>8)
 	{
-		memcpy(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
+		memcpyUser(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
 		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 		currentStepLog.UTC=sUtcs.lTime;
 		if(!isStepLogEmpty())

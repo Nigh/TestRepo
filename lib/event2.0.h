@@ -48,6 +48,7 @@
 #define M_C_UARTREVREQ 0x2
 #define M_C_FLASHSTART 0x3
 #define M_C_FLASHFINISH 0x4
+#define M_C_ACCUPLOAD 0x5
 
 
 //system event content

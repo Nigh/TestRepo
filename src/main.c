@@ -293,7 +293,16 @@ void fBLEConfirm(void)
 	}
 }
 
+
 extern const uchar data_transSuccess[5];
+void uartSuccess(uchar num)
+{
+	uartBufWrite(data_transSuccess,3);
+	uartSendBuf[3]=num;
+	calcSendBufSum();
+	uartSendDirect(5);
+}
+
 void fTimeSync(void)
 {
 	uchar* ptr1=&uartRevBuf[3];
@@ -306,8 +315,7 @@ void fTimeSync(void)
 	currentStepLog.UTC=sUtcs.lTime;
 	currentNeckLog.UTC=sUtcs.lTime;
 
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x03);
 }
 
 void fSetAlarm(void)
@@ -319,8 +327,7 @@ void fSetAlarm(void)
 	*ptr2++=*ptr1++;
 	*ptr2=*ptr1;
 
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x04);
 }
 
 void fMotorCtl(void)
@@ -337,8 +344,7 @@ void fMotorCtl(void)
 		default: break;
 	}
 	sVibrate.count=uartRevBuf[3]>>4;
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x05);
 }
 
 void fLEDCtl(void)
@@ -360,16 +366,14 @@ void fLEDCtl(void)
 	}
 	ledSetMode(ledMode,uartRevBuf[3]>>4);
 
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x06);
 }
 
 void fFormatFlash(void)
 {
 
 
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x07);
 }
 
 void fGsensorAcc(void)
@@ -384,8 +388,7 @@ void fGsensorAcc(void)
 		directGEn=0;
 	}
 
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uartSuccess(0x08);
 }
 
 
@@ -427,6 +430,7 @@ void fDataReqest(void)
 		sUpload.statu=UPLOAD_STEP;
 		sUpload.packageRemain=calcStepLogNum();
 	}
+	uartSuccess(0x0d);
 }
 
 void fDEBUG(void)
