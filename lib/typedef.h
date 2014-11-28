@@ -21,6 +21,7 @@ typedef struct
 {
 	uchar statu;	//UPLOAD_IDLE,UPLOAD_NECK,UPLOAD_STEP
 	uchar timeOut;
+	uchar timeOutCount;
 	int packageRemain;
 } sUPLOAD;
 
