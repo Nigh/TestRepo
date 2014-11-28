@@ -408,7 +408,7 @@ uint calcStepLogNum(void)
 {
 	unsigned long temp;
 	if(stepFlash.startAddr>stepFlash.endAddr){
-		temp=STEPRANGEND-stepFlash.startAddr+stepFlash.endAddr;
+		temp=(STEPRANGEND-STEPRANGSTART)-(stepFlash.startAddr-stepFlash.endAddr);
 		return temp/sizeof(sSTEPLOG);
 	}else if(stepFlash.startAddr<stepFlash.endAddr){
 		temp=stepFlash.endAddr-stepFlash.startAddr;
@@ -421,7 +421,7 @@ uint calcNeckLogNum(void)
 {
 	unsigned long temp;
 	if(neckFlash.startAddr>neckFlash.endAddr){
-		temp=NECKRANGEND-neckFlash.startAddr+neckFlash.endAddr;
+		temp=(NECKRANGEND-NECKRANGSTART)-(neckFlash.startAddr-neckFlash.endAddr);
 		return temp/2/sizeof(sNECKLOG);
 	}else if(neckFlash.startAddr<neckFlash.endAddr){
 		temp=neckFlash.endAddr-neckFlash.startAddr;
