@@ -9,7 +9,7 @@ sFLASHQUEUE sFlashQueue;
 static const sMSG sFlashFinishMsg={M_TYPE_TRANS,M_C_FLASHFINISH};
 // fFUNC fFlashOp[]={_nop_Ex,fStepSave,fNeckSave,fBlockErase,fReadStepLog,fReadNeckLog,fIdleWait};
 
-fFUNC fFlashOp[]={_nop_Ex,fIdleWait,fFlashWrite,fBlockErase,fFlashRead};
+fFUNC fFlashOp[]={_nop_Ex,fIdleWait,fFlashWrite,fBlockErase,fFlashRead,_nop_Ex};
 
 extern sFLASHOP gOP;
 

@@ -185,7 +185,7 @@ void fRtc64Hz(void)
 {
 	uint i=0;
 	if(sTimerTask.maxIndex>0)
-		while(i<sTimerTask.maxIndex){if(sTimerTask.tArray[i]()==0) taskDelete(i); else i++; }
+		while(i<sTimerTask.maxIndex){if(sTimerTask.tArray[i]==0 or sTimerTask.tArray[i]()==0) taskDelete(i); else i++; }
 	else
 		R_IT_Stop();
 }
@@ -520,7 +520,8 @@ void fFlashOpFinish(void)
 	if(gOP.opType==0){
 		// flashSleep();
 	}else{
-		fFlashOp[gOP.opType]();
+		if(gOP.opType<=5)
+			fFlashOp[gOP.opType]();
 	}
 }
 
