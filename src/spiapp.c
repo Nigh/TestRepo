@@ -111,16 +111,16 @@ void _3DH5Hz(void)
 			// sGAcc=spiRevBuf;
 			tEu=calcRulerA(&sGAcc);
 			if(absf(tEu->Pitch)>absf(tEu->Roll)){
-				if(tEu->Pitch>5 and tEu->Pitch<50)
+				if(tEu->Pitch>3 and tEu->Pitch<70)
 					tNeck->PositionID=HEAD_UP;
-				else if(tEu->Pitch<-5 and tEu->Pitch>-50)
+				else if(tEu->Pitch<-3 and tEu->Pitch>-70)
 					tNeck->PositionID=HEAD_DOWN;
 				else
 					tNeck->PositionID=0x0;
 			}else{
-				if(tEu->Roll>5 and tEu->Roll<50)
+				if(tEu->Roll>3 and tEu->Roll<70)
 					tNeck->PositionID=HEAD_LEFT;
-				else if(tEu->Roll<-5 and tEu->Roll>-50)
+				else if(tEu->Roll<-3 and tEu->Roll>-70)
 					tNeck->PositionID=HEAD_RIGHT;
 				else
 					tNeck->PositionID=0x0;
@@ -200,10 +200,10 @@ void neckLogCache(void)
 	neckLog[i].downTime=currentNeckLog.downTime/10;
 
 	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
-	if(i>=10)
+	if(i>=0)	// debug
 	{
 		flashOpPut(opFlashWait);
-		if(needErase(i*sizeof(sNECKLOG),neckFlash.endAddr)){
+		if(needErase((i+1)*sizeof(sNECKLOG),neckFlash.endAddr)){
 			flashOpPut(opFlashNeckErase);
 			flashOpPut(opFlashWait);
 		}
