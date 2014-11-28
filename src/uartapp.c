@@ -9,7 +9,7 @@ const uchar data_transSuccess[5]={'#',0x03,0x01,0x01,0x02};
 const uchar data_transFail[5]={'#',0x03,0x01,0xFF,0x00};
 
 const uchar data_neckLog[3]={'#',0x16,0x10};
-const uchar data_stepLog[3]={'#',0x16,0x16};
+const uchar data_stepLog[3]={'#',0x16,0x11};
 const uchar data_logCount[3]={'#',0x06,0x12};
 const uchar data_axisDirect[3]={'#',0x08,0x13};
 const uchar data_batteryLevel[3]={'#',0x03,0x14};
