@@ -51,6 +51,7 @@ extern int isFlashIdle(void);
 extern void R_PCLBUZ0_Start(void);
 void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
+extern void initFlash(void);
 void iMain(void)
 {
 	afterBoot();
@@ -60,7 +61,7 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
-
+	initFlash();
 	init3DH();
 	R_TAU0_Channel5_Start();
 	// dddebug();
@@ -259,7 +260,7 @@ void dataReadSend(void)
 void flashReadSeek(void)
 {
 	if(sUpload.statu==UPLOAD_NECK){
-		neckFlash.startAddr+=sizeof(sNECKLOG);
+		neckFlash.startAddr+=2*sizeof(sNECKLOG);
 		if(neckFlash.startAddr>NECKRANGEND){
 			neckFlash.startAddr-=NECKRANGEND;
 		}
@@ -272,26 +273,35 @@ void flashReadSeek(void)
 }
 
 extern const uchar data_logCount[3];
-void fBLEConfirm(void)
+void uartSendLogCount(void)
 {
 	union{uchar temp[4];uint iTemp[2];}uTemp;
-	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A) and sUpload.statu!=UPLOAD_IDLE){
-		flashReadSeek();
+
+	uTemp.iTemp[0]=calcNeckLogNum();
+	uTemp.iTemp[1]=calcStepLogNum();
+	uartBufWrite(data_logCount,3);
+	uartSendBuf[3]=uTemp.temp[0];
+	uartSendBuf[4]=uTemp.temp[1];
+	uartSendBuf[5]=uTemp.temp[2];
+	uartSendBuf[6]=uTemp.temp[3];
+	calcSendBufSum();
+	uartSend(4+4);
+}
+
+void fBLEConfirm(void)
+{
+	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
+		and sUpload.statu!=UPLOAD_IDLE){
 		sUpload.packageRemain--;
-		if(sUpload.packageRemain<=0){
+		if(sUpload.packageRemain>=0)
+			flashReadSeek();
+		if(sUpload.packageRemain<0){
 			sUpload.statu=UPLOAD_IDLE;
-			uTemp.iTemp[0]=calcNeckLogNum();
-			uTemp.iTemp[1]=calcStepLogNum();
-			uartBufWrite(data_logCount,3);
-			uartSendBuf[3]=uTemp.temp[0];
-			uartSendBuf[4]=uTemp.temp[1];
-			uartSendBuf[5]=uTemp.temp[2];
-			uartSendBuf[6]=uTemp.temp[3];
-			calcSendBufSum();
-			uartSend(4+4);
+			uartSendLogCount();
 			return;
 		}
 		dataReadSend();
+		sUpload.timeOut=0;
 	}
 }
 
@@ -412,10 +422,10 @@ uint calcNeckLogNum(void)
 	unsigned long temp;
 	if(neckFlash.startAddr>neckFlash.endAddr){
 		temp=NECKRANGEND-neckFlash.startAddr+neckFlash.endAddr;
-		return temp/sizeof(sNECKLOG);
+		return temp/2/sizeof(sNECKLOG);
 	}else if(neckFlash.startAddr<neckFlash.endAddr){
 		temp=neckFlash.endAddr-neckFlash.startAddr;
-		return temp/sizeof(sNECKLOG);
+		return temp/2/sizeof(sNECKLOG);
 	}else
 		return 0;
 }
@@ -432,7 +442,9 @@ void fDataReqest(void)
 		sUpload.statu=UPLOAD_STEP;
 		sUpload.packageRemain=calcStepLogNum();
 	}
-	uartSuccess(0x0d);
+	// uartSuccess(0x0d);
+	uartSendLogCount();
+	// dataReadSend();
 }
 
 void fDEBUG(void)

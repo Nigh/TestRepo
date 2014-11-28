@@ -75,9 +75,13 @@ void fNeckSave(void){
 	flashSeek(i*sizeof(sNECKLOG),neckFlash.endAddr);
 	flashOpFin();
 }
-
+// extern flashErase(unsigned short dataLength, unsigned long flashAddr)
 void fBlockErase(void){
-	
+	if(gOP.detail==FLASH_S_STEP){
+		flashErase(2*sizeof(sNECKLOG),neckFlash.startAddr);
+	}else if(gOP.detail==FLASH_S_NECK){
+		flashErase(sizeof(sSTEPLOG),stepFlash.startAddr);
+	}
 	flashOpFin();
 }
 
@@ -89,7 +93,7 @@ void fReadStepLog(void){
 	readFromFlashBytes(logCache,sizeof(sSTEPLOG),stepFlash.startAddr);
 	uartBufWrite(data_stepLog,3);
 	for(i=0;i<sizeof(sSTEPLOG);i++)
-		uartSendBuf[i]=logCache[i-3];
+		uartSendBuf[i+3]=logCache[i];
 	calcSendBufSum();
 	uartSend(sizeof(sSTEPLOG)+4);
 	flashOpFin();
@@ -97,12 +101,12 @@ void fReadStepLog(void){
 
 void fReadNeckLog(void){
 	uchar i;
-	readFromFlashBytes(logCache,sizeof(sNECKLOG),neckFlash.startAddr);
+	readFromFlashBytes(logCache,2*sizeof(sNECKLOG),neckFlash.startAddr);
 	uartBufWrite(data_neckLog,3);
-	for(i=0;i<sizeof(sNECKLOG);i++)
-		uartSendBuf[i]=logCache[i-3];
+	for(i=0;i<2*sizeof(sNECKLOG);i++)
+		uartSendBuf[i+3]=logCache[i];
 	calcSendBufSum();
-	uartSend(sizeof(sNECKLOG)+4);
+	uartSend(2*sizeof(sNECKLOG)+4);
 	flashOpFin();
 }
 

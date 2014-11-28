@@ -64,7 +64,7 @@ __interrupt static void r_intc0_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	static const sMSG sMsg={M_TYPE_TRANS,M_C_UARTREVREQ};
-	sUart.statu=UART_REV;
+	sUart.statu|=UART_REV;
 	fifoPut4ISR(sMsg);
     /* End user code. Do not edit comment generated here */
 }
