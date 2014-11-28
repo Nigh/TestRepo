@@ -28,6 +28,7 @@ sMSG gMsg={0,0};	//global message
 
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
+void uartSendLogCount(void);
 
 extern void dddebug(void);
 
@@ -75,7 +76,8 @@ void iMain(void)
 		gMsg=fifoGet();
 		EI();
 		NOP();
-		msgHandler[gMsg.type]();
+		if(gMsg.type<=15)
+			msgHandler[gMsg.type]();
 	}
 }
 
@@ -104,8 +106,13 @@ void fRtc2Hz(void)
 
 	if(sUpload.statu!=UPLOAD_IDLE)
 	{
-		if(sUpload.timeOut++>6){
-			sUpload.statu=UPLOAD_IDLE;
+		if(sUpload.timeOut++>2){
+			sUpload.timeOut=0;
+			sUpload.timeOutCount++;
+			if(sUpload.timeOutCount<3)
+				uartSendLogCount();
+			else
+				sUpload.statu=UPLOAD_IDLE;
 		}
 	}
 
@@ -197,7 +204,8 @@ fFUNC const rtcHandler[]={		// No
 
 void fRtcPro(void)
 {
-	rtcHandler[gMsg.content]();
+	if(gMsg.content<=8)
+		rtcHandler[gMsg.content]();
 }
 
 
@@ -217,7 +225,8 @@ fFUNC const keyHandler[]={		// No
 
 void fKeyPro(void)
 {
-	keyHandler[gMsg.content]();
+	if(gMsg.content<=8)
+		keyHandler[gMsg.content]();
 }
 
 
@@ -237,7 +246,8 @@ fFUNC const timerHandler[]={	// No
 
 void fTimerPro(void)
 {
-	timerHandler[gMsg.content]();
+	if(gMsg.content<=8)
+		timerHandler[gMsg.content]();
 }
 
 
@@ -292,15 +302,15 @@ void fBLEConfirm(void)
 {
 	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
 		and sUpload.statu!=UPLOAD_IDLE){
-		sUpload.packageRemain--;
-		if(sUpload.packageRemain>=0)
+		if(sUpload.packageRemain>0 and uartRevBuf[3]!=0x0B)
 			flashReadSeek();
-		if(sUpload.packageRemain<0){
+		if(sUpload.packageRemain<1){
 			sUpload.statu=UPLOAD_IDLE;
 			uartSendLogCount();
 			return;
 		}
 		dataReadSend();
+		sUpload.packageRemain--;
 		sUpload.timeOut=0;
 	}
 }
@@ -435,6 +445,8 @@ void fDataReqest(void)
 {
 	if(sUpload.statu!=UPLOAD_IDLE)
 		return;
+	sUpload.timeOut=0;
+	sUpload.timeOutCount=0;
 	if(uartRevBuf[3]==0x1){	//neck_log
 		sUpload.statu=UPLOAD_NECK;
 		sUpload.packageRemain=calcNeckLogNum();
@@ -470,7 +482,7 @@ fFUNC const bleHandler[]={		// No
 
 void fBLEPro(void)
 {
-	if(gMsg.content<=M_C_BLESTATU)
+	if(gMsg.content<=9)
 		bleHandler[gMsg.content]();
 }
 
@@ -545,7 +557,8 @@ fFUNC const transHandler[]={		// No
 
 void fTransPro(void)
 {
-	transHandler[gMsg.content]();
+	if(gMsg.content<=8)
+		transHandler[gMsg.content]();
 }
 // ***************************************
 // ***************************************
@@ -616,7 +629,8 @@ fFUNC const sysHandler[]={		// No
 
 void fSysPro(void)
 {
-	sysHandler[gMsg.content]();
+	if(gMsg.content<=8)
+		sysHandler[gMsg.content]();
 }
 // ***************************************
 // ***************************************
