@@ -1,3 +1,5 @@
+
+
 #include "flashapp.h"
 #include "flashfunc.h"
 #include "typedef.h"
@@ -140,13 +142,23 @@ int flashOpPut(sFLASHOP op)
 	register uchar *ptr=&sFlashQueue.remain_size;
 	static sFLASHOP *const pmsgQueue=flashQueue;
 
-	if(*ptr++>0){
-		pmsgQueue[*ptr]=op;
-		*ptr--=((*ptr)+1)&BUF_SIZE_MASK;
-		(*ptr)--;
+	if(sFlashQueue.remain_size>0){
+		flashQueue[sFlashQueue.write_pos]=op;
+		sFlashQueue.write_pos++;
+		sFlashQueue.write_pos&=FLASHQUEUE_SIZEMASK;
+		sFlashQueue.remain_size--;
 		return 0;
 	}
 	return 1;
+
+	// if(*ptr++>0){
+	// 	pmsgQueue[*ptr]=op;
+	// 	*ptr=((*ptr)+1)&FLASHQUEUE_SIZEMASK;
+	// 	*ptr--;
+	// 	(*ptr)--;
+	// 	return 0;
+	// }
+	// return 1;
 }
 
 sFLASHOP flashOpGet(void)
@@ -155,13 +167,24 @@ sFLASHOP flashOpGet(void)
 	static sFLASHOP *const pmsgQueue=flashQueue;
 	sFLASHOP op;
 
-	if(*ptr++<FLASHQUEUE_SIZE) {
-		ptr++;
-		op = pmsgQueue[*ptr];
-		*ptr-- =((*ptr)+1)&FLASHQUEUE_SIZEMASK;
-		(*--ptr)++;
-	} else {
+	if(sFlashQueue.remain_size<FLASHQUEUE_SIZE){
+		op=flashQueue[sFlashQueue.read_pos];
+		sFlashQueue.read_pos++;
+		sFlashQueue.read_pos&=FLASHQUEUE_SIZEMASK;
+		sFlashQueue.remain_size++;
+	}else{
 		op.opType=0;
 	}
+	return op;
+
+	// if(*ptr++<FLASHQUEUE_SIZE) {
+	// 	ptr++;
+	// 	op = pmsgQueue[*ptr];
+	// 	*ptr =((*ptr)+1)&FLASHQUEUE_SIZEMASK;
+	// 	*ptr--;
+	// 	(*--ptr)++;
+	// } else {
+	// 	op.opType=0;
+	// }
 	return op;
 }
