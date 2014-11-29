@@ -53,9 +53,23 @@ extern void R_PCLBUZ0_Start(void);
 void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
 extern void initFlash(void);
+	//for debug
+extern void flashErase(unsigned short dataLength, unsigned long flashAddr);
+extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
+extern sNECKLOG neckLog[16];
+extern sSTEPLOG stepLog;
 void iMain(void)
 {
 	afterBoot();
+
+	flashErase(1,0);	// for debug
+	NOP();	//wait 400ms by debugger
+	// flashErase(1,131072);	// for debug
+	// NOP();	//wait 400ms by debugger
+	// flashWrite(&neckLog, 20, 0);	//for debug
+	// sUtcs.lTime=1417171128	//for debug
+	// flashWrite(&stepLog, 20, 131072);	//for debug
+
 	ledSetMode(LED_M_OFF,1);
 	EI();
 	HALT();
@@ -126,8 +140,8 @@ void fRtc2Hz(void)
 
 		if(sNeckMoveStatu.statu){
 			sNeckMoveStatu.timeCount++;
-			// if(sNeckMoveStatu.timeCount>=300){
-			if(sNeckMoveStatu.timeCount>=60){	//debug
+			if(sNeckMoveStatu.timeCount>=240){
+			// if(sNeckMoveStatu.timeCount>=35){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckLogCache();
@@ -135,8 +149,8 @@ void fRtc2Hz(void)
 		}
 
 		currentStepLogSec++;
-		// if(currentStepLogSec>=300){
-		if(currentStepLogSec>=30){	//debug
+		if(currentStepLogSec>=300){
+		// if(currentStepLogSec>=30){	//debug
 			currentStepLogSec=0;
 			stepLogCache();
 		}
@@ -185,7 +199,7 @@ void fRtc64Hz(void)
 {
 	uint i=0;
 	if(sTimerTask.maxIndex>0)
-		while(i<sTimerTask.maxIndex){if(sTimerTask.tArray[i]==0 or sTimerTask.tArray[i]()==0) taskDelete(i); else i++; }
+		while(i<sTimerTask.maxIndex){if(sTimerTask.tArray[i]<0xff or sTimerTask.tArray[i]()==0) taskDelete(i); else i++; }
 	else
 		R_IT_Stop();
 }
@@ -302,7 +316,7 @@ void fBLEConfirm(void)
 {
 	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
 		and sUpload.statu!=UPLOAD_IDLE){
-		if(sUpload.packageRemain>0 and uartRevBuf[3]!=0x0B)
+		if(sUpload.packageRemain>=0 and uartRevBuf[3]!=0x0B)
 			flashReadSeek();
 		if(sUpload.packageRemain<1){
 			sUpload.statu=UPLOAD_IDLE;
