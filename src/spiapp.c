@@ -63,6 +63,7 @@ uint currentStepLogSec=0;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
 sGACC sGAcc;
+extern const uchar data_axisDirect[3];
 static const sMSG sAccUpload={M_TYPE_TRANS,M_C_ACCUPLOAD};
 void _3DH5Hz(void)
 {
@@ -148,7 +149,7 @@ void _3DH5Hz(void)
 		}
 	}
 
-	if(directGEn && sUart.statu!=UART_SEND)
+	if(directGEn && !(sUart.statu&UART_SEND) && !(sUart.statu&UART_WAIT))
 	{
 		DI();
 		fifoPut4ISR(sAccUpload);
@@ -185,7 +186,7 @@ void memsetUser(uchar* ptr,const uchar ch,const size_t length)
 const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
 static const sFLASHOP opFlashNeckErase={FLASH_F_BLOCKERASE,FLASH_S_NECK};
 static const sFLASHOP opFlashNeckSave={FLASH_F_WRITE,FLASH_S_NECK};
-sNECKLOG neckLog[16];
+sNECKLOG neckLog[16]={0};
 void neckLogCache(void)
 {
 	uchar i=0;
@@ -200,7 +201,7 @@ void neckLogCache(void)
 	neckLog[i].downTime=currentNeckLog.downTime/10;
 
 	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
-	if(i>=0)	// debug
+	if(i>=1)	// debug
 	{
 		flashOpPut(opFlashWait);
 		if(needErase((i+1)*sizeof(sNECKLOG),neckFlash.endAddr)){

@@ -100,7 +100,8 @@ void uartSendDirect(uchar len)
 	startHClk();
 	uartBufInit(len);
 	P2.0=0;
-	sUart.statu=UART_SEND;
+	sUart.statu&=0xFF^UART_WAIT;
+	sUart.statu|=UART_SEND;
 	sUart.count=0;
 	sUart.time=0;
 	R_DMAC1_Start();
@@ -109,9 +110,9 @@ void uartSendDirect(uchar len)
 
 void uartSend(uchar len)
 {
-	if(sUart.statu==UART_SEND)
+	if(sUart.statu&UART_SEND or sUart.statu&UART_WAIT)
 		return;
-	sUart.statu=UART_WAIT;
+	sUart.statu|=UART_WAIT;
 	P2.0=0;
 	startHClk();
 	uartBufInit(len);

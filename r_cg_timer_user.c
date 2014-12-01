@@ -93,9 +93,10 @@ __interrupt static void r_tau0_channel6_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
 	TT0 |= _0040_TAU_CH6_STOP_TRG_ON;
-	if(sUart.statu==UART_WAIT)
+	if(sUart.statu&UART_WAIT)
 	{
-		sUart.statu=UART_SEND;
+		sUart.statu&=0xFF^UART_WAIT;
+		sUart.statu|=UART_SEND;
 		sUart.count=0;
 		sUart.time=0;
 		R_DMAC1_Start();

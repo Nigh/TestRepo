@@ -505,7 +505,7 @@ void fBLEPro(void)
 void fUartSendEnd(void)
 {
 	NOP();
-	sUart.statu=UART_IDLE;
+	// sUart.statu&=0xFF^UART_SEND;
 }
 
 void fUartRevReq(void)

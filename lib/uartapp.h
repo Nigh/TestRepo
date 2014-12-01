@@ -6,7 +6,9 @@
 #define UART_IDLE (0)
 #define UART_SEND (1)
 #define UART_REV (2)
-#define UART_WAIT (3)
+#define UART_WAIT (4)
+// #define UART_SENDWAIT (4)
+// #define UART_REVWAIT (8)
 
 // extern const uchar data_transSuccess[5];
 // extern const uchar data_transFail[5];

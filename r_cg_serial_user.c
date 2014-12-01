@@ -188,7 +188,8 @@ __interrupt static void int_uartRev(void)
 			sMsg.content=uartRevBuf[2];
 			fifoPut4ISR(sMsg);
 			sUart.count=0;
-			sUart.statu=UART_IDLE;
+			sUart.statu&=0xFF^UART_REV;
+			// sUart.statu=UART_IDLE;
 		}
 	}
 }
