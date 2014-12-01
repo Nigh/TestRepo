@@ -35,7 +35,12 @@ extern void dddebug(void);
 void afterBoot(void)
 {
 	unsigned long x=0;
-	while(x++<100000);
+	flashErase(1,0);	// for debug
+	NOP();	//wait 400ms by debugger
+	while(x++<2000000);
+	flashErase(1,131072);	// for debug
+	NOP();	//wait 400ms by debugger
+
 	P2.0=1;
 	R_INTC0_Start();
 	sUtcs.lTime=0;
@@ -62,10 +67,6 @@ void iMain(void)
 {
 	afterBoot();
 
-	flashErase(1,0);	// for debug
-	NOP();	//wait 400ms by debugger
-	// flashErase(1,131072);	// for debug
-	// NOP();	//wait 400ms by debugger
 	// flashWrite(&neckLog, 20, 0);	//for debug
 	// sUtcs.lTime=1417171128	//for debug
 	// flashWrite(&stepLog, 20, 131072);	//for debug
