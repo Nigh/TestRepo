@@ -91,5 +91,9 @@ extern void _halt_Ex(void);
 extern void startHClk(void);
 extern void stopHClk(void);
 
+extern uchar neckUnhealthCount;
+
+#define HEALTHNECKMOVE (30)
+
 /* End user code. Do not edit comment generated here */
 #endif

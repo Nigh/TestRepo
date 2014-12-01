@@ -112,16 +112,16 @@ void _3DH5Hz(void)
 			// sGAcc=spiRevBuf;
 			tEu=calcRulerA(&sGAcc);
 			if(absf(tEu->Pitch)>absf(tEu->Roll)){
-				if(tEu->Pitch>3 and tEu->Pitch<70)
+				if(tEu->Pitch>5 and tEu->Pitch<55)
 					tNeck->PositionID=HEAD_UP;
-				else if(tEu->Pitch<-3 and tEu->Pitch>-70)
+				else if(tEu->Pitch<-5 and tEu->Pitch>-55)
 					tNeck->PositionID=HEAD_DOWN;
 				else
 					tNeck->PositionID=0x0;
 			}else{
-				if(tEu->Roll>3 and tEu->Roll<70)
+				if(tEu->Roll>5 and tEu->Roll<55)
 					tNeck->PositionID=HEAD_LEFT;
-				else if(tEu->Roll<-3 and tEu->Roll>-70)
+				else if(tEu->Roll<-5 and tEu->Roll>-55)
 					tNeck->PositionID=HEAD_RIGHT;
 				else
 					tNeck->PositionID=0x0;

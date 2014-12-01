@@ -31,6 +31,10 @@ uint calcNeckLogNum(void);
 void uartSendLogCount(void);
 
 extern void dddebug(void);
+extern void initFlash(void);
+	//for debug
+extern void flashErase(unsigned short dataLength, unsigned long flashAddr);
+extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 
 void afterBoot(void)
 {
@@ -57,10 +61,6 @@ extern int isFlashIdle(void);
 extern void R_PCLBUZ0_Start(void);
 void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
-extern void initFlash(void);
-	//for debug
-extern void flashErase(unsigned short dataLength, unsigned long flashAddr);
-extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 extern sNECKLOG neckLog[16];
 extern sSTEPLOG stepLog;
 void iMain(void)
@@ -111,6 +111,24 @@ extern void read3DHCount(void);
 extern sNECKMOVESTATU sNeckMoveStatu;
 extern sNECKLOGLONG currentNeckLog;
 extern sAPPTIMER adTimer;
+
+extern sGACC sGAcc;
+void neckHealthCheck(void)
+{
+	if(currentNeckLog.neckMove<HEALTHNECKMOVE)
+		neckUnhealthCount++;
+	else
+		neckUnhealthCount=0;
+	if(neckUnhealthCount>=5){
+		if(neckUnhealthCount>50)
+			neckUnhealthCount=50;
+		if(g_Statu==G_INACTIVE and (sGAcc.x>30 or sGAcc.x<-30))
+			setVibrate(&sV5);
+		sVibrate.count=neckUnhealthCount/5;
+	}
+}
+
+
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -145,6 +163,7 @@ void fRtc2Hz(void)
 			// if(sNeckMoveStatu.timeCount>=35){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
+				neckHealthCheck();
 				neckLogCache();
 			}
 		}
@@ -550,7 +569,6 @@ void memcpyUser(uchar* src,uchar* dst,const size_t length)
 }
 
 extern const uchar data_axisDirect[3];
-extern sGACC sGAcc;
 void fAccUpload(void)
 {
 	uartBufWrite(data_axisDirect,3);
