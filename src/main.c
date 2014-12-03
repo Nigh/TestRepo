@@ -41,7 +41,7 @@ void afterBoot(void)
 	unsigned long x=0;
 	flashErase(1,0);	// for debug
 	NOP();	//wait 400ms by debugger
-	while(x++<2000000);
+	while(x++<1000000);
 	flashErase(1,131072);	// for debug
 	NOP();	//wait 400ms by debugger
 
@@ -160,7 +160,7 @@ void fRtc2Hz(void)
 		if(sNeckMoveStatu.statu){
 			sNeckMoveStatu.timeCount++;
 			if(sNeckMoveStatu.timeCount>=240){
-			// if(sNeckMoveStatu.timeCount>=35){	//debug
+			// if(sNeckMoveStatu.timeCount>=60){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
@@ -170,7 +170,7 @@ void fRtc2Hz(void)
 
 		currentStepLogSec++;
 		if(currentStepLogSec>=300){
-		// if(currentStepLogSec>=30){	//debug
+		// if(currentStepLogSec>=60){	//debug
 			currentStepLogSec=0;
 			stepLogCache();
 		}
