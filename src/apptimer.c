@@ -8,9 +8,9 @@ sAPPTIMER stopVibrateTimer={0,0,&stopVibrate};
 
 sTIMERTASK sTimerTask={0};
 sVIBRATE sVibrate={0,3,{1,4,26},0,1};
-const sVIBRATE sV1={1,3,{1,4,3},0,1};	//duty 50%
-const sVIBRATE sV2={1,3,{1,6,1},0,1};	//duty 75%
-const sVIBRATE sV3={1,2,{1,7},0,1};	//duty 100%
+const sVIBRATE sV1={1,3,{1,3,4},0,1};	//duty 50%
+const sVIBRATE sV2={1,3,{1,1,6},0,1};	//duty 75%
+const sVIBRATE sV3={1,3,{1,1,8},0,1};	//duty 100%
 
 const sVIBRATE sV4={1,3,{1,32,31},0,1};	//duty 50% 1Hz
 const sVIBRATE sV5={1,5,{1,16,16,16,15},0,1};	//duty 50% 2Hz
@@ -63,6 +63,7 @@ int vibrateTask(void)
 			}
 			if(sVibrate.ptr==0){
 				if(sVibrate.count--==0){
+					vibrate32HzCount=0;
 					sVibrate.en=0;
 					return 0;
 				}
