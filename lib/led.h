@@ -14,6 +14,8 @@
 #define LED_M_RANDOM	(6)
 #define LED_M_STATICPOWER	(7)
 
+#define LED_M_MAX	(7)	//max mode num
+
 #define PWM_RISE (1)
 #define PWM_FALL (2)
 #define PWM_HOLD (0)

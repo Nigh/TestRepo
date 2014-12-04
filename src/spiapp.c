@@ -20,7 +20,7 @@ void echo(void)
 	if(batteryStatu==BAT_CHARGE){
 		ledSetMode(LED_M_MQ,1);
 	}else{
-		ledSetMode(LED_M_STATICPOWER,3);
+		ledSetMode(LED_M_STATICPOWER,1);
 	}
 }
 

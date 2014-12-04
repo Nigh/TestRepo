@@ -115,7 +115,7 @@ void ledAllOff(void)
 
 void ledNext(void)
 {
-	if(sLed.ledMode<=6)
+	if(sLed.ledMode<=LED_M_MAX)
 		ledMode[sLed.ledMode]();
 	else
 		ledSetMode(LED_M_OFF,1);
