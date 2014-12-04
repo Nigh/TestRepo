@@ -571,8 +571,17 @@ void memcpyUser(uchar* src,uchar* dst,const size_t length)
 extern const uchar data_axisDirect[3];
 void fAccUpload(void)
 {
+	sGACC tempAcc;
 	uartBufWrite(data_axisDirect,3);
-	memcpyUser(&sGAcc,&uartSendBuf[3],6);
+	if(sGAcc.x<0)
+		memcpyUser(&sGAcc,&uartSendBuf[3],6);
+	else
+	{
+		tempAcc.x=-sGAcc.x;
+		tempAcc.y=-sGAcc.y;
+		tempAcc.z=sGAcc.z;
+		memcpyUser(&tempAcc,&uartSendBuf[3],6);
+	}
 	calcSendBufSum();
 	uartSend(10);
 }
