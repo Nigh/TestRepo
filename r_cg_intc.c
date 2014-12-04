@@ -123,9 +123,9 @@ void R_KEY_Create(void)
     /* Set KR1 pin */
     PM7 |= 0x02U;
     /* Set KR2 pin */
-    PM7 |= 0x04U;
+    // PM7 |= 0x04U;
     /* Set KR3 pin */
-    PM7 |= 0x08U;
+    // PM7 |= 0x08U;
 
     /* Change the waiting time according to the system */
     for (w_count = 0U; w_count < KEY_WAITTIME; w_count++)
