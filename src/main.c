@@ -84,7 +84,7 @@ void iMain(void)
 	// dddebug();
 
 	ledSetMode(LED_M_MQ,3);
-	R_PCLBUZ0_Start();
+	// R_PCLBUZ0_Start();
 	while(1){
 		if(sUart.statu!=UART_IDLE)
 			startHClk();
