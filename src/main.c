@@ -627,11 +627,15 @@ void fAdcEnd(void)
 		return;
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
-	batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
-	powerLevel=batteryLevel/27;
+	batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
+	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
+	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
+	if(batteryLevel<0)
+		batteryLevel=0;
+	powerLevel=batteryLevel/5;
 
 	uartBufWrite(data_batteryLevel,3);
-	uartSendBuf[3]=powerLevel*25;
+	uartSendBuf[3]=powerLevel*4;
 	calcSendBufSum();
 	uartSend(5);
 }

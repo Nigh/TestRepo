@@ -324,6 +324,7 @@ extern int batteryLevel;
 extern uchar powerLevel;
 void led_power(void)
 {
+	uchar temp;
 	if(sLed.ledCount<1000){
 		sLed.ledCount++;
 	}else{
@@ -331,8 +332,18 @@ void led_power(void)
 		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
+	if(powerLevel>BAT80){
+		temp=4;
+	}else if(powerLevel>BAT60){
+		temp=3;
+	}else if(powerLevel>BAT40){
+		temp=2;
+	}else{
+		temp=1;
+	}
+
 	if(sLed.ledCount==1){
-		switch(powerLevel){
+		switch(temp){
 			default:
 			case 5: case 4: led4On();
 			case 3: led3On();
@@ -340,7 +351,7 @@ void led_power(void)
 			case 1: case 0: led1On();
 		}
 	}else if(sLed.ledCount==500){
-		switch(powerLevel){
+		switch(temp){
 			default:
 			case 5: case 4: led4Off();break;
 			case 3: led3Off();break;
@@ -402,6 +413,7 @@ void led_random(void)
 
 void led_staticPower(void)
 {
+	uchar temp;
 	if(sLed.ledCount<2000){
 		sLed.ledCount++;
 	}else{
@@ -410,7 +422,16 @@ void led_staticPower(void)
 	}
 
 	if(sLed.ledCount==1){
-		switch(powerLevel){
+		if(powerLevel>BAT80){
+			temp=4;
+		}else if(powerLevel>BAT60){
+			temp=3;
+		}else if(powerLevel>BAT40){
+			temp=2;
+		}else{
+			temp=1;
+		}
+		switch(temp){
 			default:
 			case 5: case 4: led4On();
 			case 3: led3On();

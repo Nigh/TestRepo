@@ -13,8 +13,13 @@ uchar powerLevel=4;
 void ADPro(void)
 {
 	if(sVibrate.en==0){
-		startAD();
-		setADTimer(600);
+		if(P2.1!=0){
+			P2.1=0;
+			setADTimer(1);
+		}else{
+			startAD();
+			setADTimer(600);
+		}
 	}else{
 		setADTimer(10);
 	}
@@ -23,7 +28,6 @@ void ADPro(void)
 void startAD(void)
 {
 	adcCount=0;
-	P2.1=0;
 	ADCE = 1U;
 	NOP();
 	NOP();
