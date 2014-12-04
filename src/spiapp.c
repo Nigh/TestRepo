@@ -95,7 +95,7 @@ void _3DH5Hz(void)
 			if(IsClick(temp)==1){
 				if(dClick==0)
 					dClick=1;
-				else if(dClick>55)
+				else if(dClick>24)
 					dClick=1;
 				else{
 					if(dClick>3){
