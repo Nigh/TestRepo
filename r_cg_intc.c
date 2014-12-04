@@ -117,7 +117,7 @@ void R_KEY_Create(void)
     /* Set INTKR low priority */
     KRPR1 = 1U;
     KRPR0 = 1U;
-    KRM = _01_KR0_SIGNAL_DETECT_ON | _02_KR1_SIGNAL_DETECT_ON | _04_KR2_SIGNAL_DETECT_ON | _08_KR3_SIGNAL_DETECT_ON;
+    KRM = _01_KR0_SIGNAL_DETECT_ON | _02_KR1_SIGNAL_DETECT_ON;
     /* Set KR0 pin */
     PM7 |= 0x01U;
     /* Set KR1 pin */
