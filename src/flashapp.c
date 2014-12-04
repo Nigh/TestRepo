@@ -45,17 +45,17 @@ void flashOpFin(void)
 extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 void neckDataSave(uchar* ptr,uchar len)
 {
-	flashWrite(ptr, len, neckFlash.startAddr);
+	flashWrite(ptr, len, neckFlash.endAddr);
 }
 
 void stepDataSave(uchar* ptr,uchar len)
 {
-	flashWrite(ptr, len, stepFlash.startAddr);
+	flashWrite(ptr, len, stepFlash.endAddr);
 }
 
 void progDataSave(uchar* ptr,uchar len)
 {
-	flashWrite(ptr, len, programFlash.startAddr);
+	flashWrite(ptr, len, programFlash.endAddr);
 }
 
 extern sSTEPLOG stepLog;
@@ -80,9 +80,9 @@ void fNeckSave(void){
 // extern flashErase(unsigned short dataLength, unsigned long flashAddr)
 void fBlockErase(void){
 	if(gOP.detail==FLASH_S_STEP){
-		flashErase(2*sizeof(sNECKLOG),neckFlash.startAddr);
-	}else if(gOP.detail==FLASH_S_NECK){
 		flashErase(sizeof(sSTEPLOG),stepFlash.startAddr);
+	}else if(gOP.detail==FLASH_S_NECK){
+		flashErase(2*sizeof(sNECKLOG),neckFlash.startAddr);
 	}
 	flashOpFin();
 }
