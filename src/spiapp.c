@@ -223,6 +223,7 @@ sSTEPLOG stepLog;
 void stepLogCache(void)
 {
 	currentStepLog.steps[currentStepLog.logCount++]=steps;
+	steps=0;
 	if(currentStepLog.logCount>8)
 	{
 		memcpyUser(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
