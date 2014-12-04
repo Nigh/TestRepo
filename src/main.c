@@ -159,8 +159,8 @@ void fRtc2Hz(void)
 
 		if(sNeckMoveStatu.statu){
 			sNeckMoveStatu.timeCount++;
-			if(sNeckMoveStatu.timeCount>=240){
-			// if(sNeckMoveStatu.timeCount>=60){	//debug
+			// if(sNeckMoveStatu.timeCount>=240){
+			if(sNeckMoveStatu.timeCount>=60){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
@@ -169,8 +169,8 @@ void fRtc2Hz(void)
 		}
 
 		currentStepLogSec++;
-		if(currentStepLogSec>=300){
-		// if(currentStepLogSec>=60){	//debug
+		// if(currentStepLogSec>=300){
+		if(currentStepLogSec>=60){	//debug
 			currentStepLogSec=0;
 			stepLogCache();
 		}
