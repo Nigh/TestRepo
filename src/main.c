@@ -47,6 +47,7 @@ void afterBoot(void)
 
 	P2.0=1;
 	R_INTC0_Start();
+	R_KEY_Start();
 	sUtcs.lTime=0;
 	sAlarmTime.lTime=0xffffffff;
 	currentStepLog.UTC=sUtcs.lTime;
