@@ -86,7 +86,9 @@ void setTimer64Hz(sAPPTIMER* apptimer,uint period)
 		apptimerTaskEn=1;
 	}
 	apptimer->count=period;
-	apptimer->en=1;	
+	apptimer->en=1;
+	if(!(ITMC&0x8000))
+		R_IT_Start();
 }
 
 void functionX(void)
@@ -102,8 +104,8 @@ uchar timer(sAPPTIMER* apptimer)
 		if(apptimer->count==0){	//count
 			apptimer->en=0;	//en
 			apptimer->func();
-			return 1;
 		}
+		return 1;
 	}
 	return 0;
 }
