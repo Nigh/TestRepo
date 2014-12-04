@@ -190,7 +190,7 @@ unsigned char IsClick(unsigned char *clickdata)
 				}
 				if(tempA < (XAbsDif[temp1] >> 1))		//two difdata different in 1/2
 				{
-					if(StableTimes > 10)
+					if(StableTimes > 5)
 					{
 						comparedata = CLICKSTABLELIMIT;
 					}
@@ -246,7 +246,7 @@ unsigned char IsClick(unsigned char *clickdata)
 				}
 				if(tempA < (YAbsDif[temp1] >> 1))		//two difdata different in 1/2
 				{
-					if(StableTimes > 10)
+					if(StableTimes > 5)
 					{
 						comparedata = CLICKSTABLELIMIT;
 					}
@@ -302,7 +302,7 @@ unsigned char IsClick(unsigned char *clickdata)
 				}
 				if(tempA < (ZAbsDif[temp1] >> 1))		//two difdata different in 1/2
 				{
-					if(StableTimes > 10)
+					if(StableTimes > 5)
 					{
 						comparedata = CLICKSTABLELIMIT;
 					}
