@@ -25,6 +25,7 @@ fFUNC const msgHandler[]={		// No
 };
 
 sMSG gMsg={0,0};	//global message
+uchar uartRevTimeout=0;
 
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
@@ -147,6 +148,14 @@ void fRtc2Hz(void)
 				uartSendLogCount();
 			else
 				sUpload.statu=UPLOAD_IDLE;
+		}
+	}
+
+	if(uartRevTimeout>0){
+		uartRevTimeout++;
+		if(uartRevTimeout>3){
+			sUart.statu&=0xFF^UART_REV;
+			uartRevTimeout=0;
 		}
 	}
 
@@ -532,6 +541,7 @@ void fUartSendEnd(void)
 void fUartRevReq(void)
 {
 	startHClk();
+	uartRevTimeout=1;
 }
 
 

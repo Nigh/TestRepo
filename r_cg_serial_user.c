@@ -175,10 +175,12 @@ static void r_csi00_callback_sendend(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+extern uchar uartRevTimeout;
 __interrupt static void int_uartRev(void)
 {
 	sMSG sMsg;
 	uartRevBuf[sUart.count++] = RXD1;
+	uartRevTimeout=0;
 	if(sUart.count==1){
 		if(uartRevBuf[0]!='#')
 			sUart.count=0;
