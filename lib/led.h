@@ -58,5 +58,6 @@ void led_flashAll(void);
 void led_swing(void);
 void led_power(void);
 void led_random(void);
+void led_staticPower(void);
 
 #endif
