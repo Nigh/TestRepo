@@ -39,11 +39,11 @@ extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned l
 void afterBoot(void)
 {
 	unsigned long x=0;
-	flashErase(1,0);	// for debug
-	NOP();	//wait 400ms by debugger
-	while(x++<1000000);
-	flashErase(1,131072);	// for debug
-	NOP();	//wait 400ms by debugger
+	// flashErase(1,0);	// for debug
+	// NOP();	//wait 400ms by debugger
+	while(x++<100000);
+	// flashErase(1,131072);	// for debug
+	// NOP();	//wait 400ms by debugger
 
 	P2.0=1;
 	R_INTC0_Start();
