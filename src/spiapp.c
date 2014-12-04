@@ -4,6 +4,7 @@
 
 #include "r_cg_macrodriver.h"
 #include "r_cg_serial.h"
+#include "r_cg_userdefine.h"
 #include "spiapp.h"
 #include "flashapp.h"
 #include "flashfunc.h"
@@ -13,9 +14,14 @@ uchar g_Statu=G_INACTIVE;
 
 extern time_t time2(void);
 
+
 void echo(void)
 {
-	ledSetMode(LED_M_POWER,3);
+	if(batteryStatu==BAT_CHARGE){
+		ledSetMode(LED_M_MQ,1);
+	}else{
+		ledSetMode(LED_M_STATICPOWER,3);
+	}
 }
 
 // int spiRevBuf[48]={0};	// 5/16 used

@@ -153,7 +153,7 @@ void fRtc2Hz(void)
 	if((count&0x1)==0)
 	{
 		if(batteryStatu!=BAT_NORMAL){
-			if(batteryStatu==BAT_CHARGE)
+			if(batteryStatu==BAT_CHARGE && (sLed.ledMode==LED_M_OFF or sLed.ledMode==LED_M_POWER))
 				ledSetMode(LED_M_POWER,2);
 		}
 		timer(&adTimer);

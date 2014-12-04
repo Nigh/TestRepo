@@ -22,7 +22,8 @@ fFUNC ledMode[]={led_heartBeat,
 				led_flashAll,
 				led_swing,
 				led_power,
-				led_random};
+				led_random,
+				led_staticPower};
 
 void ledSetMode(uint ledMode,uint times)
 {
@@ -60,6 +61,7 @@ void ledSetMode(uint ledMode,uint times)
 		case LED_M_SWING:
 		case LED_M_POWER:
 		case LED_M_RANDOM:
+		case LED_M_STATICPOWER:
 			R_TAU0_Channel0_Start();
 		break;
 	}
@@ -395,6 +397,26 @@ void led_random(void)
 			led3Off();
 			led1On();
 		break;
+	}
+}
+
+void led_staticPower(void)
+{
+	if(sLed.ledCount<2000){
+		sLed.ledCount++;
+	}else{
+		sLed.ledCount=0;
+		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
+	}
+
+	if(sLed.ledCount==1){
+		switch(powerLevel){
+			default:
+			case 5: case 4: led4On();
+			case 3: led3On();
+			case 2: led2On();
+			case 1: case 0: led1On();
+		}
 	}
 }
 

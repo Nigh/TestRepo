@@ -12,6 +12,7 @@
 #define LED_M_SWING		(4)
 #define LED_M_POWER		(5)
 #define LED_M_RANDOM	(6)
+#define LED_M_STATICPOWER	(7)
 
 #define PWM_RISE (1)
 #define PWM_FALL (2)
