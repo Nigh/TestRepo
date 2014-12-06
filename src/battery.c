@@ -8,7 +8,7 @@ int batteryLevel=0xffff;
 
 static uchar adcCount=0;
 uint adcValue[4];
-uchar powerLevel=4;
+uchar powerLevel=BAT80+1;
 
 void ADPro(void)
 {
