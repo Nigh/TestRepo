@@ -13,6 +13,7 @@ extern float absf(float);
 uchar g_Statu=G_INACTIVE;
 
 extern time_t time2(void);
+extern void memcpyUser(uchar* src,uchar* dst,const size_t length);
 
 
 void echo(void)
@@ -62,6 +63,16 @@ void read3DHCount(void)
 	disable_3dh();
 }
 
+uint accDiff(int a,int b)
+{
+	if(a>b){
+		return (a-b)>>6;
+	}else{
+		return (b-a)>>6;
+	}
+}
+
+
 tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
 sNECKLOGLONG currentNeckLog={0,0,0,0,0,1};
 sNECKMOVESTATU sNeckMoveStatu={0};
@@ -74,6 +85,8 @@ static const sMSG sAccUpload={M_TYPE_TRANS,M_C_ACCUPLOAD};
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
+	static uint SMA=0,SMAOld=0,SMACount=0;	//1sec SMA (使用 1G=256)
+	static sGACC oldAcc;
 	static int staticCount=0,inactiveCount=0;
 	int iTemp;
 	uchar calcCount=0,_;
@@ -116,42 +129,57 @@ void _3DH5Hz(void)
 			sGAcc.y=spiRevBuf[1]/4+spiRevBuf[4]/4+spiRevBuf[7]/4+spiRevBuf[10]/4;
 			sGAcc.z=spiRevBuf[2]/4+spiRevBuf[5]/4+spiRevBuf[8]/4+spiRevBuf[11]/4;
 			// sGAcc=spiRevBuf;
-			tEu=calcRulerA(&sGAcc);
-			if(absf(tEu->Pitch)>absf(tEu->Roll)){
-				if(tEu->Pitch>5 and tEu->Pitch<55)
-					tNeck->PositionID=HEAD_UP;
-				else if(tEu->Pitch<-5 and tEu->Pitch>-55)
-					tNeck->PositionID=HEAD_DOWN;
-				else
-					tNeck->PositionID=0x0;
+			if(SMACount==0){
+				SMAOld=SMA;
+				SMA=0;
 			}else{
-				if(tEu->Roll>5 and tEu->Roll<55)
-					tNeck->PositionID=HEAD_LEFT;
-				else if(tEu->Roll<-5 and tEu->Roll>-55)
-					tNeck->PositionID=HEAD_RIGHT;
-				else
-					tNeck->PositionID=0x0;
+				SMA+=accDiff(oldAcc.x,sGAcc.x)+accDiff(oldAcc.y,sGAcc.y)+accDiff(oldAcc.z,sGAcc.z);
+				SMACount++;
+				if(SMACount>=10)
+					SMACount=0;
 			}
-			if(tNeck->PositionID){
-				tNeck->StartTime=time2();
-				iTemp=NeckActivityAlgorithm(tEu,tNeck);
-				if(!sNeckMoveStatu.statu and iTemp){
-					sNeckMoveStatu.statu=1;
-					currentNeckLog.UTC=sUtcs.lTime;
+
+			memcpyUser(&sGAcc,&oldAcc,sizeof(sGACC));
+
+			if(SMAOld>NECKMOVE_UPLIMIT){
+				tEu=calcRulerA(&sGAcc);
+				if(absf(tEu->Pitch)>absf(tEu->Roll)){
+					if(tEu->Pitch>5 and tEu->Pitch<55)
+						tNeck->PositionID=HEAD_UP;
+					else if(tEu->Pitch<-5 and tEu->Pitch>-55)
+						tNeck->PositionID=HEAD_DOWN;
+					else
+						tNeck->PositionID=0x0;
+				}else{
+					if(tEu->Roll>5 and tEu->Roll<55)
+						tNeck->PositionID=HEAD_LEFT;
+					else if(tEu->Roll<-5 and tEu->Roll>-55)
+						tNeck->PositionID=HEAD_RIGHT;
+					else
+						tNeck->PositionID=0x0;
 				}
-				if(sNeckMoveStatu.statu){
-					if(iTemp){
-						currentNeckLog.neckMove+=iTemp;
-					}else{
-						switch(tNeck->PositionID){
-						case HEAD_UP: currentNeckLog.upTime++; break;
-						case HEAD_DOWN: currentNeckLog.downTime++; break;
-						case HEAD_LEFT: currentNeckLog.leftTime++; break;
-						case HEAD_RIGHT: currentNeckLog.rightTime++; break;
+				if(tNeck->PositionID){
+					tNeck->StartTime=time2();
+					iTemp=NeckActivityAlgorithm(tEu,tNeck);
+					if(!sNeckMoveStatu.statu and iTemp){
+						sNeckMoveStatu.statu=1;
+						currentNeckLog.UTC=sUtcs.lTime;
+					}
+					if(sNeckMoveStatu.statu){
+						if(iTemp){
+							currentNeckLog.neckMove+=iTemp;
+						}else{
+							switch(tNeck->PositionID){
+							case HEAD_UP: currentNeckLog.upTime++; break;
+							case HEAD_DOWN: currentNeckLog.downTime++; break;
+							case HEAD_LEFT: currentNeckLog.leftTime++; break;
+							case HEAD_RIGHT: currentNeckLog.rightTime++; break;
+							}
 						}
 					}
 				}
 			}
+
 		}
 	}
 
@@ -224,7 +252,6 @@ static uchar isStepLogEmpty(void);
 static const sFLASHOP opFlashStepErase={FLASH_F_BLOCKERASE,FLASH_S_STEP};
 static const sFLASHOP opFlashStepSave={FLASH_F_WRITE,FLASH_S_STEP};
 extern sSTEPLONGLOG currentStepLog;
-extern void memcpyUser(uchar* src,uchar* dst,const size_t length);
 sSTEPLOG stepLog;
 void stepLogCache(void)
 {

@@ -57,6 +57,7 @@ User definitions
 #include "battery.h"
 #include "flashapp.h"
 #include "r_cg_intc.h"
+#include "project.h"
 
 #define and &&
 #define or ||
