@@ -76,6 +76,10 @@ User definitions
 #define VibrateOn() P5.0=1
 #define VibrateOff() P5.0=0
 
+#define SYS_ACTIVE (0)
+#define SYS_SLEEP (1)
+#define SYS_TEST (2)
+
 extern sSELF sSelf;
 extern sUTCS sUtcs,sAlarmTime;
 extern sUPLOAD sUpload;

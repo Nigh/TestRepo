@@ -1,6 +1,6 @@
 #include "r_cg_userdefine.h"
 
-sSELF sSelf={0,0,0,0};
+sSELF sSelf={SYS_ACTIVE,0,0,0};
 sUTCS sUtcs,sAlarmTime;
 
 uint steps=0;

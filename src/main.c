@@ -139,6 +139,9 @@ void fRtc2Hz(void)
 	static uint currentStepLogSec=0;
 	count++;
 
+	if(sSelf.mode!=SYS_ACTIVE)
+		return;
+
 	if(sUpload.statu!=UPLOAD_IDLE)
 	{
 		if(sUpload.timeOut++>2){
@@ -437,10 +440,40 @@ void fLEDCtl(void)
 	uartSuccess(0x06);
 }
 
+
+extern void memsetUser(uchar* ptr,const uchar ch,const size_t length);
+void goSleep(void)
+{
+	startHClk();
+	set3DHEx(0x20,0x07);	// power down
+	if(sSelf.mode==SYS_ACTIVE)
+	{
+		memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
+		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
+		g_Statu=G_SLEEP;
+		R_TAU0_Channel5_Stop();
+		// 此处应关闭蓝牙
+	}
+	sSelf.mode=SYS_SLEEP;
+}
+
+void goActive(void)
+{
+	if(sSelf.mode==SYS_SLEEP)
+	{
+		set3DHEx(0x20,0x47);
+		R_TAU0_Channel5_Start();
+		g_Statu=G_INACTIVE;
+		// 此处应打开蓝牙
+	}
+	sSelf.mode=SYS_ACTIVE;
+}
+
 void fFormatFlash(void)
 {
-
-
+	if(uartRevBuf[3]==0xd9){
+		goSleep();
+	}
 	uartSuccess(0x07);
 }
 
@@ -516,9 +549,9 @@ void fConnectRequest(void)
 {
 	if(uartRevBuf[3]==0x01){
 		BLE_Connect_Timeout=BLE_CONNECT_TIMEOUT_SET;
-		ledSetMode(LED_M_MQ,10);
-		uartSuccess(0x10);
+		// ledSetMode(LED_M_MQ,10);
 	}
+	uartSuccess(0x10);
 }
 
 fFUNC const bleHandler[]={		// No
@@ -640,6 +673,8 @@ void fAdcEnd(void)
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
 	batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
+	if(batteryLevel<0)
+		batteryLevel=0;
 	if(batteryLevelOld>25 && batteryLevel<=25){
 		setVibrate(&sV5);
 		sVibrate.count=1;
@@ -647,8 +682,7 @@ void fAdcEnd(void)
 	batteryLevelOld=batteryLevel;
 	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
-	if(batteryLevel<0)
-		batteryLevel=0;
+
 	powerLevel=batteryLevel/5;	//0~25
 
 	uartBufWrite(data_batteryLevel,3);
@@ -661,13 +695,15 @@ void fAdcEnd(void)
 extern sAPPTIMER chargeScanTimer;
 void chargeScan(void)
 {
-	if(P7.0==0)
-		batteryStatu|=BAT_CHARGE;
-	else
+	if(P7.0==0){
+			batteryStatu|=BAT_CHARGE;
+			goActive();
+	}else
 		batteryStatu&=0xff^BAT_CHARGE;
-	if(P7.1==0)
-		batteryStatu|=BAT_FULL;
-	else
+	if(P7.1==0){
+			batteryStatu|=BAT_FULL;
+			goActive();
+	}else
 		batteryStatu&=0xff^BAT_FULL;
 	setTimer64Hz(&chargeScanTimer,16);
 }
@@ -676,12 +712,16 @@ sAPPTIMER chargeScanTimer={0,0,&chargeScan};
 
 void fChargeInt(void)
 {
-	if(P7.0==0)
+	if(P7.0==0){
 		batteryStatu|=BAT_CHARGE;
+		goActive();
+	}
 	else
 		batteryStatu&=0xff^BAT_CHARGE;
-	if(P7.1==0)
+	if(P7.1==0){
 		batteryStatu|=BAT_FULL;
+		goActive();
+	}
 	else
 		batteryStatu&=0xff^BAT_FULL;
 
