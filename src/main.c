@@ -620,6 +620,7 @@ void fTransPro(void)
 extern const uchar data_batteryLevel[3];
 void fAdcEnd(void)
 {
+	static uint batteryLevelOld=0;
 	uint temp;
 	if(sVibrate.en)
 	{
@@ -628,11 +629,16 @@ void fAdcEnd(void)
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
 	batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
+	if(batteryLevelOld>25 && batteryLevel<=25){
+		setVibrate(&sV5);
+		sVibrate.count=1;
+	}
+	batteryLevelOld=batteryLevel;
 	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
 	if(batteryLevel<0)
 		batteryLevel=0;
-	powerLevel=batteryLevel/5;
+	powerLevel=batteryLevel/5;	//0~25
 
 	uartBufWrite(data_batteryLevel,3);
 	uartSendBuf[3]=powerLevel*4;
