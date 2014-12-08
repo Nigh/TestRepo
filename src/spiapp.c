@@ -144,16 +144,16 @@ void _3DH5Hz(void)
 			if(SMAOld>NECKMOVE_UPLIMIT){
 				tEu=calcRulerA(&sGAcc);
 				if(absf(tEu->Pitch)>absf(tEu->Roll)){
-					if(tEu->Pitch>5 and tEu->Pitch<55)
+					if(tEu->Pitch>NECK_PITCH_POSITIVE_DOWNLIMIT and tEu->Pitch<NECK_PITCH_POSITIVE_UPLIMIT)
 						tNeck->PositionID=HEAD_UP;
-					else if(tEu->Pitch<-5 and tEu->Pitch>-55)
+					else if(tEu->Pitch<NECK_PITCH_NEGATIVE_UPLIMIT and tEu->Pitch>NECK_PITCH_NEGATIVE_DOWNLIMIT)
 						tNeck->PositionID=HEAD_DOWN;
 					else
 						tNeck->PositionID=0x0;
 				}else{
-					if(tEu->Roll>5 and tEu->Roll<55)
+					if(tEu->Roll>NECK_ROLL_POSITIVE_DOWNLIMIT and tEu->Roll<NECK_ROLL_POSITIVE_UPLIMIT)
 						tNeck->PositionID=HEAD_LEFT;
-					else if(tEu->Roll<-5 and tEu->Roll>-55)
+					else if(tEu->Roll<NECK_ROLL_NEGATIVE_UPLIMIT and tEu->Roll>NECK_ROLL_NEGATIVE_DOWNLIMIT)
 						tNeck->PositionID=HEAD_RIGHT;
 					else
 						tNeck->PositionID=0x0;
@@ -194,12 +194,12 @@ void _3DH5Hz(void)
 		// uartSend(10);
 	}
 
-	if(++staticCount>300){
+	if(++staticCount>G_ACTIVE_TIMEOUT){
 		g_Statu=G_SLEEP;
 		set3DHEx(0x20,0x1f);
 		R_TAU0_Channel5_Stop();
 		staticCount=0;
-	}else if(staticCount>50){
+	}else if(staticCount>STEP_ACTIVE_TIMEOUT){
 		g_Statu=G_INACTIVE;
 		if(directGEn)
 			staticCount=0;
