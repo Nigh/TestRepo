@@ -584,7 +584,7 @@ void fAccUpload(void)
 {
 	sGACC tempAcc;
 	uartBufWrite(data_axisDirect,3);
-	if(sGAcc.x<0)
+	if(sGAcc.x>0)
 		memcpyUser(&sGAcc,&uartSendBuf[3],6);
 	else
 	{
