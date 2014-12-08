@@ -15,9 +15,19 @@ uchar g_Statu=G_INACTIVE;
 extern time_t time2(void);
 extern void memcpyUser(uchar* src,uchar* dst,const size_t length);
 
-
+extern const uchar data_accessConfirm[5];
 void echo(void)
 {
+	if(BLE_Connect_Timeout>0){
+		BLE_Connect_Timeout=0;
+		ledSetMode(LED_M_OFF,1);
+		setVibrate(&sV5);
+		sVibrate.count=1;
+		uartBufWrite(data_accessConfirm,5);
+		calcSendBufSum();
+		uartSend(5);
+		return;
+	}
 	if(batteryStatu==BAT_CHARGE){
 		ledSetMode(LED_M_MQ,1);
 	}else{

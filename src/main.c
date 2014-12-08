@@ -161,6 +161,8 @@ void fRtc2Hz(void)
 
 	if((count&0x1)==0)
 	{
+		if(BLE_Connect_Timeout>0)
+			BLE_Connect_Timeout--;
 		if(batteryStatu!=BAT_NORMAL){
 			if(batteryStatu==BAT_CHARGE && (sLed.ledMode==LED_M_OFF or sLed.ledMode==LED_M_POWER))
 				ledSetMode(LED_M_POWER,2);
@@ -510,6 +512,14 @@ void fDEBUG(void)
 	uartSendDirect(5);
 }
 
+void fConnectRequest(void)
+{
+	if(uartRevBuf[3]==0x01){
+		BLE_Connect_Timeout=BLE_CONNECT_TIMEOUT_SET;
+		ledSetMode(LED_M_MQ,10);
+		uartSuccess(0x10);
+	}
+}
 
 fFUNC const bleHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
@@ -522,11 +532,12 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fGsensorAcc),				// 7
 	VECTOR(fDataReqest),				// 8
 	VECTOR(fDEBUG),				// 9
+	VECTOR(fConnectRequest),				// 10
 };
 
 void fBLEPro(void)
 {
-	if(gMsg.content<=9)
+	if(gMsg.content<=10)
 		bleHandler[gMsg.content]();
 }
 
@@ -620,7 +631,7 @@ void fTransPro(void)
 extern const uchar data_batteryLevel[3];
 void fAdcEnd(void)
 {
-	static uint batteryLevelOld=0;
+	static uint batteryLevelOld=100;
 	uint temp;
 	if(sVibrate.en)
 	{

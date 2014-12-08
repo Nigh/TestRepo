@@ -94,6 +94,8 @@ extern void stopHClk(void);
 
 extern uchar neckUnhealthCount;
 
+extern uchar BLE_Connect_Timeout;
+
 #define HEALTHNECKMOVE (30)
 
 /* End user code. Do not edit comment generated here */

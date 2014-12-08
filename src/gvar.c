@@ -10,6 +10,8 @@ uchar batteryStatu=BAT_NORMAL;
 sFLASHOP gOP;
 sUPLOAD sUpload={0};
 
+uchar BLE_Connect_Timeout=0;
+
 uchar neckUnhealthCount=0;
 
 time_t time2(void)
