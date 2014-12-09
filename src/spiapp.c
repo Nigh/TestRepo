@@ -151,7 +151,7 @@ void _3DH5Hz(void)
 
 			memcpyUser(&sGAcc,&oldAcc,sizeof(sGACC));
 
-			if(SMAOld>NECKMOVE_UPLIMIT){
+			if(SMAOld<NECKMOVE_UPLIMIT){
 				tEu=calcRulerA(&sGAcc);
 				if(absf(tEu->Pitch)>absf(tEu->Roll)){
 					if(tEu->Pitch>NECK_PITCH_POSITIVE_DOWNLIMIT and tEu->Pitch<NECK_PITCH_POSITIVE_UPLIMIT)
