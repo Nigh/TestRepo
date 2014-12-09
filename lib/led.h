@@ -20,10 +20,10 @@
 #define PWM_FALL (2)
 #define PWM_HOLD (0)
 
-#define BAT80 (20)
-#define BAT60 (15)
-#define BAT40 (10)
-#define BAT20 (5)
+#define BAT80 (80)
+#define BAT60 (60)
+#define BAT40 (40)
+#define BAT20 (20)
 #define BAT0 (0)
 
 // #define led1Off() *(_PWM[0])=0,TOE0&=0xffff^_0002_TAU_CH1_OUTPUT_ENABLE,TO0 |= _0002_TAU_CH1_OUTPUT_VALUE_1

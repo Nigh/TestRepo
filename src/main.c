@@ -673,9 +673,10 @@ void fAdcEnd(void)
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
 	batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
+	// 42~125 -> 3.6v~4.2v
 	if(batteryLevel<0)
 		batteryLevel=0;
-	if(batteryLevelOld>25 && batteryLevel<=25){
+	if(batteryLevelOld>58 && batteryLevel<=58){
 		setVibrate(&sV5);
 		sVibrate.count=1;
 	}
@@ -683,10 +684,15 @@ void fAdcEnd(void)
 	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
 
-	powerLevel=batteryLevel/5;	//0~25
+	if(batteryLevel>42)
+		powerLevel=(float)(batteryLevel-42)*1.2;	//0~100
+	else
+		powerLevel=0;
+	if(powerLevel>100)
+		powerLevel=100;
 
 	uartBufWrite(data_batteryLevel,3);
-	uartSendBuf[3]=powerLevel*4;
+	uartSendBuf[3]=powerLevel;
 	calcSendBufSum();
 	uartSend(5);
 }
