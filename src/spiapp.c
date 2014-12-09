@@ -267,10 +267,9 @@ void stepLogCache(void)
 {
 	currentStepLog.steps[currentStepLog.logCount++]=steps;
 	steps=0;
-	if(currentStepLog.logCount>8)
+	if(currentStepLog.logCount>7)
 	{
 		memcpyUser(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
-		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 		currentStepLog.UTC=sUtcs.lTime;
 		if(!isStepLogEmpty())
 		{
@@ -282,13 +281,14 @@ void stepLogCache(void)
 			flashOpPut(opFlashStepSave);
 			flashOpFin();
 		}
+		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 	}
 }
 
 uchar isStepLogEmpty(void)
 {
 	uchar i=0;
-	while(i<=8){
+	while(i<=7){
 		if(currentStepLog.steps[i]>0)
 			return 0;
 		i++;
