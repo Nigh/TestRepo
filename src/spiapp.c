@@ -98,8 +98,10 @@ void _3DH5Hz(void)
 	static uint SMA=0,SMAOld=0,SMACount=0;	//1sec SMA (使用 1G=256)
 	static sGACC oldAcc;
 	static int staticCount=0,inactiveCount=0;
+	static uchar stepHalf=0;
 	int iTemp;
-	uchar calcCount=0,_;
+	uchar calcCount=0;
+	char _;
 	uchar* pBuf=spiRevBuf;
 	char temp[3];
 	tEULER* tEu;
@@ -128,9 +130,16 @@ void _3DH5Hz(void)
 				}
 				staticCount=0;
 			}
-			_=CalculateStep(temp);
-			if(_) {staticCount=0;g_Statu=G_ACTIVE;}
-			steps+=_;
+			if(stepHalf=!stepHalf){
+				if(g_Statu==G_INACTIVE)
+					_=_calcStep(temp,1);
+				else
+					_=_calcStep(temp,0);
+			// _=CalculateStep(temp);
+			}
+
+			if(_>0) {steps+=_;staticCount=0;g_Statu=G_ACTIVE;}
+			else if(_<0) {g_Statu=G_INACTIVE;}
 			pBuf+=6;
 		}
 
