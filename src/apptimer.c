@@ -79,6 +79,32 @@ int vibrateTask(void)
 	return 0;
 }
 
+extern void uartSendLogCount(void);
+uchar uartTimeOutTaskStatu=0;
+int uartTimeOutTask(void)
+{
+	if(sUpload.statu!=UPLOAD_IDLE)
+	{
+		if(sUpload.timeOut++>4){
+			sUpload.timeOut=0;
+			sUpload.timeOutCount++;
+			if(sUpload.timeOutCount<3)
+				uartSendLogCount();
+			else{
+				sUpload.statu=UPLOAD_IDLE;
+				sUpload.timeOutCount=0;
+				uartTimeOutTaskStatu=0;
+				return 0;
+			}
+		}
+		uartTimeOutTaskStatu=1;
+		return 1;
+	}else{
+		uartTimeOutTaskStatu=0;
+		return 0;
+	}
+}
+
 void setTimer64Hz(sAPPTIMER* apptimer,uint period)
 {
 	if(apptimerTaskEn==0){

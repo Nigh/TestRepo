@@ -144,19 +144,21 @@ void fRtc2Hz(void)
 
 	if(sUpload.statu!=UPLOAD_IDLE)
 	{
-		if(sUpload.timeOut++>2){
+		if(sUpload.timeOut++>1){
 			sUpload.timeOut=0;
 			sUpload.timeOutCount++;
 			if(sUpload.timeOutCount<3)
 				uartSendLogCount();
-			else
+			else{
 				sUpload.statu=UPLOAD_IDLE;
+				sUpload.timeOutCount=0;
+			}
 		}
 	}
 
 	if(uartRevTimeout>0){
 		uartRevTimeout++;
-		if(uartRevTimeout>3){
+		if(uartRevTimeout>1){
 			sUart.statu&=0xFF^UART_REV;
 			uartRevTimeout=0;
 		}
@@ -347,20 +349,27 @@ void uartSendLogCount(void)
 	uartSend(4+4);
 }
 
+extern int uartTimeOutTask(void);
+extern uchar uartTimeOutTaskStatu;
 void fBLEConfirm(void)
 {
 	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
 		and sUpload.statu!=UPLOAD_IDLE){
 		if(sUpload.packageRemain>=0 and uartRevBuf[3]!=0x0B)
 			flashReadSeek();
-		if(sUpload.packageRemain<1){
+		if(sUpload.packageRemain<=0){
 			sUpload.statu=UPLOAD_IDLE;
 			uartSendLogCount();
 			return;
 		}
 		dataReadSend();
-		sUpload.packageRemain--;
+		if(uartRevBuf[3]!=0x0B)
+			sUpload.packageRemain--;
 		sUpload.timeOut=0;
+		if(!uartTimeOutTaskStatu){
+			uartTimeOutTaskStatu=1;
+			taskInsert(&uartTimeOutTask);
+		}
 	}
 }
 
@@ -525,7 +534,11 @@ void fDataReqest(void)
 	if(sUpload.statu!=UPLOAD_IDLE)
 		return;
 	sUpload.timeOut=0;
-	sUpload.timeOutCount=0;
+	sUpload.timeOutCount=0;		
+	if(!uartTimeOutTaskStatu){
+		uartTimeOutTaskStatu=1;
+		taskInsert(&uartTimeOutTask);
+	}
 	if(uartRevBuf[3]==0x1){	//neck_log
 		sUpload.statu=UPLOAD_NECK;
 		sUpload.packageRemain=calcNeckLogNum();

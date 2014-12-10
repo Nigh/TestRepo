@@ -27,6 +27,8 @@ extern uchar timer(sAPPTIMER* apptimer);
 // extern sAPPTIMER BLEResetTimer;
 void stopVibrate(void);
 void setVibrate(sVIBRATE* sV);
+extern int uartTimeOutTask(void);
+
 extern void setTimer64Hz(sAPPTIMER* apptimer,uint period);
 extern void taskInsert(iFUNC* task);
 extern void taskDelete(uint ptr);
