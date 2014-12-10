@@ -367,6 +367,7 @@ void fBLEConfirm(void)
 		}
 		dataReadSend();
 		sUpload.timeOut=0;
+		sUpload.timeOutCount=0;
 		if(!uartTimeOutTaskStatu){
 			uartTimeOutTaskStatu=1;
 			taskInsert(&uartTimeOutTask);
