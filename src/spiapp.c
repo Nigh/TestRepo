@@ -135,11 +135,11 @@ void _3DH5Hz(void)
 					_=_calcStep(temp,1);
 				else
 					_=_calcStep(temp,0);
-			// _=CalculateStep(temp);
+				// _=CalculateStep(temp);
+				if(_>0) {steps+=_;staticCount=0;g_Statu=G_ACTIVE;}
+				else if(_<0) {g_Statu=G_INACTIVE;}
 			}
 
-			if(_>0) {steps+=_;staticCount=0;g_Statu=G_ACTIVE;}
-			else if(_<0) {g_Statu=G_INACTIVE;}
 			pBuf+=6;
 		}
 
