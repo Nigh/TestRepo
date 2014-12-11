@@ -279,7 +279,6 @@ void stepLogCache(void)
 	if(currentStepLog.logCount>7)
 	{
 		memcpyUser(&currentStepLog,&stepLog,sizeof(sSTEPLOG));
-		currentStepLog.UTC=sUtcs.lTime;
 		if(!isStepLogEmpty())
 		{
 			flashOpPut(opFlashWait);
@@ -291,6 +290,7 @@ void stepLogCache(void)
 			flashOpFin();
 		}
 		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
+		currentStepLog.UTC=sUtcs.lTime;
 	}
 }
 

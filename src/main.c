@@ -502,9 +502,9 @@ void fGsensorAcc(void)
 {
 	if(uartRevBuf[3]){
 		directGEn=1;
+		set3DHEx(0x20,0x47);
 		if(g_Statu==G_SLEEP){
 			R_TAU0_Channel5_Start();
-			set3DHEx(0x20,0x47);
 		}
 	}else{
 		directGEn=0;
