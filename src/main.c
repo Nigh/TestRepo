@@ -131,6 +131,8 @@ void neckHealthCheck(void)
 }
 
 
+extern tNECK Neck;
+// Neck.PositionID
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -175,6 +177,14 @@ void fRtc2Hz(void)
 		timer(&adTimer);
 
 		if(sNeckMoveStatu.statu){
+			if(g_Statu==G_SLEEP){
+				switch(Neck.PositionID){
+				case HEAD_UP: currentNeckLog.upTime+=10; break;
+				case HEAD_DOWN: currentNeckLog.downTime+=10; break;
+				case HEAD_LEFT: currentNeckLog.leftTime+=10; break;
+				case HEAD_RIGHT: currentNeckLog.rightTime+=10; break;
+				}
+			}
 			sNeckMoveStatu.timeCount++;
 			// if(sNeckMoveStatu.timeCount>=240){
 			if(sNeckMoveStatu.timeCount>=60){	//debug
