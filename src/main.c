@@ -27,6 +27,8 @@ fFUNC const msgHandler[]={		// No
 sMSG gMsg={0,0};	//global message
 uchar uartRevTimeout=0;
 
+uchar BLEResetCount=0;
+
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
 void uartSendLogCount(void);
@@ -141,6 +143,17 @@ void fRtc2Hz(void)
 	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
 	static uint currentStepLogSec=0;
 	count++;
+
+	if(BLEResetCount>0)
+	{
+		BLEResetCount++;
+		if(BLEResetCount>3){
+			P2.5=1;
+			BLEResetCount=0;
+		}else if(BLEResetCount>2){
+			P2.5=0;
+		}
+	}
 
 	if(sSelf.mode!=SYS_ACTIVE)
 		return;
@@ -365,6 +378,7 @@ extern int uartTimeOutTask(void);
 extern uchar uartTimeOutTaskStatu;
 void fBLEConfirm(void)
 {
+	BLEResetCount=0;
 	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
 		and sUpload.statu!=UPLOAD_IDLE){
 		if(sUpload.packageRemain>0 and uartRevBuf[3]!=0x0B){
@@ -725,6 +739,7 @@ void fAdcEnd(void)
 	uartSendBuf[3]=powerLevel;
 	calcSendBufSum();
 	uartSend(5);
+	BLEResetCount=1;
 }
 
 
