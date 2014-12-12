@@ -64,7 +64,7 @@ void R_PORT_Create(void)
     P2 = _01_Pn0_OUTPUT_1 | _02_Pn1_OUTPUT_1 | _04_Pn2_OUTPUT_1 | _08_Pn3_OUTPUT_1 | _10_Pn4_OUTPUT_1 |
          _20_Pn5_OUTPUT_1 | _40_Pn6_OUTPUT_1;
     P3 = _01_Pn0_OUTPUT_1;
-    P5 = _00_Pn0_OUTPUT_0;
+    P5 = _00_Pn0_OUTPUT_0 | _00_Pn1_OUTPUT_0;
     PU7 = _01_PUn0_PULLUP_ON | _02_PUn1_PULLUP_ON;
     ADPC = _01_ADPC_DI_ON;
     PM1 = _01_PMn0_NOT_USE | _02_PMn1_NOT_USE | _04_PMn2_NOT_USE | _08_PMn3_NOT_USE | _10_PMn4_NOT_USE |
@@ -72,7 +72,7 @@ void R_PORT_Create(void)
     PM2 = _00_PMn0_MODE_OUTPUT | _00_PMn1_MODE_OUTPUT | _00_PMn2_MODE_OUTPUT | _00_PMn3_MODE_OUTPUT |
           _00_PMn4_MODE_OUTPUT | _00_PMn5_MODE_OUTPUT | _00_PMn6_MODE_OUTPUT | _80_PM2_DEFAULT;
     PM3 = _00_PMn0_MODE_OUTPUT | _02_PMn1_NOT_USE | _FC_PM3_DEFAULT;
-    PM5 = _00_PMn0_MODE_OUTPUT | _02_PMn1_NOT_USE | _FC_PM5_DEFAULT;
+    PM5 = _00_PMn0_MODE_OUTPUT | _00_PMn1_MODE_OUTPUT | _02_PMn1_NOT_USE | _FC_PM5_DEFAULT;
 }
 
 /* Start user code for adding. Do not edit comment generated here */

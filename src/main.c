@@ -49,6 +49,7 @@ void afterBoot(void)
 	// NOP();	//wait 400ms by debugger
 
 	P2.0=1;
+	P5.1=0;
 	R_INTC0_Start();
 	R_KEY_Start();
 	sUtcs.lTime=0;
