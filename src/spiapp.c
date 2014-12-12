@@ -150,6 +150,8 @@ void _3DH5Hz(void)
 			// sGAcc=spiRevBuf;
 			if(SMACount==0){
 				SMAOld=SMA;
+				if(SMAOld>G_SLEEPLIMIT)
+					staticCount=0;
 				SMA=0;
 			}else{
 				SMA+=accDiff(oldAcc.x,sGAcc.x)+accDiff(oldAcc.y,sGAcc.y)+accDiff(oldAcc.z,sGAcc.z);
