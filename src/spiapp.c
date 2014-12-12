@@ -216,6 +216,7 @@ void _3DH5Hz(void)
 	if(++staticCount>G_ACTIVE_TIMEOUT){
 		g_Statu=G_SLEEP;
 		set3DHEx(0x20,0x1f);
+		set3DHEx(0x20,0x1f);
 		R_TAU0_Channel5_Stop();
 		staticCount=0;
 	}else if(staticCount>STEP_ACTIVE_TIMEOUT){

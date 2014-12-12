@@ -81,6 +81,7 @@ void iMain(void)
 	fifoFlush();
 	initFlash();
 	init3DH();
+	init3DH();
 	R_TAU0_Channel5_Start();
 	// dddebug();
 
@@ -226,6 +227,7 @@ void fRtc2Hz(void)
 				if(g_Statu!=G_SLEEP){
 					flag=0;
 					R_TAU0_Channel5_Start();
+					set3DHEx(0x20,0x47);
 					set3DHEx(0x20,0x47);
 				}
 			}
@@ -467,6 +469,7 @@ void goSleep(void)
 {
 	startHClk();
 	set3DHEx(0x20,0x07);	// power down
+	set3DHEx(0x20,0x07);	// power down
 	if(sSelf.mode==SYS_ACTIVE)
 	{
 		memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
@@ -482,6 +485,7 @@ void goActive(void)
 {
 	if(sSelf.mode==SYS_SLEEP)
 	{
+		set3DHEx(0x20,0x47);
 		set3DHEx(0x20,0x47);
 		R_TAU0_Channel5_Start();
 		g_Statu=G_INACTIVE;
@@ -502,6 +506,7 @@ void fGsensorAcc(void)
 {
 	if(uartRevBuf[3]){
 		directGEn=1;
+		set3DHEx(0x20,0x47);
 		set3DHEx(0x20,0x47);
 		if(g_Statu==G_SLEEP){
 			R_TAU0_Channel5_Start();
