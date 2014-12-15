@@ -16,6 +16,8 @@ const uchar data_axisDirect[3]={'#',0x08,0x13};
 const uchar data_batteryLevel[3]={'#',0x03,0x14};
 const uchar data_bleCtrl[3]={'#',0x03,0x15};
 
+const uchar data_OADRequest[3]={'#',0x04,0x17};
+
 uchar uartSendBuf[32]={1,2,3,4,5,6,7,8,9,1,2,3};
 uchar uartRevBuf[32];
 

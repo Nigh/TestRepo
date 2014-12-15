@@ -27,6 +27,7 @@ typedef struct
 
 #define FLASH_S_STEP 0xF1
 #define FLASH_S_NECK 0xF2
+#define FLASH_S_OAD 0xF3
 
 #define FLASH_F_IDLEWAIT 1
 #define FLASH_F_WRITE 2
@@ -42,6 +43,7 @@ void fFlashRead(void);
 
 void fStepSave(void);
 void fNeckSave(void);
+void fOADSave(void);
 
 void fBlockErase(void);
 void fReadStepLog(void);

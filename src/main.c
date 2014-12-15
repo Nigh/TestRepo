@@ -583,11 +583,52 @@ void fDataReqest(void)
 	// dataReadSend();
 }
 
-void fDEBUG(void)
+static uint OADcount=3;
+uchar OADLog[18]={0};
+extern const uchar data_OADRequest[];
+static const sFLASHOP opFlashOADErase={FLASH_F_BLOCKERASE,FLASH_S_OAD};
+static const sFLASHOP opFlashOADSave={FLASH_F_WRITE,FLASH_S_OAD};
+void fOAD(void)
 {
-	TDR06=uartRevBuf[3]*4000;
-	uartBufWrite(data_transSuccess,5);
-	uartSendDirect(5);
+	uint i=0,checkSum=0;
+	uint *ptr=OADLog;
+	if(uartRevBuf[1]!=0x14)
+		return;
+	sSelf.mode=SYS_OAD;
+	if(uartRevBuf[3]==0 && uartRevBuf[4]==0){
+		uartBufWrite(data_OADRequest,3);
+		uartSendBuf[3]=OADcount&0xFF;
+		uartSendBuf[4]=OADcount>>8;
+		calcSendBufSum();
+		uartSendDirect(6);
+		OADcount++;
+	}else{
+		while(i<16){
+			OADLog[i++]=uartRevBuf[i+4];
+		}
+		i=0;
+		while(i<8){
+			checkSum+=*ptr++;
+			i++;
+		}
+		*ptr=checkSum;
+
+		flashOpPut(opFlashWait);
+		if(needErase(18,programFlash.endAddr)){
+			flashOpPut(opFlashOADErase);
+			flashOpPut(opFlashWait);
+		}
+		flashOpPut(opFlashOADSave);
+		flashOpFin();
+
+		// uartBufWrite(data_OADRequest,3);
+		// uartSendBuf[3]=count&0xFF;
+		// uartSendBuf[4]=count>>8;
+		// calcSendBufSum();
+		// uartSendDirect(6);
+	}
+	// uartBufWrite(data_transSuccess,5);
+	// uartSendDirect(5);
 }
 
 void fConnectRequest(void)
@@ -609,7 +650,7 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fFormatFlash),				// 6
 	VECTOR(fGsensorAcc),				// 7
 	VECTOR(fDataReqest),				// 8
-	VECTOR(fDEBUG),				// 9
+	VECTOR(fOAD),				// 9
 	VECTOR(fConnectRequest),				// 10
 };
 
@@ -652,6 +693,14 @@ void fFlashOpFinish(void)
 {
 	gOP=flashOpGet();
 	if(gOP.opType==0){
+		if(sSelf.mode==SYS_OAD){
+			uartBufWrite(data_OADRequest,3);
+			uartSendBuf[3]=OADcount&0xFF;
+			uartSendBuf[4]=OADcount>>8;
+			calcSendBufSum();
+			uartSendDirect(6);
+			OADcount++;
+		}
 		// flashSleep();
 	}else{
 		if(gOP.opType<=5)

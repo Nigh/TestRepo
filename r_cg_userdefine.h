@@ -80,6 +80,7 @@ User definitions
 #define SYS_ACTIVE (0)
 #define SYS_SLEEP (1)
 #define SYS_TEST (2)
+#define SYS_OAD (3)
 
 extern sSELF sSelf;
 extern sUTCS sUtcs,sAlarmTime;

@@ -22,6 +22,8 @@ void fFlashWrite(void)
 		fStepSave();
 	}else if(gOP.detail==FLASH_S_NECK){
 		fNeckSave();
+	}else if(gOP.detail==FLASH_S_OAD){
+		fOADSave();
 	}
 }
 
@@ -39,6 +41,11 @@ void flashOpFin(void)
 	DI();
 	fifoPut4ISR(sFlashFinishMsg);
 	EI();
+}
+
+void OADDataSave(uchar* ptr,uchar len)
+{
+	flashWrite(ptr, len, programFlash.endAddr);
 }
 
 // extern _sFlash sFlash;
@@ -77,12 +84,24 @@ void fNeckSave(void){
 	flashSeek(i*sizeof(sNECKLOG),neckFlash.endAddr);
 	flashOpFin();
 }
+
+extern uchar OADLog[];
+void fOADSave(void)
+{
+	OADDataSave(&OADLog,18);
+	memsetUser(&OADLog,0,18);
+	flashSeek(18,programFlash.endAddr);
+	flashOpFin();
+}
+
 // extern flashErase(unsigned short dataLength, unsigned long flashAddr)
 void fBlockErase(void){
 	if(gOP.detail==FLASH_S_STEP){
 		flashErase(sizeof(sSTEPLOG),stepFlash.startAddr);
 	}else if(gOP.detail==FLASH_S_NECK){
 		flashErase(2*sizeof(sNECKLOG),neckFlash.startAddr);
+	}else if(gOP.detail==FLASH_S_OAD){
+		flashErase(18,programFlash.endAddr);
 	}
 	flashOpFin();
 }

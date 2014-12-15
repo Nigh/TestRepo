@@ -61,7 +61,7 @@ void _nop_Ex(void)
 
 void _halt_Ex(void)
 {
-	if(sUart.statu==UART_IDLE && sLed.ledMode==LED_M_OFF && sVibrate.en==0 && sUpload.statu==UPLOAD_IDLE)
+	if(sUart.statu==UART_IDLE && sLed.ledMode==LED_M_OFF && sVibrate.en==0 && sUpload.statu==UPLOAD_IDLE && sSelf.mode!=SYS_OAD)
 		stopHClk();
 	else
 		startHClk();
