@@ -28,6 +28,7 @@ sMSG gMsg={0,0};	//global message
 uchar uartRevTimeout=0;
 
 uchar BLEResetCount=0;
+static uint OADcount=3;
 
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
@@ -44,6 +45,7 @@ void afterBoot(void)
 	unsigned long x=0;
 	// flashErase(1,0);	// for debug
 	// NOP();	//wait 400ms by debugger
+	P2.5=0;
 	while(x++<100000);
 	// flashErase(1,131072);	// for debug
 	// NOP();	//wait 400ms by debugger
@@ -59,6 +61,7 @@ void afterBoot(void)
 	fifoInit(&sMsgFifo,msgQueue);
 	flashQueueInit(&sFlashQueue);
 	setADTimer(10);
+	P2.5=1;
 }
 
 #include "bootmain.h"
@@ -104,9 +107,12 @@ void iMain(void)
 
 // ***************************************
 // ***************************************
+
+uchar resetHEX[]={0xff,0xff,0xff,0xff};
+fFUNC resetFunc=&resetHEX;
 void fReset(void)
 {
-	
+	resetFunc();
 }
 
 // ***************************************
@@ -583,11 +589,21 @@ void fDataReqest(void)
 	// dataReadSend();
 }
 
-static uint OADcount=3;
+
 uchar OADLog[18]={0};
 extern const uchar data_OADRequest[];
 static const sFLASHOP opFlashOADErase={FLASH_F_BLOCKERASE,FLASH_S_OAD};
 static const sFLASHOP opFlashOADSave={FLASH_F_WRITE,FLASH_S_OAD};
+
+void OADRequest(uint num)
+{
+	uartBufWrite(data_OADRequest,3);
+	uartSendBuf[3]=num&0xFF;
+	uartSendBuf[4]=num>>8;
+	calcSendBufSum();
+	uartSendDirect(6);
+}
+
 void fOAD(void)
 {
 	uint i=0,checkSum=0;
@@ -595,13 +611,14 @@ void fOAD(void)
 	if(uartRevBuf[1]!=0x14)
 		return;
 	sSelf.mode=SYS_OAD;
-	if(uartRevBuf[3]==0 && uartRevBuf[4]==0){
-		uartBufWrite(data_OADRequest,3);
-		uartSendBuf[3]=OADcount&0xFF;
-		uartSendBuf[4]=OADcount>>8;
-		calcSendBufSum();
-		uartSendDirect(6);
-		OADcount++;
+	OADcount=(uartRevBuf[4]<<8)+uartRevBuf[3];
+	if(OADcount==0){
+		flashOpPut(opFlashWait);
+		if(needErase(18,programFlash.endAddr)){
+			flashOpPut(opFlashOADErase);
+			flashOpPut(opFlashWait);
+		}
+		flashOpFin();
 	}else{
 		while(i<16){
 			OADLog[i++]=uartRevBuf[i+4];
@@ -614,21 +631,14 @@ void fOAD(void)
 		*ptr=checkSum;
 
 		flashOpPut(opFlashWait);
+		flashOpPut(opFlashOADSave);
 		if(needErase(18,programFlash.endAddr)){
 			flashOpPut(opFlashOADErase);
 			flashOpPut(opFlashWait);
 		}
-		flashOpPut(opFlashOADSave);
 		flashOpFin();
-
-		// uartBufWrite(data_OADRequest,3);
-		// uartSendBuf[3]=count&0xFF;
-		// uartSendBuf[4]=count>>8;
-		// calcSendBufSum();
-		// uartSendDirect(6);
 	}
-	// uartBufWrite(data_transSuccess,5);
-	// uartSendDirect(5);
+
 }
 
 void fConnectRequest(void)
@@ -688,18 +698,22 @@ void fFlashOpStart(void)
 	}
 }
 
+extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 extern sFLASHOP gOP;
+static uchar AA=0xAA;
 void fFlashOpFinish(void)
 {
 	gOP=flashOpGet();
 	if(gOP.opType==0){
 		if(sSelf.mode==SYS_OAD){
-			uartBufWrite(data_OADRequest,3);
-			uartSendBuf[3]=OADcount&0xFF;
-			uartSendBuf[4]=OADcount>>8;
-			calcSendBufSum();
-			uartSendDirect(6);
 			OADcount++;
+			if(OADcount<3)
+				OADcount=3;
+			if(OADcount>=0x0c05){
+				flashWrite(&AA, 1, PROGRAMFLAGADDR);
+				fReset();
+			}
+			OADRequest(OADcount);
 		}
 		// flashSleep();
 	}else{
