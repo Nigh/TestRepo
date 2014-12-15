@@ -766,6 +766,7 @@ void fChargeInt(void)
 {
 	if(P7.0==0){
 		batteryStatu|=BAT_CHARGE;
+		setADTimer(10);
 		goActive();
 	}
 	else

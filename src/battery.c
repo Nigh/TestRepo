@@ -9,7 +9,7 @@ int batteryLevel=0xffff;
 static uchar adcCount=0;
 uint adcValue[4];
 uchar powerLevel=BAT80+1;
-
+extern uchar batteryStatu;
 void ADPro(void)
 {
 	if(sVibrate.en==0){
@@ -18,7 +18,10 @@ void ADPro(void)
 			setADTimer(1);
 		}else{
 			startAD();
-			setADTimer(600);
+			if(batteryStatu>0)
+				setADTimer(30);
+			else
+				setADTimer(600);
 		}
 	}else{
 		setADTimer(10);
