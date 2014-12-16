@@ -26,9 +26,10 @@ fFUNC const msgHandler[]={		// No
 
 sMSG gMsg={0,0};	//global message
 uchar uartRevTimeout=0;
+uchar OADTimeout=0,OADTimeoutCount=0;
 
 uchar BLEResetCount=0;
-static uint OADcount=3;
+static uint OADcount=0;
 
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
@@ -162,9 +163,6 @@ void fRtc2Hz(void)
 		}
 	}
 
-	if(sSelf.mode!=SYS_ACTIVE)
-		return;
-
 	// if(sUpload.statu!=UPLOAD_IDLE)
 	// {
 	// 	if(sUpload.timeOut++>1){
@@ -186,6 +184,21 @@ void fRtc2Hz(void)
 			uartRevTimeout=0;
 		}
 	}
+
+	if(sSelf.mode==SYS_OAD){
+		OADTimeout++;
+		if(OADTimeout>2){
+			OADRequest(OADcount+1);
+			OADTimeout=0;
+			OADTimeoutCount++;
+			if(OADTimeoutCount>2){
+				fReset();
+			}
+		}
+	}
+
+	if(sSelf.mode!=SYS_ACTIVE)
+		return;
 
 	if((count&0x1)==0)
 	{
@@ -610,22 +623,20 @@ void fOAD(void)
 	uint *ptr=OADLog;
 	if(uartRevBuf[1]!=0x14)
 		return;
-	sSelf.mode=SYS_OAD;
 	OADcount=(uartRevBuf[4]<<8)+uartRevBuf[3];
-	if(OADcount==0){
+	OADTimeout=0;
+	OADTimeoutCount=0;
+	if(OADcount==0 && sSelf.mode!=SYS_OAD){
+		sSelf.mode=SYS_OAD;
+		OADRequest(0);
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashOADErase);
 		flashOpPut(opFlashWait);
 		flashOpFin();
 	}else{
-		while(i<16){
-			OADLog[i++]=uartRevBuf[i+4];
-		}
+		while(i<16){OADLog[i++]=uartRevBuf[i+4]; }
 		i=0;
-		while(i<8){
-			checkSum+=*ptr++;
-			i++;
-		}
+		while(i<8){checkSum+=*ptr++; i++; }
 		*ptr=checkSum;
 
 		flashOpPut(opFlashWait);
@@ -636,7 +647,6 @@ void fOAD(void)
 		}
 		flashOpFin();
 	}
-
 }
 
 void fConnectRequest(void)
@@ -704,14 +714,13 @@ void fFlashOpFinish(void)
 	gOP=flashOpGet();
 	if(gOP.opType==0){
 		if(sSelf.mode==SYS_OAD){
-			OADcount++;
 			if(OADcount<3)
 				OADcount=3;
 			if(OADcount>=0x0c05){
 				flashWrite(&AA, 1, PROGRAMFLAGADDR);
 				fReset();
 			}
-			OADRequest(OADcount);
+			OADRequest(OADcount+1);
 		}
 		// flashSleep();
 	}else{
