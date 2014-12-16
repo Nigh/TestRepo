@@ -616,10 +616,8 @@ void fOAD(void)
 	OADcount=(uartRevBuf[4]<<8)+uartRevBuf[3];
 	if(OADcount==0){
 		flashOpPut(opFlashWait);
-		if(needErase(18,programFlash.endAddr)){
-			flashOpPut(opFlashOADErase);
-			flashOpPut(opFlashWait);
-		}
+		flashOpPut(opFlashOADErase);
+		flashOpPut(opFlashWait);
 		flashOpFin();
 	}else{
 		while(i<16){
