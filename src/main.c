@@ -472,10 +472,10 @@ void fLEDCtl(void)
 		case 3: ledMode=LED_M_BREATHE;break;
 		case 4: ledMode=LED_M_SWING;break;
 		case 5: ledMode=LED_M_HERATBEAT;break;
-		case 6: powerLevel=1;ledMode=LED_M_POWER;break;
-		case 7: powerLevel=2;ledMode=LED_M_POWER;break;
-		case 8: powerLevel=3;ledMode=LED_M_POWER;break;
-		case 9: powerLevel=4;ledMode=LED_M_POWER;break;
+		case 6: powerLevel=BAT20+1;ledMode=LED_M_POWER;break;
+		case 7: powerLevel=BAT40+1;ledMode=LED_M_POWER;break;
+		case 8: powerLevel=BAT60+1;ledMode=LED_M_POWER;break;
+		case 9: powerLevel=BAT80+1;ledMode=LED_M_POWER;break;
 		case 10: ledMode=LED_M_RANDOM;break;
 		default: ledMode=LED_M_OFF;break;
 	}
