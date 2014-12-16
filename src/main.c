@@ -510,7 +510,7 @@ void goSleep(void)
 		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 		g_Statu=G_SLEEP;
 		R_TAU0_Channel5_Stop();
-		// 此处应关闭蓝牙
+		P5.1=1;
 	}
 	sSelf.mode=SYS_SLEEP;
 }
@@ -523,7 +523,7 @@ void goActive(void)
 		set3DHEx(0x20,0x47);
 		R_TAU0_Channel5_Start();
 		g_Statu=G_INACTIVE;
-		// 此处应打开蓝牙
+		P5.1=0;
 	}
 	sSelf.mode=SYS_ACTIVE;
 }
@@ -628,6 +628,7 @@ void fOAD(void)
 	OADTimeoutCount=0;
 	if(OADcount==0 && sSelf.mode!=SYS_OAD){
 		sSelf.mode=SYS_OAD;
+		directGEn=0;
 		OADRequest(0);
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashOADErase);
