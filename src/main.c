@@ -459,8 +459,6 @@ void fMotorCtl(void)
 		default: break;
 	}
 	sVibrate.count=uartRevBuf[3]>>4;
-	if(sVibrate.count==0)
-		sVibrate.count=0xff;
 	uartSuccess(0x05);
 }
 
