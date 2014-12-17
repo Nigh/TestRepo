@@ -42,11 +42,32 @@ extern void initFlash(void);
 extern void flashErase(unsigned short dataLength, unsigned long flashAddr);
 extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 
+extern int isFlashIdle(void);
+
+void waitFlashIdle(void)
+{
+	unsigned int x=0;
+	while(1)
+	{
+		if(isFlashIdle())
+			return;
+		x=0;
+		while(x++<10000);
+	}
+}
+
+void recoverData(void)
+{
+	uchar temp[20];
+}
+
 void afterBoot(void)
 {
 	unsigned long x=0;
 	// flashErase(1,0);	// for debug
 	// NOP();	//wait 400ms by debugger
+	waitFlashIdle();
+	recoverData();
 	P2.5=0;
 	while(x++<100000);
 	// flashErase(1,131072);	// for debug
