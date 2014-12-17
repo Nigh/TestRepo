@@ -645,7 +645,8 @@ void fOAD(void)
 	uint *ptr=OADLog;
 	if(uartRevBuf[1]!=0x14)
 		return;
-	OADcount=(uartRevBuf[4]<<8)+uartRevBuf[3];
+	OADcount=uartRevBuf[4];
+	OADcount=(OADcount<<8)|uartRevBuf[3];
 	OADTimeout=0;
 	OADTimeoutCount=0;
 	if(OADcount<3 && sSelf.mode!=SYS_OAD){
