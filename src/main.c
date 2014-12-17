@@ -34,6 +34,7 @@ static uint OADcount=0;
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
 void uartSendLogCount(void);
+void OADRequest(uint num);
 
 extern void dddebug(void);
 extern void initFlash(void);
@@ -626,10 +627,10 @@ void fOAD(void)
 	OADcount=(uartRevBuf[4]<<8)+uartRevBuf[3];
 	OADTimeout=0;
 	OADTimeoutCount=0;
-	if(OADcount==0 && sSelf.mode!=SYS_OAD){
+	if(OADcount<3 && sSelf.mode!=SYS_OAD){
 		sSelf.mode=SYS_OAD;
 		directGEn=0;
-		OADRequest(0);
+		OADRequest(1);
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashOADErase);
 		flashOpPut(opFlashWait);
@@ -715,8 +716,8 @@ void fFlashOpFinish(void)
 	gOP=flashOpGet();
 	if(gOP.opType==0){
 		if(sSelf.mode==SYS_OAD){
-			if(OADcount<3)
-				OADcount=3;
+			if(OADcount<2)
+				OADcount=2;
 			if(OADcount>=0x0c05){
 				flashWrite(&AA, 1, PROGRAMFLAGADDR);
 				fReset();
