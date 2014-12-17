@@ -663,7 +663,7 @@ void fOAD(void)
 		while(i<8){checkSum+=*ptr++; i++; }
 		*ptr=checkSum;
 
-		flashOpPut(opFlashWait);
+		// flashOpPut(opFlashWait);
 		flashOpPut(opFlashOADSave);
 		if(needErase(18,programFlash.endAddr)){
 			flashOpPut(opFlashOADErase);
