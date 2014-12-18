@@ -659,7 +659,7 @@ void fOAD(void)
 		// flashOpPut(opFlashWait);
 		// flashOpPut(opFlashOADErase);
 		// flashOpPut(opFlashWait);
-		flashOpFin();
+		// flashOpFin();
 	}else{
 		while(i<16){OADLog[i++]=uartRevBuf[i+5];}
 		i=0;
