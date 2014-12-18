@@ -265,6 +265,8 @@ unsigned char needErase(unsigned short dataLength, unsigned long flashAddr)
 	unsigned int temp=flashAddr%FLASH_BLOCK_SIZE;
 	if(temp+dataLength>FLASH_BLOCK_SIZE)	//(temp==0时，应返回0)
 		return 1;
+	if(temp==0)
+		return 1;
 	if(flashAddr==NECKRANGSTART || flashAddr==STEPRANGSTART || flashAddr==PROGRAMERRANGSTART)
 		return 1;
 	return 0;

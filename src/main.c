@@ -52,13 +52,14 @@ void waitFlashIdle(void)
 		if(isFlashIdle())
 			return;
 		x=0;
-		while(x++<10000);
+		while(x++<1000);
 	}
 }
 
 void recoverData(void)
 {
 	uchar temp[20];
+
 }
 
 void afterBoot(void)
@@ -653,22 +654,24 @@ void fOAD(void)
 		sSelf.mode=SYS_OAD;
 		directGEn=0;
 		OADRequest(1);
-		flashOpPut(opFlashWait);
-		flashOpPut(opFlashOADErase);
-		flashOpPut(opFlashWait);
+		// flashOpPut(opFlashWait);
+		// flashOpPut(opFlashOADErase);
+		// flashOpPut(opFlashWait);
 		flashOpFin();
 	}else{
-		while(i<16){OADLog[i++]=uartRevBuf[i+4]; }
+		while(i<16){OADLog[i++]=uartRevBuf[i+5];}
 		i=0;
 		while(i<8){checkSum+=*ptr++; i++; }
 		*ptr=checkSum;
 
 		// flashOpPut(opFlashWait);
-		flashOpPut(opFlashOADSave);
+		waitFlashIdle();
 		if(needErase(18,programFlash.endAddr)){
+			flashOpPut(opFlashWait);
 			flashOpPut(opFlashOADErase);
 			flashOpPut(opFlashWait);
 		}
+		flashOpPut(opFlashOADSave);
 		flashOpFin();
 	}
 }
@@ -740,8 +743,13 @@ void fFlashOpFinish(void)
 		if(sSelf.mode==SYS_OAD){
 			if(OADcount<2)
 				OADcount=2;
-			if(OADcount>=0x0c05){
+			if(OADcount>=0x0c04){
+				waitFlashIdle();
 				flashWrite(&AA, 1, PROGRAMFLAGADDR);
+				waitFlashIdle();
+				readFromFlashBytes(&AA,1,PROGRAMFLAGADDR);
+				readFromFlashBytes(&AA,1,PROGRAMERRANGSTART);
+				NOP();
 				fReset();
 			}
 			OADRequest(OADcount+1);
