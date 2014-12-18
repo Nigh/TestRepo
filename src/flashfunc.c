@@ -263,7 +263,7 @@ redelay2:
 unsigned char needErase(unsigned short dataLength, unsigned long flashAddr)
 {
 	unsigned int temp=flashAddr%FLASH_BLOCK_SIZE;
-	if(temp+dataLength>FLASH_BLOCK_SIZE)	//(temp==0时，应返回0)
+	if(temp+dataLength>FLASH_BLOCK_SIZE)	//(temp==0时，应返回1)
 		return 1;
 	if(temp==0)
 		return 1;
