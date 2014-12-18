@@ -246,7 +246,7 @@ sNECKLOG neckLog[16]={0};
 void neckLogCache(void)
 {
 	uchar i=0;
-	while(neckLog[i++].UTC!=0);
+	while(neckLog[i++].UTC!=0 && i<15);
 	i-=1;
 	neckLog[i].UTC=currentNeckLog.UTC;
 	neckLog[i].neckMove=currentNeckLog.neckMove;
