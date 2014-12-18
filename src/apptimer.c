@@ -62,6 +62,8 @@ int vibrateTask(void)
 				VibrateOn();
 			}
 			if(sVibrate.ptr==0){
+				if(sVibrate.count>0xf0)
+					sVibrate.count=0xff;
 				if(sVibrate.count--==0){
 					vibrate32HzCount=0;
 					sVibrate.en=0;
@@ -135,9 +137,6 @@ uchar timer(sAPPTIMER* apptimer)
 	}
 	return 0;
 }
-
-
-
 
 void stopVibrate(void)
 {
