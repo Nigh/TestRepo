@@ -257,6 +257,14 @@ redelay2:
 				goto rewriteaddr2;
 			}
 		} while(i < dataLength);
+
+		for(i=0;i<256-(flashAddr+dataLength)%256;i++)
+		{
+			SIO00=0xFF;
+			while(CSIIF00==0);
+			CSIIF00=0;
+		}
+
 			disable_flash();
 }
 
