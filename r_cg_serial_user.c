@@ -179,6 +179,7 @@ extern uchar uartRevTimeout;
 __interrupt static void int_uartRev(void)
 {
 	sMSG sMsg;
+	uchar checkSum=0,i=0;
 	uartRevBuf[sUart.count++] = RXD1;
 	uartRevTimeout=0;
 	if(sUart.count==1){
@@ -188,10 +189,14 @@ __interrupt static void int_uartRev(void)
 		if(uartRevBuf[1]+2==sUart.count){
 			sMsg.type=M_TYPE_BLE;
 			sMsg.content=uartRevBuf[2];
-			fifoPut4ISR(sMsg);
-			sUart.count=0;
-			sUart.statu&=0xFF^UART_REV;
-			// sUart.statu=UART_IDLE;
+			for(i=2;i<=uartRevBuf[1];i++)
+				checkSum+=uartRevBuf[i];
+			if(checkSum==uartRevBuf[uartRevBuf[1]+1]){
+				fifoPut4ISR(sMsg);
+				sUart.count=0;
+				sUart.statu&=0xFF^UART_REV;
+				// sUart.statu=UART_IDLE;
+			}
 		}
 	}
 }
