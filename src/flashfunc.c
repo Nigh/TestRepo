@@ -258,7 +258,7 @@ redelay2:
 			}
 		} while(i < dataLength);
 
-		for(i=0;i<256-(flashAddr+dataLength)%256;i++)
+		for(i=0;i<16;i++)
 		{
 			SIO00=0xFF;
 			while(CSIIF00==0);
