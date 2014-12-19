@@ -24,5 +24,6 @@ void spiStop(void);
 void _3DH5Hz(void);
 void neckLogCache(void);
 void stepLogCache(void);
+void addrCache(void);
 
 #endif

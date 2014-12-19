@@ -236,10 +236,21 @@ void memsetUser(uchar* ptr,const uchar ch,const size_t length)
 		*ptr++=ch;
 }
 
+const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
+static const sFLASHOP opFlashAddrErase={FLASH_F_BLOCKERASE,FLASH_S_ADDR};
+static const sFLASHOP opFlashAddrSave={FLASH_F_WRITE,FLASH_S_ADDR};
+void addrCache(void)
+{
+	flashOpPut(opFlashWait);
+	flashOpPut(opFlashAddrErase);
+	flashOpPut(opFlashWait);
+	flashOpPut(opFlashAddrSave);
+	flashOpFin();
+}
+
 // 缓存颈动量时清理longLog
 // 触发颈动量时配置longLog.UTC
 // 写入flash后，清Log.UTC
-const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
 static const sFLASHOP opFlashNeckErase={FLASH_F_BLOCKERASE,FLASH_S_NECK};
 static const sFLASHOP opFlashNeckSave={FLASH_F_WRITE,FLASH_S_NECK};
 sNECKLOG neckLog[16]={0};

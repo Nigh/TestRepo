@@ -3,6 +3,8 @@
 #include "r_cg_userdefine.h"
 #include "NeckAlgorithm.h"
 
+#include "flashfunc.h"
+
 #define VECTOR(vec) vec
 
 fFUNC const msgHandler[]={		// No
@@ -56,10 +58,61 @@ void waitFlashIdle(void)
 	}
 }
 
+extern void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
 void recoverData(void)
 {
+	uchar i=0;
 	uchar temp[20];
+	union{
+		uchar addr[16];
+		unsigned long addrLong[4];
+	}uAddr;
+	waitFlashIdle();
+	readFromFlashBytes(uAddr.addr,4*sizeof(unsigned long),ADDR_SAVE_START);
+	if(uAddr.addrLong[0]!=0xffffffff){
+		stepFlash.startAddr=uAddr.addrLong[0];
+		stepFlash.endAddr=uAddr.addrLong[1];
+		neckFlash.startAddr=uAddr.addrLong[2];
+		neckFlash.endAddr=uAddr.addrLong[3];
+	}
+	// addr seek
+	// end addr在块尾，或当前无记录则截止
+	// 否则，end addr + 20
+	while(1)
+	{
+		readFromFlashBytes(temp,20,stepFlash.endAddr);
+		for(i=0;i<20;i++)
+		{
+			if(temp[i]!=0xff)
+				break;
+		}
+		if(i<20)
+			stepFlash.endAddr+=20;
+		else
+			break;
+		if(stepFlash.endAddr%4096==0)
+			break;
+		if(stepFlash.endAddr>=STEPRANGEND)
+			break;
+	}
 
+	while(1)
+	{
+		readFromFlashBytes(temp,20,neckFlash.endAddr);
+		for(i=0;i<20;i++)
+		{
+			if(temp[i]!=0xff)
+				break;
+		}
+		if(i<20)
+			neckFlash.endAddr+=20;
+		else
+			break;
+		if(neckFlash.endAddr%4096==0)
+			break;
+		if(neckFlash.endAddr>=NECKRANGEND)
+			break;
+	}
 }
 
 void afterBoot(void)
@@ -67,7 +120,6 @@ void afterBoot(void)
 	unsigned long x=0;
 	// flashErase(1,0);	// for debug
 	// NOP();	//wait 400ms by debugger
-	waitFlashIdle();
 	recoverData();
 	P2.5=0;
 	while(x++<100000);
@@ -165,15 +217,22 @@ void neckHealthCheck(void)
 }
 
 
+extern void addrCache(void);
 extern tNECK Neck;
 // Neck.PositionID
 void fRtc2Hz(void)
 {
 	static uint count=0;
+	static uint recoverCount=0;
 	static uchar* const pBuf=spiRevBuf;
 	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
 	static uint currentStepLogSec=0;
 	count++;
+
+	if(recoverCount>277){	// debug
+		addrCache();
+		recoverCount=0;
+	}
 
 	if(BLEResetCount>0)
 	{
@@ -185,20 +244,6 @@ void fRtc2Hz(void)
 			P2.5=0;
 		}
 	}
-
-	// if(sUpload.statu!=UPLOAD_IDLE)
-	// {
-	// 	if(sUpload.timeOut++>1){
-	// 		sUpload.timeOut=0;
-	// 		sUpload.timeOutCount++;
-	// 		if(sUpload.timeOutCount<3)
-	// 			uartSendLogCount();
-	// 		else{
-	// 			sUpload.statu=UPLOAD_IDLE;
-	// 			sUpload.timeOutCount=0;
-	// 		}
-	// 	}
-	// }
 
 	if(uartRevTimeout>0){
 		uartRevTimeout++;
@@ -749,10 +794,12 @@ void fFlashOpFinish(void)
 				OADcount=2;
 			if(OADcount>=0x0c04){
 				waitFlashIdle();
-				flashWrite(&AA, 1, PROGRAMFLAGADDR);
+				flashErase(1,PROGRAMFLAGADDR);
 				waitFlashIdle();
-				readFromFlashBytes(&AA,1,PROGRAMFLAGADDR);
-				readFromFlashBytes(&AA,1,PROGRAMERRANGSTART);
+				flashWrite(&AA,1,PROGRAMFLAGADDR);
+				waitFlashIdle();
+				// readFromFlashBytes(&AA,1,PROGRAMFLAGADDR);
+				// readFromFlashBytes(&AA,1,PROGRAMERRANGSTART);
 				NOP();
 				fReset();
 			}
