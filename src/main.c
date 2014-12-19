@@ -652,10 +652,12 @@ void fOAD(void)
 	OADcount=(OADcount<<8)|uartRevBuf[3];
 	OADTimeout=0;
 	OADTimeoutCount=0;
-	if(OADcount<3 && sSelf.mode!=SYS_OAD){
+	if(OADcount<3 or sSelf.mode!=SYS_OAD){
 		sSelf.mode=SYS_OAD;
 		directGEn=0;
-		OADRequest(1);
+		if(OADcount>=0x0c04)
+			fReset();
+		OADRequest(OADcount+1);
 		// flashOpPut(opFlashWait);
 		// flashOpPut(opFlashOADErase);
 		// flashOpPut(opFlashWait);
