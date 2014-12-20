@@ -127,7 +127,7 @@ void afterBoot(void)
 	// NOP();	//wait 400ms by debugger
 
 	P2.0=1;
-	P5.1=0;
+	P5.1=1;
 	R_INTC0_Start();
 	R_KEY_Start();
 	sUtcs.lTime=0;
@@ -919,6 +919,7 @@ sAPPTIMER chargeScanTimer={0,0,&chargeScan};
 void fChargeInt(void)
 {
 	if(P7.0==0){
+		P5.1=0;
 		batteryStatu|=BAT_CHARGE;
 		setADTimer(10);
 		goActive();
@@ -926,6 +927,7 @@ void fChargeInt(void)
 	else
 		batteryStatu&=0xff^BAT_CHARGE;
 	if(P7.1==0){
+		P5.1=0;
 		batteryStatu|=BAT_FULL;
 		goActive();
 	}
