@@ -115,12 +115,25 @@ void recoverData(void)
 	}
 }
 
+void statuSelect(void)
+{
+	uchar temp;
+	waitFlashIdle();
+	readFromFlashBytes(&temp,1,PROGRAMFLAGADDR+1);
+	if(temp==0x55)
+		sSelf.mode=SYS_ACTIVE;
+	else
+		sSelf.mode=SYS_SLEEP;
+}
+
 void afterBoot(void)
 {
 	unsigned long x=0;
 	// flashErase(1,0);	// for debug
 	// NOP();	//wait 400ms by debugger
+	initFlash();
 	recoverData();
+	statuSelect();
 	P2.5=0;
 	while(x++<100000);
 	// flashErase(1,131072);	// for debug
@@ -161,13 +174,18 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
-	initFlash();
-	init3DH();
-	init3DH();
-	R_TAU0_Channel5_Start();
-	// dddebug();
 
-	ledSetMode(LED_M_MQ,3);
+	if(sSelf.mode==SYS_ACTIVE){
+		init3DH();
+		init3DH();
+		R_TAU0_Channel5_Start();
+		ledSetMode(LED_M_MQ,3);
+		P5.1=0;
+	}else{
+		set3DHEx(0x20,0x07);	// power down
+		set3DHEx(0x20,0x07);	// power down
+	}
+
 	// R_PCLBUZ0_Start();
 	while(1){
 		if(sUart.statu!=UART_IDLE)
@@ -229,10 +247,8 @@ void fRtc2Hz(void)
 	static uint currentStepLogSec=0;
 	count++;
 
-	if(recoverCount>277){	// debug
-		addrCache();
-		recoverCount=0;
-	}
+	// if(count==6 && P5.1==1)
+	// 	P5.1==0;
 
 	if(BLEResetCount>0)
 	{
@@ -267,6 +283,11 @@ void fRtc2Hz(void)
 
 	if(sSelf.mode!=SYS_ACTIVE)
 		return;
+
+	if(isTimeSync && recoverCount>277){	// debug
+		addrCache();
+		recoverCount=0;
+	}
 
 	if((count&0x1)==0)
 	{
@@ -581,6 +602,7 @@ void goSleep(void)
 		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 		g_Statu=G_SLEEP;
 		R_TAU0_Channel5_Stop();
+		directGEn=0;
 		P5.1=1;
 	}
 	sSelf.mode=SYS_SLEEP;
@@ -590,13 +612,15 @@ void goActive(void)
 {
 	if(sSelf.mode==SYS_SLEEP)
 	{
-		set3DHEx(0x20,0x47);
-		set3DHEx(0x20,0x47);
+		// set3DHEx(0x20,0x47);
+		// set3DHEx(0x20,0x47);
+		init3DH();
+		init3DH();
 		R_TAU0_Channel5_Start();
 		g_Statu=G_INACTIVE;
 		P5.1=0;
+		sSelf.mode=SYS_ACTIVE;
 	}
-	sSelf.mode=SYS_ACTIVE;
 }
 
 void fFormatFlash(void)
@@ -919,7 +943,6 @@ sAPPTIMER chargeScanTimer={0,0,&chargeScan};
 void fChargeInt(void)
 {
 	if(P7.0==0){
-		P5.1=0;
 		batteryStatu|=BAT_CHARGE;
 		setADTimer(10);
 		goActive();
@@ -927,7 +950,6 @@ void fChargeInt(void)
 	else
 		batteryStatu&=0xff^BAT_CHARGE;
 	if(P7.1==0){
-		P5.1=0;
 		batteryStatu|=BAT_FULL;
 		goActive();
 	}
