@@ -88,6 +88,7 @@ extern sUPLOAD sUpload;
 
 extern uchar directGEn;
 
+extern uchar isTimeSync;
 extern uint step;
 
 extern uchar batteryStatu;

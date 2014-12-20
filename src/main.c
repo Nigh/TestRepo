@@ -278,7 +278,7 @@ void fRtc2Hz(void)
 		}
 		timer(&adTimer);
 
-		if(sNeckMoveStatu.statu){
+		if(sNeckMoveStatu.statu && isTimeSync){
 			if(g_Statu==G_SLEEP){
 				switch(Neck.PositionID){
 				case HEAD_UP: currentNeckLog.upTime+=10; break;
@@ -301,7 +301,8 @@ void fRtc2Hz(void)
 		// if(currentStepLogSec>=300){
 		if(currentStepLogSec>=60){	//debug
 			currentStepLogSec=0;
-			stepLogCache();
+			if(isTimeSync)
+				stepLogCache();
 		}
 
 		sUtcs.lTime++;
@@ -510,7 +511,7 @@ void fTimeSync(void)
 
 	currentStepLog.UTC=sUtcs.lTime;
 	currentNeckLog.UTC=sUtcs.lTime;
-
+	isTimeSync=1;
 	uartSuccess(0x03);
 }
 

@@ -130,7 +130,7 @@ void _3DH5Hz(void)
 				}
 				staticCount=0;
 			}
-			if(stepHalf=!stepHalf){
+			if(stepHalf=!stepHalf && isTimeSync){
 				if(g_Statu==G_INACTIVE)
 					_=_calcStep(temp,1);
 				else
@@ -162,7 +162,7 @@ void _3DH5Hz(void)
 
 			memcpyUser(&sGAcc,&oldAcc,sizeof(sGACC));
 
-			if(SMAOld<NECKMOVE_UPLIMIT){
+			if(SMAOld<NECKMOVE_UPLIMIT && isTimeSync){
 				tEu=calcRulerA(&sGAcc);
 				if(absf(tEu->Pitch)>absf(tEu->Roll)){
 					if(tEu->Pitch>NECK_PITCH_POSITIVE_DOWNLIMIT and tEu->Pitch<NECK_PITCH_POSITIVE_UPLIMIT)

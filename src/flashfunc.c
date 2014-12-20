@@ -264,8 +264,7 @@ redelay2:
 			while(CSIIF00==0);
 			CSIIF00=0;
 		}
-
-			disable_flash();
+		disable_flash();
 }
 
 unsigned char needErase(unsigned short dataLength, unsigned long flashAddr)

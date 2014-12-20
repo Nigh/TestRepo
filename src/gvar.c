@@ -3,6 +3,8 @@
 sSELF sSelf={SYS_ACTIVE,0,0,0};
 sUTCS sUtcs,sAlarmTime;
 
+uchar isTimeSync=0;
+
 uint steps=0;
 sSTEPLONGLOG currentStepLog={0};
 uchar directGEn=0;
