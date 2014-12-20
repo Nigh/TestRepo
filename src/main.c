@@ -119,8 +119,8 @@ void statuSelect(void)
 {
 	uchar temp;
 	waitFlashIdle();
-	readFromFlashBytes(&temp,1,PROGRAMFLAGADDR+1);
-	if(temp==0x55)
+	readFromFlashBytes(&temp,1,PROGRAMFLAGADDR);
+	if(temp==0xAA)
 		sSelf.mode=SYS_ACTIVE;
 	else
 		sSelf.mode=SYS_SLEEP;
@@ -176,6 +176,8 @@ void iMain(void)
 	fifoFlush();
 
 	if(sSelf.mode==SYS_ACTIVE){
+		waitFlashIdle();
+		flashErase(2,PROGRAMFLAGADDR);
 		init3DH();
 		init3DH();
 		R_TAU0_Channel5_Start();
