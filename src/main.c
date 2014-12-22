@@ -916,6 +916,11 @@ void fAdcEnd(void)
 	if(powerLevel>100)
 		powerLevel=100;
 
+	if(batteryLevel<48){
+		goSleep();
+		return;
+	}
+
 	uartBufWrite(data_batteryLevel,3);
 	uartSendBuf[3]=powerLevel;
 	calcSendBufSum();
