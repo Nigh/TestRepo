@@ -905,9 +905,19 @@ void fAdcEnd(void)
 		setVibrate(&sV5);
 		sVibrate.count=1;
 	}
+
+	if(batteryStatu==BAT_NORMAL){
+		if(batteryLevel>batteryLevelOld)
+			batteryLevel=batteryLevelOld;
+	}else{
+		if(batteryLevel<batteryLevelOld)
+			batteryLevel=batteryLevelOld;
+	}
+
 	batteryLevelOld=batteryLevel;
 	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
+
 
 	if(batteryLevel>42)
 		powerLevel=(float)(batteryLevel-42)*1.2;	//0~100
@@ -916,7 +926,7 @@ void fAdcEnd(void)
 	if(powerLevel>100)
 		powerLevel=100;
 
-	if(batteryLevel<48){
+	if(batteryStatu==BAT_NORMAL and batteryLevel<48){
 		goSleep();
 		return;
 	}
