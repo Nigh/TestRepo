@@ -138,7 +138,6 @@ void afterBoot(void)
 	while(x++<100000);
 	// flashErase(1,131072);	// for debug
 	// NOP();	//wait 400ms by debugger
-
 	P2.0=1;
 	P5.1=1;
 	R_INTC0_Start();
@@ -149,7 +148,6 @@ void afterBoot(void)
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 	flashQueueInit(&sFlashQueue);
-	setADTimer(10);
 	P2.5=1;
 }
 
@@ -174,6 +172,7 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
+	setADTimer(10);
 
 	if(sSelf.mode==SYS_ACTIVE){
 		waitFlashIdle();
@@ -286,7 +285,7 @@ void fRtc2Hz(void)
 	if(sSelf.mode!=SYS_ACTIVE)
 		return;
 
-	if(isTimeSync && recoverCount>277){	// debug
+	if(isTimeSync && recoverCount>777){	// debug
 		addrCache();
 		recoverCount=0;
 	}
@@ -501,6 +500,7 @@ void fBLEConfirm(void)
 		if(sUpload.packageRemain<=0){
 			sUpload.statu=UPLOAD_IDLE;
 			uartSendLogCount();
+			addrCache();
 			return;
 		}
 		dataReadSend();
