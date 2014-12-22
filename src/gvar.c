@@ -3,6 +3,8 @@
 sSELF sSelf={SYS_ACTIVE,0,0,0};
 sUTCS sUtcs,sAlarmTime;
 
+uchar version[16]={STR_VERSION};
+
 uchar isTimeSync=0;
 
 uint steps=0;

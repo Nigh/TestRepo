@@ -86,6 +86,8 @@ extern sSELF sSelf;
 extern sUTCS sUtcs,sAlarmTime;
 extern sUPLOAD sUpload;
 
+extern uchar version[16];
+
 extern uchar directGEn;
 
 extern uchar isTimeSync;
@@ -103,7 +105,6 @@ extern uchar neckUnhealthCount;
 
 extern uchar BLE_Connect_Timeout;
 
-#define HEALTHNECKMOVE (30)
 
 /* End user code. Do not edit comment generated here */
 #endif

@@ -20,4 +20,8 @@
 
 #define BLE_CONNECT_TIMEOUT_SET (10)	// x 1sec
 
+#define HEALTHNECKMOVE (30)	//for debug
+
+#define STR_VERSION "beta0.9.4"
+
 #endif
