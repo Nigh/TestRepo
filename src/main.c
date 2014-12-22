@@ -129,15 +129,11 @@ void statuSelect(void)
 void afterBoot(void)
 {
 	unsigned long x=0;
-	// flashErase(1,0);	// for debug
-	// NOP();	//wait 400ms by debugger
 	initFlash();
 	recoverData();
 	statuSelect();
 	P2.5=0;
 	while(x++<100000);
-	// flashErase(1,131072);	// for debug
-	// NOP();	//wait 400ms by debugger
 	P2.0=1;
 	P5.1=1;
 	R_INTC0_Start();
@@ -162,9 +158,6 @@ void iMain(void)
 {
 	afterBoot();
 
-	// flashWrite(&neckLog, 20, 0);	//for debug
-	// sUtcs.lTime=1417171128	//for debug
-	// flashWrite(&stepLog, 20, 131072);	//for debug
 
 	ledSetMode(LED_M_OFF,1);
 	EI();
@@ -239,6 +232,8 @@ void neckHealthCheck(void)
 extern void addrCache(void);
 extern tNECK Neck;
 // Neck.PositionID
+unsigned long daySec=0;
+unsigned long dayStep=0;
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -285,7 +280,7 @@ void fRtc2Hz(void)
 	if(sSelf.mode!=SYS_ACTIVE)
 		return;
 
-	if(isTimeSync && recoverCount>777){	// debug
+	if(isTimeSync && recoverCount>60000){
 		addrCache();
 		recoverCount=0;
 	}
@@ -310,8 +305,8 @@ void fRtc2Hz(void)
 				}
 			}
 			sNeckMoveStatu.timeCount++;
-			// if(sNeckMoveStatu.timeCount>=240){
-			if(sNeckMoveStatu.timeCount>=60){	//debug
+			if(sNeckMoveStatu.timeCount>=240){
+			// if(sNeckMoveStatu.timeCount>=60){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
@@ -320,13 +315,17 @@ void fRtc2Hz(void)
 		}
 
 		currentStepLogSec++;
-		// if(currentStepLogSec>=300){
-		if(currentStepLogSec>=60){	//debug
+		if(currentStepLogSec>=300){
+		// if(currentStepLogSec>=60){	//debug
 			currentStepLogSec=0;
 			if(isTimeSync)
 				stepLogCache();
 		}
-
+		daySec++;
+		if(daySec>=86400){
+			daySec=0;
+			dayStep=0;
+		}
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();
@@ -534,6 +533,7 @@ void fTimeSync(void)
 
 	currentStepLog.UTC=sUtcs.lTime;
 	currentNeckLog.UTC=sUtcs.lTime;
+	daySec=sUtcs.lTime%86400;
 	isTimeSync=1;
 	uartSuccess(0x03);
 }

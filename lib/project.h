@@ -20,7 +20,8 @@
 
 #define BLE_CONNECT_TIMEOUT_SET (10)	// x 1sec
 
-#define HEALTHNECKMOVE (30)	//for debug
+#define HEALTHNECKMOVE (300)
+#define TARGET_STEP (4000)
 
 #define STR_VERSION "beta0.9.4"
 

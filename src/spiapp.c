@@ -92,6 +92,8 @@ uchar dClick=0;
 sGACC sGAcc;
 extern const uchar data_axisDirect[3];
 static const sMSG sAccUpload={M_TYPE_TRANS,M_C_ACCUPLOAD};
+extern uint stepTarget;
+extern unsigned long dayStep;
 void _3DH5Hz(void)
 {
 	// static char oldG[3];
@@ -136,7 +138,16 @@ void _3DH5Hz(void)
 				else
 					_=_calcStep(temp,0);
 				// _=CalculateStep(temp);
-				if(_>0) {steps+=_;staticCount=0;g_Statu=G_ACTIVE;}
+				if(_>0) {
+					steps+=_;staticCount=0;g_Statu=G_ACTIVE;
+					dayStep+=_;
+					if(dayStep>stepTarget){
+						dayStep=0;
+						ledSetMode(LED_M_RANDOM,2);
+						setVibrate(&sV1);
+						sVibrate.count=2;
+					}
+				}
 				// else if(_<0) {g_Statu=G_INACTIVE;}
 			}
 
@@ -268,7 +279,8 @@ void neckLogCache(void)
 	neckLog[i].downTime=currentNeckLog.downTime/10;
 
 	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
-	if(i>=1)	// debug
+	// if(i>=1)	// debug
+	if(i>=7)
 	{
 		flashOpPut(opFlashWait);
 		if(needErase((i+1)*sizeof(sNECKLOG),neckFlash.endAddr)){
@@ -285,6 +297,7 @@ static uchar isStepLogEmpty(void);
 static const sFLASHOP opFlashStepErase={FLASH_F_BLOCKERASE,FLASH_S_STEP};
 static const sFLASHOP opFlashStepSave={FLASH_F_WRITE,FLASH_S_STEP};
 extern sSTEPLONGLOG currentStepLog;
+extern unsigned long dayStep;
 sSTEPLOG stepLog;
 void stepLogCache(void)
 {

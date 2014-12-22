@@ -7,6 +7,7 @@ uchar version[16]={STR_VERSION};
 
 uchar isTimeSync=0;
 
+uint stepTarget=TARGET_STEP;
 uint steps=0;
 sSTEPLONGLOG currentStepLog={0};
 uchar directGEn=0;
@@ -69,7 +70,6 @@ void _halt_Ex(void)
 		stopHClk();
 	else
 		startHClk();
-	// debug : always HClk
 	HALT();
 	NOP();
 }
