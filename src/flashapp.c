@@ -26,6 +26,8 @@ void fFlashWrite(void)
 		fOADSave();
 	}else if(gOP.detail==FLASH_S_ADDR){
 		fAddrSave();
+	}else if(gOP.detail==FLASH_S_SN){
+		fSNSave();
 	}
 }
 
@@ -35,6 +37,8 @@ void fFlashRead(void)
 		fReadStepLog();
 	}else if(gOP.detail==FLASH_S_NECK){
 		fReadNeckLog();
+	}else if(gOP.detail==FLASH_S_SN){
+		fReadSN();
 	}
 }
 
@@ -105,6 +109,13 @@ void fAddrSave(void)
 	flashOpFin();
 }
 
+void fSNSave(void)
+{
+	flashWrite(&OADLog, 16, SN_SAVE_START);
+	waitFlashIdle();
+	flashOpFin();
+}
+
 // extern flashErase(unsigned short dataLength, unsigned long flashAddr)
 void fBlockErase(void){
 	if(gOP.detail==FLASH_S_STEP){
@@ -115,6 +126,8 @@ void fBlockErase(void){
 		flashErase(18,programFlash.endAddr);
 	}else if(gOP.detail==FLASH_S_ADDR){
 		flashErase(1,ADDR_SAVE_START);
+	}else if(gOP.detail==FLASH_S_SN){
+		flashErase(1,SN_SAVE_START);
 	}
 	flashOpFin();
 }
@@ -141,6 +154,18 @@ void fReadNeckLog(void){
 		uartSendBuf[i+3]=logCache[i];
 	calcSendBufSum();
 	uartSend(2*sizeof(sNECKLOG)+4);
+	flashOpFin();
+}
+
+extern const uchar data_SNCode[3];
+void fReadSN(void){
+	uchar i;
+	readFromFlashBytes(logCache,16,SN_SAVE_START);
+	uartBufWrite(data_SNCode,3);
+	for(i=0;i<16;i++)
+		uartSendBuf[i+3]=logCache[i];
+	calcSendBufSum();
+	uartSend(16+3);
 	flashOpFin();
 }
 

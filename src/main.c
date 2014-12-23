@@ -7,12 +7,12 @@
 
 #define VECTOR(vec) vec
 
-fFUNC const msgHandler[]={		// No
+fFUNC const msgHandler[]={			// No
 	VECTOR(_halt_Ex),				// 0
-	VECTOR(fRtcPro),			// 1
-	VECTOR(fKeyPro),			// 2
-	VECTOR(fTimerPro),			// 3
-	VECTOR(fBLEPro),			// 4
+	VECTOR(fRtcPro),				// 1
+	VECTOR(fKeyPro),				// 2
+	VECTOR(fTimerPro),				// 3
+	VECTOR(fBLEPro),				// 4
 	VECTOR(fTransPro),				// 5
 	VECTOR(fSysPro),				// 6
 	VECTOR(_nop_Ex),				// 7
@@ -23,7 +23,7 @@ fFUNC const msgHandler[]={		// No
 	VECTOR(_nop_Ex),				// 12
 	VECTOR(_nop_Ex),				// 13
 	VECTOR(_nop_Ex),				// 14
-	VECTOR(fReset),				// 15
+	VECTOR(fReset),					// 15
 };
 
 sMSG gMsg={0,0};	//global message
@@ -120,7 +120,7 @@ void statuSelect(void)
 	uchar temp;
 	waitFlashIdle();
 	readFromFlashBytes(&temp,1,PROGRAMFLAGADDR);
-	if(temp==0xAA)
+	if(temp==0x00)
 		sSelf.mode=SYS_ACTIVE;
 	else
 		sSelf.mode=SYS_SLEEP;
@@ -165,7 +165,19 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
-	setADTimer(10);
+
+	if(P3.0==0){
+		while(1){
+			startHClk();
+			DI();
+			gMsg=fifoGet();
+			EI();
+			if(gMsg.type<=15)
+				msgHandler[gMsg.type]();
+			if(P3.0==1)
+				break;
+		}
+	}
 
 	if(sSelf.mode==SYS_ACTIVE){
 		waitFlashIdle();
@@ -180,6 +192,7 @@ void iMain(void)
 		set3DHEx(0x20,0x07);	// power down
 	}
 
+	setADTimer(10);
 	// R_PCLBUZ0_Start();
 	while(1){
 		if(sUart.statu!=UART_IDLE)
@@ -714,10 +727,28 @@ void OADRequest(uint num)
 	uartSendDirect(6);
 }
 
+static const sFLASHOP opFlashSNErase={FLASH_F_BLOCKERASE,FLASH_S_SN};
+static const sFLASHOP opFlashSNSave={FLASH_F_WRITE,FLASH_S_SN};
+static const sFLASHOP opFlashSNRead={FLASH_F_READ,FLASH_S_SN};
 void fOAD(void)
 {
 	uint i=0,checkSum=0;
 	uint *ptr=OADLog;
+
+	if(uartRevBuf[1]==0x12)	// SN 烧录(复用了OADlog)
+	{
+		i=0;
+		while(i<16){OADLog[i++]=uartRevBuf[i+3];}
+		waitFlashIdle();
+		flashOpPut(opFlashWait);
+		flashOpPut(opFlashSNErase);
+		flashOpPut(opFlashWait);
+		flashOpPut(opFlashSNSave);
+		flashOpPut(opFlashWait);
+		flashOpPut(opFlashSNRead);
+		flashOpFin();
+	}
+
 	if(uartRevBuf[1]!=0x14)
 		return;
 	OADcount=uartRevBuf[4];
@@ -735,6 +766,7 @@ void fOAD(void)
 		// flashOpPut(opFlashWait);
 		// flashOpFin();
 	}else{
+		i=0;
 		while(i<16){OADLog[i++]=uartRevBuf[i+5];}
 		i=0;
 		while(i<8){checkSum+=*ptr++; i++; }
@@ -771,7 +803,7 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fFormatFlash),				// 6
 	VECTOR(fGsensorAcc),				// 7
 	VECTOR(fDataReqest),				// 8
-	VECTOR(fOAD),				// 9
+	VECTOR(fOAD),				// 9	(OAD+SN program)
 	VECTOR(fConnectRequest),				// 10
 };
 
@@ -905,7 +937,7 @@ void fAdcEnd(void)
 		setVibrate(&sV5);
 		sVibrate.count=1;
 	}
-	
+
 	if(batteryLevelOld<100){
 		if(batteryStatu==BAT_NORMAL){
 			if(batteryLevel>batteryLevelOld)

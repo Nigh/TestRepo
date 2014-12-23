@@ -29,6 +29,7 @@ typedef struct
 #define FLASH_S_NECK 0xF2
 #define FLASH_S_OAD 0xF3
 #define FLASH_S_ADDR 0xF4
+#define FLASH_S_SN 0xF5
 
 #define FLASH_F_IDLEWAIT 1
 #define FLASH_F_WRITE 2
@@ -46,10 +47,12 @@ void fStepSave(void);
 void fNeckSave(void);
 void fOADSave(void);
 void fAddrSave(void);
+void fSNSave(void);
 
 void fBlockErase(void);
 void fReadStepLog(void);
 void fReadNeckLog(void);
+void fReadSN(void);
 void fIdleWait(void);
 
 extern void flashQueueInit(sFLASHQUEUE *p_fifo);
