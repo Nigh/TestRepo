@@ -905,13 +905,15 @@ void fAdcEnd(void)
 		setVibrate(&sV5);
 		sVibrate.count=1;
 	}
-
-	if(batteryStatu==BAT_NORMAL){
-		if(batteryLevel>batteryLevelOld)
-			batteryLevel=batteryLevelOld;
-	}else{
-		if(batteryLevel<batteryLevelOld)
-			batteryLevel=batteryLevelOld;
+	
+	if(batteryLevelOld<100){
+		if(batteryStatu==BAT_NORMAL){
+			if(batteryLevel>batteryLevelOld)
+				batteryLevel=batteryLevelOld;
+		}else{
+			if(batteryLevel<batteryLevelOld)
+				batteryLevel=batteryLevelOld;
+		}
 	}
 
 	batteryLevelOld=batteryLevel;
