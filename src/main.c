@@ -37,6 +37,7 @@ uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
 void uartSendLogCount(void);
 void OADRequest(uint num);
+void memcpyUser(uchar* src,uchar* dst,const size_t length);
 
 extern void dddebug(void);
 extern void initFlash(void);
@@ -500,12 +501,13 @@ void uartSendLogCount(void)
 	uartSend(4+4);
 }
 
+extern const uchar data_version[3];
 extern int uartTimeOutTask(void);
 extern uchar uartTimeOutTaskStatu;
 void fBLEConfirm(void)
 {
 	BLEResetCount=0;
-	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B) 
+	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B)
 		and sUpload.statu!=UPLOAD_IDLE){
 		if(sUpload.packageRemain>0 and uartRevBuf[3]!=0x0B){
 			flashReadSeek();
@@ -525,6 +527,11 @@ void fBLEConfirm(void)
 			uartTimeOutTaskStatu=1;
 			taskInsert(&uartTimeOutTask);
 		}
+	}else if(uartRevBuf[3]==0x11){
+		uartBufWrite(data_version,3);
+		memcpyUser(&version,&uartSendBuf[3],16);
+		calcSendBufSum();
+		uartSend(20);	// 发送版本号
 	}
 }
 
@@ -730,9 +737,9 @@ void OADRequest(uint num)
 	uartSendDirect(6);
 }
 
-static const sFLASHOP opFlashSNErase={FLASH_F_BLOCKERASE,FLASH_S_SN};
-static const sFLASHOP opFlashSNSave={FLASH_F_WRITE,FLASH_S_SN};
-static const sFLASHOP opFlashSNRead={FLASH_F_READ,FLASH_S_SN};
+const sFLASHOP opFlashSNErase={FLASH_F_BLOCKERASE,FLASH_S_SN};
+const sFLASHOP opFlashSNSave={FLASH_F_WRITE,FLASH_S_SN};
+const sFLASHOP opFlashSNRead={FLASH_F_READ,FLASH_S_SN};
 void fOAD(void)
 {
 	uint i=0,checkSum=0;
@@ -796,6 +803,16 @@ void fConnectRequest(void)
 	uartSuccess(0x10);
 }
 
+
+void fSNRequest(void)
+{
+	if(uartRevBuf[3]==0x01){
+		flashOpPut(opFlashWait);
+		flashOpPut(opFlashSNRead);
+		flashOpFin();
+	}
+}
+
 fFUNC const bleHandler[]={		// No
 	VECTOR(_nop_Ex),				// 0
 	VECTOR(fBLEConfirm),				// 1
@@ -808,11 +825,12 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fDataReqest),				// 8
 	VECTOR(fOAD),				// 9	(OAD+SN program)
 	VECTOR(fConnectRequest),				// 10
+	VECTOR(fSNRequest),				// 11
 };
 
 void fBLEPro(void)
 {
-	if(gMsg.content<=10)
+	if(gMsg.content<=11)
 		bleHandler[gMsg.content]();
 }
 
