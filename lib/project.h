@@ -21,7 +21,9 @@
 #define BLE_CONNECT_TIMEOUT_SET (10)	// x 1sec
 
 #define HEALTHNECKMOVE (120)
-#define TARGET_STEP (4000)
+#define TARGET_STEP (6000)
+
+#define DATA_BEFORE_TIMESYNC (1)	// is data save without timesynced
 
 #define STR_VERSION "beta0.9.6"	//v1.0.0
 

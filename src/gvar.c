@@ -5,7 +5,7 @@ sUTCS sUtcs,sAlarmTime;
 
 uchar version[16]=STR_VERSION;
 
-uchar isTimeSync=0;
+uchar isTimeSync=DATA_BEFORE_TIMESYNC;
 
 uint stepTarget=TARGET_STEP;
 uint steps=0;
