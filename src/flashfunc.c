@@ -258,8 +258,10 @@ redelay2:
 			}
 		} while(i < dataLength);
 
+		DI();
 		SIO00=0xFF;
 		P2.3=1;
+		EI();
 		while(CSIIF00==0);
 		CSIIF00=0;
 		disable_flash();
