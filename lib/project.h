@@ -23,6 +23,6 @@
 #define HEALTHNECKMOVE (300)
 #define TARGET_STEP (4000)
 
-#define STR_VERSION "beta0.9.4"
+#define STR_VERSION "beta0.9.5"
 
 #endif

@@ -167,6 +167,7 @@ void iMain(void)
 	fifoFlush();
 
 	if(P3.0==0){
+		sSelf.mode=SYS_TEST;
 		while(1){
 			startHClk();
 			DI();
@@ -177,8 +178,8 @@ void iMain(void)
 			if(P3.0==1)
 				break;
 		}
+		sSelf.mode=SYS_SLEEP;
 	}
-
 	if(sSelf.mode==SYS_ACTIVE){
 		waitFlashIdle();
 		flashErase(2,PROGRAMFLAGADDR);
@@ -192,7 +193,7 @@ void iMain(void)
 		set3DHEx(0x20,0x07);	// power down
 	}
 
-	setADTimer(10);
+	setADTimer(2);
 	// R_PCLBUZ0_Start();
 	while(1){
 		if(sUart.statu!=UART_IDLE)
@@ -290,6 +291,9 @@ void fRtc2Hz(void)
 		}
 	}
 
+	if((count&0x1)==0)
+		timer(&adTimer);
+
 	if(sSelf.mode!=SYS_ACTIVE)
 		return;
 
@@ -306,7 +310,6 @@ void fRtc2Hz(void)
 			if(batteryStatu==BAT_CHARGE && (sLed.ledMode==LED_M_OFF or sLed.ledMode==LED_M_POWER))
 				ledSetMode(LED_M_POWER,2);
 		}
-		timer(&adTimer);
 
 		if(sNeckMoveStatu.statu && isTimeSync){
 			if(g_Statu==G_SLEEP){
