@@ -145,7 +145,7 @@ void afterBoot(void)
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 	flashQueueInit(&sFlashQueue);
-	P2.5=1;
+	
 }
 
 #include "bootmain.h"
@@ -166,7 +166,7 @@ void iMain(void)
 	NOP();
 	HALT();
 	fifoFlush();
-
+	P2.5=1;
 	if(P3.0==0){
 		sSelf.mode=SYS_TEST;
 		while(1){
