@@ -29,6 +29,7 @@ fFUNC const msgHandler[]={			// No
 sMSG gMsg={0,0};	//global message
 uchar uartRevTimeout=0;
 uchar OADTimeout=0,OADTimeoutCount=0;
+uchar SNCode[16]={0};
 
 uchar BLEResetCount=0;
 static uint OADcount=0;
@@ -114,6 +115,7 @@ void recoverData(void)
 		if(neckFlash.endAddr>=NECKRANGEND)
 			break;
 	}
+	readFromFlashBytes(SNCode,16,SN_SAVE_START);
 }
 
 void statuSelect(void)
@@ -832,9 +834,11 @@ void fConnectRequest(void)
 void fSNRequest(void)
 {
 	if(uartRevBuf[3]==0x01){
-		flashOpPut(opFlashWait);
-		flashOpPut(opFlashSNRead);
-		flashOpFin();
+		uartBufWrite(data_SNCode,3);
+		for(i=0;i<14;i++)
+			uartSendBuf[i+3]=SNCode[i];
+		calcSendBufSum();
+		uartSend(14+4);
 	}
 }
 
