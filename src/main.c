@@ -254,7 +254,7 @@ unsigned long dayStep=0;
 void fRtc2Hz(void)
 {
 	static uint count=0;
-	static uint recoverCount=0;
+	static uint recoverCount=0,sleepCount=0;
 	static uchar* const pBuf=spiRevBuf;
 	static uchar gOld[3]={0},flag=0;	//flag 用于标示是否已更新gOld
 	static uint currentStepLogSec=0;
@@ -348,6 +348,11 @@ void fRtc2Hz(void)
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();
+			sleepCount++;
+			if(sleepCount>=3600){
+				sleepCount=0;
+				neckUnhealthCount=0;
+			}
 			// P2.3=0;
 			read3DHCount();
 			if(receiveMax>0){
