@@ -162,10 +162,10 @@ void fReadSN(void){
 	uchar i;
 	readFromFlashBytes(logCache,16,SN_SAVE_START);
 	uartBufWrite(data_SNCode,3);
-	for(i=0;i<16;i++)
+	for(i=0;i<14;i++)
 		uartSendBuf[i+3]=logCache[i];
 	calcSendBufSum();
-	uartSend(16+3);
+	uartSend(14+4);
 	flashOpFin();
 }
 

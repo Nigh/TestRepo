@@ -248,6 +248,7 @@ void neckHealthCheck(void)
 
 extern void addrCache(void);
 extern tNECK Neck;
+extern sAPPTIMER stopVibrateTimer;
 // Neck.PositionID
 unsigned long daySec=0;
 unsigned long dayStep=0;
@@ -543,12 +544,12 @@ void fBLEConfirm(void)
 		uartBufWrite(data_version,3);
 		memcpyUser(&version,&uartSendBuf[3],16);
 		calcSendBufSum();
-		uartSend(20);	// 发送版本号
+		uartSend(20);	// send version num 
 	}else if(uartRevBuf[3]==0x14){
 		uartBufWrite(data_batteryLevel,3);
 		uartSendBuf[3]=powerLevel;
 		calcSendBufSum();
-		uartSend(5);	// 发送电量
+		uartSend(5);	// send battery level
 	}
 }
 

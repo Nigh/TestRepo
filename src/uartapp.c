@@ -15,7 +15,7 @@ const uchar data_logCount[3]={'#',0x06,0x12};
 const uchar data_axisDirect[3]={'#',0x08,0x13};
 const uchar data_batteryLevel[3]={'#',0x03,0x14};
 const uchar data_bleCtrl[3]={'#',0x03,0x15};
-const uchar data_SNCode[3]={'#',0x12,0x09};
+const uchar data_SNCode[3]={'#',0x10,0x15};
 const uchar data_version[3]={'#',0x12,0x18};
 
 const uchar data_OADRequest[3]={'#',0x04,0x17};
