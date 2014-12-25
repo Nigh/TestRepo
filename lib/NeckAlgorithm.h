@@ -1,7 +1,9 @@
 #ifndef __NECK_ALGORITHM_H__
 #define __NECK_ALGORITHM_H__
-#include "time.h"
 
+#include "time.h"
+//typedef unsigned int time_t;     /* date/time in unix secs past 1-Jan-70 */
+extern time_t time2(void);
 /*********************************************************************
  * TYPEDEFS
  */
@@ -149,10 +151,6 @@ unsigned char GetBleNeckLogEnable(void);
 void SetBleNeckLogEnable(unsigned char Enable);
 
 typedef int (*CALLBACK_LOG)(tNECK_LOG*);  // Declare Function pointer for CALLBACK_LOG
-extern time_t time2(void);
-
-float SetMinDeltaNeckMovement(float DeltaNeckMovement);
-float SetMinZeroPoint(float ZeroPoint);
 
 
 #endif
