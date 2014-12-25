@@ -32,6 +32,7 @@ uchar OADTimeout=0,OADTimeoutCount=0;
 uchar SNCode[16]={0};
 
 uchar BLEResetCount=0;
+uchar SNReSendCount=0;
 static uint OADcount=0;
 
 uint calcStepLogNum(void);
@@ -272,6 +273,14 @@ void fRtc2Hz(void)
 			BLEResetCount=0;
 		}else if(BLEResetCount>2){
 			P2.5=0;
+		}
+	}
+
+	if(SNReSendCount>0){
+		SNReSendCount++;
+		if(SNReSendCount>3){
+			// reSend
+			SNReSendCount=0;
 		}
 	}
 
@@ -546,6 +555,7 @@ void fBLEConfirm(void)
 		calcSendBufSum();
 		uartSend(20);	// send version num 
 	}else if(uartRevBuf[3]==0x14){
+		SNReSendCount=0;
 		uartBufWrite(data_batteryLevel,3);
 		uartSendBuf[3]=powerLevel;
 		calcSendBufSum();
@@ -830,15 +840,17 @@ void fConnectRequest(void)
 	uartSuccess(0x10);
 }
 
-
+extern const uchar data_SNCode[3];
 void fSNRequest(void)
 {
+	uchar i;
 	if(uartRevBuf[3]==0x01){
 		uartBufWrite(data_SNCode,3);
 		for(i=0;i<14;i++)
 			uartSendBuf[i+3]=SNCode[i];
 		calcSendBufSum();
 		uartSend(14+4);
+		SNReSendCount=1;
 	}
 }
 

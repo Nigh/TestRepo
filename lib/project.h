@@ -25,6 +25,6 @@
 
 #define DATA_BEFORE_TIMESYNC (1)	// is data save without timesynced
 
-#define STR_VERSION "beta0.9.7"	//v1.0.0
+#define STR_VERSION "beta0.9.7A"	//v1.0.0
 
 #endif
