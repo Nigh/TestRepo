@@ -196,7 +196,7 @@ void iMain(void)
 		set3DHEx(0x20,0x07);	// power down
 	}
 
-	setADTimer(2);
+	setADTimer(3);
 	// R_PCLBUZ0_Start();
 	while(1){
 		if(sUart.statu!=UART_IDLE)
@@ -357,18 +357,20 @@ void fRtc2Hz(void)
 			read3DHCount();
 			if(receiveMax>0){
 				read3DH();
-				if(flag){
-					if(gOld[0]-pBuf[1]>20 and gOld[0]-pBuf[1]<240)
-						g_Statu=G_INACTIVE;
-					else if(gOld[1]-pBuf[3]>20 and gOld[1]-pBuf[3]<240)
-						g_Statu=G_INACTIVE;
-					else if(gOld[2]-pBuf[5]>20 and gOld[2]-pBuf[5]<240)
-						g_Statu=G_INACTIVE;
-				}else{
-					gOld[0]=pBuf[1];
-					gOld[1]=pBuf[3];
-					gOld[2]=pBuf[5];
-					flag=1;
+				if(!stopVibrateTimer.en){
+					if(flag){
+						if(gOld[0]-pBuf[1]>20 and gOld[0]-pBuf[1]<240)
+							g_Statu=G_INACTIVE;
+						else if(gOld[1]-pBuf[3]>20 and gOld[1]-pBuf[3]<240)
+							g_Statu=G_INACTIVE;
+						else if(gOld[2]-pBuf[5]>20 and gOld[2]-pBuf[5]<240)
+							g_Statu=G_INACTIVE;
+					}else{
+						gOld[0]=pBuf[1];
+						gOld[1]=pBuf[3];
+						gOld[2]=pBuf[5];
+						flag=1;
+					}
 				}
 
 				if(g_Statu!=G_SLEEP){
@@ -378,6 +380,8 @@ void fRtc2Hz(void)
 					set3DHEx(0x20,0x47);
 				}
 			}
+		}else{
+			sleepCount=0;
 		}
 	}
 }
