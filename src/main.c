@@ -145,7 +145,9 @@ void afterBoot(void)
 	R_UART1_Start();
 	fifoInit(&sMsgFifo,msgQueue);
 	flashQueueInit(&sFlashQueue);
-	
+
+	SetMinDeltaNeckMovement(MIN_DELTA_NECKMOVEMENT);
+	SetMinZeroPoint(MIN_ZEROPOINT);
 }
 
 #include "bootmain.h"
