@@ -248,8 +248,8 @@ void memsetUser(uchar* ptr,const uchar ch,const size_t length)
 }
 
 const sFLASHOP opFlashWait={FLASH_F_IDLEWAIT,0};
-static const sFLASHOP opFlashAddrErase={FLASH_F_BLOCKERASE,FLASH_S_ADDR};
-static const sFLASHOP opFlashAddrSave={FLASH_F_WRITE,FLASH_S_ADDR};
+const sFLASHOP opFlashAddrErase={FLASH_F_BLOCKERASE,FLASH_S_ADDR};
+const sFLASHOP opFlashAddrSave={FLASH_F_WRITE,FLASH_S_ADDR};
 void addrCache(void)
 {
 	flashOpPut(opFlashWait);

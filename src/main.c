@@ -941,7 +941,6 @@ void fTransPro(void)
 // ***************************************
 // ***************************************
 
-extern const uchar data_batteryLevel[3];
 void fAdcEnd(void)
 {
 	static uint batteryLevelOld=100;
@@ -1000,13 +999,13 @@ extern sAPPTIMER chargeScanTimer;
 void chargeScan(void)
 {
 	if(P7.0==0){
-			batteryStatu|=BAT_CHARGE;
-			goActive();
+		batteryStatu|=BAT_CHARGE;
+		goActive();
 	}else
 		batteryStatu&=0xff^BAT_CHARGE;
 	if(P7.1==0){
-			batteryStatu|=BAT_FULL;
-			goActive();
+		batteryStatu|=BAT_FULL;
+		goActive();
 	}else
 		batteryStatu&=0xff^BAT_FULL;
 	setTimer64Hz(&chargeScanTimer,16);
