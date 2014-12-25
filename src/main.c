@@ -512,6 +512,7 @@ void uartSendLogCount(void)
 	uartSend(4+4);
 }
 
+extern const uchar data_batteryLevel[3];
 extern const uchar data_version[3];
 extern int uartTimeOutTask(void);
 extern uchar uartTimeOutTaskStatu;
@@ -543,6 +544,11 @@ void fBLEConfirm(void)
 		memcpyUser(&version,&uartSendBuf[3],16);
 		calcSendBufSum();
 		uartSend(20);	// 发送版本号
+	}else if(uartRevBuf[3]==0x14){
+		uartBufWrite(data_batteryLevel,3);
+		uartSendBuf[3]=powerLevel;
+		calcSendBufSum();
+		uartSend(5);	// 发送电量
 	}
 }
 
