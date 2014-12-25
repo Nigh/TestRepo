@@ -64,9 +64,11 @@ void _nop_Ex(void)
 	NOP();
 }
 
+extern uchar BLEResetCount;
 void _halt_Ex(void)
 {
 	if(sUart.statu==UART_IDLE 
+		&& BLEResetCount==0
 		&& sLed.ledMode==LED_M_OFF 
 		&& sVibrate.en==0 
 		&& sUpload.statu==UPLOAD_IDLE 
