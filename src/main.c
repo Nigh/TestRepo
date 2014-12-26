@@ -1101,7 +1101,6 @@ void fAdcEnd(void)
 	// batteryLevel=batteryLevel-810;	//810~919  batteryLevel:0~109
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
 
-
 	if(batteryLevel>42)
 		powerLevel=(float)(batteryLevel-42)*1.2;	//0~100
 	else
