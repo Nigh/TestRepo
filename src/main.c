@@ -346,6 +346,7 @@ extern sAPPTIMER stopVibrateTimer;
 // Neck.PositionID
 unsigned long daySec=0;
 unsigned long dayStep=0;
+uchar SNReSendTimeOutCount=0;
 void fRtc2Hz(void)
 {
 	static uint count=0;
@@ -372,8 +373,18 @@ void fRtc2Hz(void)
 	if(SNReSendCount>0){
 		SNReSendCount++;
 		if(SNReSendCount>3){
-			// reSend
-			SNReSendCount=0;
+			uartBufWrite(data_SNCode,3);
+			for(i=0;i<14;i++)
+				uartSendBuf[i+3]=SNCode[i];
+			calcSendBufSum();
+			uartSend(14+4);
+			SNReSendTimeOutCount++;
+			if(SNReSendTimeOutCount<4)
+				SNReSendCount=1;
+			else{
+				SNReSendCount=0;
+				SNReSendTimeOutCount=0;
+			}
 		}
 	}
 
@@ -966,6 +977,7 @@ void fSNRequest(void)
 		calcSendBufSum();
 		uartSend(14+4);
 		SNReSendCount=1;
+		SNReSendTimeOutCount=0;
 	}
 }
 
