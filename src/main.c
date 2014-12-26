@@ -891,6 +891,11 @@ void fOAD(void)
 	OADTimeout=0;
 	OADTimeoutCount=0;
 	if(OADcount<3 or sSelf.mode!=SYS_OAD){
+		ledSetMode(LED_M_STATICPOWER,0x1FF);
+		led1On();
+		led2On();
+		led3On();
+		led4On();
 		sSelf.mode=SYS_OAD;
 		directGEn=0;
 		if(OADcount>=0x0c04)
@@ -906,6 +911,16 @@ void fOAD(void)
 		i=0;
 		while(i<8){checkSum+=*ptr++; i++; }
 		*ptr=checkSum;
+
+		ledAllOff();
+		if((OADcount&0x3)==0x0)
+			led1On();
+		if((OADcount&0x3)==0x1)
+			led2On();
+		if((OADcount&0x3)==0x2)
+			led3On();
+		if((OADcount&0x3)==0x3)
+			led4On();
 
 		// flashOpPut(opFlashWait);
 		waitFlashIdle();
@@ -1002,6 +1017,7 @@ void fFlashOpFinish(void)
 			if(OADcount<2)
 				OADcount=2;
 			if(OADcount>=0x0c04){
+				ledAllOff();
 				waitFlashIdle();
 				flashErase(1,PROGRAMFLAGADDR);
 				waitFlashIdle();

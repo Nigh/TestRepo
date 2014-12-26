@@ -37,6 +37,6 @@
 #define MIN_DELTA_NECKMOVEMENT (0.9)
 #define MIN_ZEROPOINT (5.5)
 
-#define STR_VERSION "beta0.9.7A"	//v1.0.0
+#define STR_VERSION "beta0.9.8"	//v1.0.0
 
 #endif
