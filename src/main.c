@@ -1108,7 +1108,7 @@ void fTransPro(void)
 }
 // ***************************************
 // ***************************************
-
+void fChargeInt(void);
 void fAdcEnd(void)
 {
 	static uint batteryLevelOld=100;
