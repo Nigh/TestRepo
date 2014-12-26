@@ -205,13 +205,18 @@ void recoverData(void)
 
 void statuSelect(void)
 {
-	uchar temp;
+	uchar temp[2];
 	waitFlashIdle();
-	readFromFlashBytes(&temp,1,PROGRAMFLAGADDR);
-	if(temp==0x00)
+	readFromFlashBytes(&temp,2,PROGRAMFLAGADDR);
+	if(temp[0]==0x00)
 		sSelf.mode=SYS_ACTIVE;
 	else
 		sSelf.mode=SYS_SLEEP;
+
+	if(temp[1]==0x55)
+		ledSetMode(LED_M_MQ,1);
+	else if(temp[1]==0x44)
+		ledSetMode(LED_M_FLASHALL,5);
 }
 
 void afterBoot(void)
@@ -277,7 +282,7 @@ void iMain(void)
 		init3DH();
 		init3DH();
 		R_TAU0_Channel5_Start();
-		ledSetMode(LED_M_MQ,3);
+		// ledSetMode(LED_M_MQ,3);
 		P5.1=0;
 	}else{
 		ledSetMode(LED_M_OFF,1);
@@ -764,6 +769,7 @@ void goActive(void)
 	}
 }
 
+extern const uchar data_UTC[3];
 extern const sFLASHOP opFlashAddrErase;
 void fFormatFlash(void)
 {
@@ -777,6 +783,12 @@ void fFormatFlash(void)
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashAddrErase);
 		flashOpFin();
+	}else if(uartRevBuf[3]==0xE1){
+		uartBufWrite(data_UTC,3);
+		memcpyUser(&sUtcs.lTime,&uartSendBuf[3],4);
+		calcSendBufSum();
+		uartSend(8);	// send version num 
+		return;
 	}
 	uartSuccess(0x07);
 }

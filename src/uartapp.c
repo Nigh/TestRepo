@@ -17,6 +17,8 @@ const uchar data_batteryLevel[3]={'#',0x03,0x14};
 const uchar data_bleCtrl[3]={'#',0x03,0x15};
 const uchar data_SNCode[3]={'#',0x10,0x15};
 const uchar data_version[3]={'#',0x12,0x18};
+const uchar data_UTC[3]={'#',0x06,0x19};
+
 
 const uchar data_OADRequest[3]={'#',0x04,0x17};
 
