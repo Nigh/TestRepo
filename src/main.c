@@ -343,6 +343,7 @@ void neckHealthCheck(void)
 extern void addrCache(void);
 extern tNECK Neck;
 extern sAPPTIMER stopVibrateTimer;
+extern const uchar data_SNCode[3];
 // Neck.PositionID
 unsigned long daySec=0;
 unsigned long dayStep=0;
@@ -374,8 +375,7 @@ void fRtc2Hz(void)
 		SNReSendCount++;
 		if(SNReSendCount>3){
 			uartBufWrite(data_SNCode,3);
-			for(i=0;i<14;i++)
-				uartSendBuf[i+3]=SNCode[i];
+			memcpyUser(&SNCode,&uartSendBuf[3],14);
 			calcSendBufSum();
 			uartSend(14+4);
 			SNReSendTimeOutCount++;
@@ -966,7 +966,6 @@ void fConnectRequest(void)
 	uartSuccess(0x10);
 }
 
-extern const uchar data_SNCode[3];
 void fSNRequest(void)
 {
 	uchar i;

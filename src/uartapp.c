@@ -115,6 +115,7 @@ void uartSendDirect(uchar len)
 	STG1 = 1U;
 }
 
+extern uchar uartRevTimeout;
 void uartSend(uchar len)
 {
 	if(sUart.statu&UART_SEND or sUart.statu&UART_WAIT)
@@ -126,6 +127,8 @@ void uartSend(uchar len)
 	// sUart.count=0;
 	// sUart.time=0;
 	wait5msTimer();
+	sUart.statu|=UART_REV;
+	uartRevTimeout=1;
 }
 
 void calcSendBufSum(void)
