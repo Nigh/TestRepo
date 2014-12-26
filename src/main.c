@@ -1170,6 +1170,7 @@ void fAdcEnd(void)
 		}
 	}else{
 		localPowerLevel=powerLevel;
+		fChargeInt();
 	}
 	powerLevel=localPowerLevel;
 
