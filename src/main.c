@@ -137,6 +137,11 @@ void selfCheck(void)
 	led4On();
 	selfCheck_sensor();
 	selfCheck_flash();
+	VibrateOn();
+	HALT();
+	NOP();
+	HALT();
+	VibrateOff();
 	led3Off();
 	// led4Off();
 }
