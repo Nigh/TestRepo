@@ -936,9 +936,9 @@ void fOAD(void)
 		while(i<8){checkSum+=*ptr++; i++; }
 		*ptr=checkSum;
 
-		ledAllOff();
 		if((OADcount&0x1F)==0x0){
 			_t++;
+			ledAllOff();
 			switch(_t&0x3){
 				case 0: led1On();break;
 				case 1: led2On();break;
