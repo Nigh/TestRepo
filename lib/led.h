@@ -23,9 +23,9 @@
 #define PWM_FALL (2)
 #define PWM_HOLD (0)
 
-#define BAT80 (80)
-#define BAT60 (60)
-#define BAT40 (40)
+#define BAT80 (75)
+#define BAT60 (50)
+#define BAT40 (25)
 #define BAT20 (20)
 #define BAT0 (0)
 
