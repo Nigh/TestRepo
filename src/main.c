@@ -1120,7 +1120,7 @@ void fAdcEnd(void)
 		return;
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
-	batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
+	// batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
 	batteryLevel=batteryLevel-745;	//745~920  batteryLevel:0~175
 	// 42~125 -> 3.6v~4.2v
 	if(batteryLevel<0)
