@@ -35,6 +35,9 @@ uchar BLEResetCount=0;
 uchar SNReSendCount=0;
 static uint OADcount=0;
 
+uchar get3DHEx(uchar addr);
+void set3DHEx(uchar addr,uchar value);
+
 uint calcStepLogNum(void);
 uint calcNeckLogNum(void);
 void uartSendLogCount(void);
@@ -49,6 +52,8 @@ extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned l
 
 extern int isFlashIdle(void);
 
+extern void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
+
 void waitFlashIdle(void)
 {
 	unsigned int x=0;
@@ -61,7 +66,81 @@ void waitFlashIdle(void)
 	}
 }
 
-extern void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
+uchar waitFlashIdleEx(void)
+{
+	unsigned int x=0,y=0;
+	while(1)
+	{
+		if(isFlashIdle())
+			return 0;	//idle
+		x=0;
+		while(x++<1000);
+		y++;
+		if(y>300)
+			return 1;	//time out
+	}	
+}
+
+extern uint* const _PWM[4];
+void selfCheck_sensor(void)
+{
+	set3DHEx(0x23,0x00);
+	if(get3DHEx(0x23)!=0x00)
+		return;
+	set3DHEx(0x23,0xAA);
+	if(get3DHEx(0x23)!=0xAA)
+		return;
+	set3DHEx(0x23,0x44);
+	if(get3DHEx(0x23)!=0x44)	// the least bit is SPI mode ctrl, DO NOT CHANGE IT!!
+		return;
+	set3DHEx(0x23,0x00);
+	led1Off();
+}
+
+uchar selfCheck_flash_module(uchar data,unsigned long addr)
+{
+	uchar _;
+	flashErase(1,addr);
+	if(waitFlashIdleEx())
+		return 1;	//1 for error
+	readFromFlashBytes(&_,1,addr);
+	if(_!=0xff)
+		return 1;
+
+	_=data;
+	flashWrite(&_, 1, addr);
+	if(waitFlashIdleEx())
+		return 1;
+	readFromFlashBytes(&_,1,addr);
+	if(_!=data)
+		return 1;
+	return 0;	//0 for success
+}
+
+void selfCheck_flash(void)
+{
+	if(selfCheck_flash_module(FLASH_TEST_ADDR1,FLASH_TEST_DATA1))
+		return;
+	if(selfCheck_flash_module(FLASH_TEST_ADDR2,FLASH_TEST_DATA2))
+		return;
+	if(selfCheck_flash_module(FLASH_TEST_ADDR3,FLASH_TEST_DATA3))
+		return;
+	led2Off();
+}
+
+void selfCheck(void)
+{
+	ledSetMode(LED_M_STATICPOWER,0x1FF);
+	led1On();
+	led2On();
+	led3On();
+	led4On();
+	selfCheck_sensor();
+	selfCheck_flash();
+	led3Off();
+	// led4Off();
+}
+
 void recoverData(void)
 {
 	uchar i=0;
@@ -134,8 +213,6 @@ void afterBoot(void)
 {
 	unsigned long x=0;
 	initFlash();
-	recoverData();
-	statuSelect();
 	P2.5=0;
 	while(x++<100000);
 	P2.0=1;
@@ -156,14 +233,12 @@ void afterBoot(void)
 #include "bootmain.h"
 extern int isFlashIdle(void); 
 extern void R_PCLBUZ0_Start(void);
-void set3DHEx(uchar addr,uchar value);
 void init3DH(void);
 extern sNECKLOG neckLog[16];
 extern sSTEPLOG stepLog;
 void iMain(void)
 {
 	afterBoot();
-
 
 	ledSetMode(LED_M_OFF,1);
 	EI();
@@ -172,10 +247,12 @@ void iMain(void)
 	HALT();
 	fifoFlush();
 	P2.5=1;
+
 	if(P3.0==0){
+		startHClk();
+		selfCheck();
 		sSelf.mode=SYS_TEST;
 		while(1){
-			startHClk();
 			DI();
 			gMsg=fifoGet();
 			EI();
@@ -186,6 +263,9 @@ void iMain(void)
 		}
 		sSelf.mode=SYS_SLEEP;
 	}
+
+	recoverData();
+	statuSelect();
 	if(sSelf.mode==SYS_ACTIVE){
 		waitFlashIdle();
 		flashErase(2,PROGRAMFLAGADDR);
@@ -195,6 +275,7 @@ void iMain(void)
 		ledSetMode(LED_M_MQ,3);
 		P5.1=0;
 	}else{
+		ledSetMode(LED_M_OFF,1);
 		set3DHEx(0x20,0x07);	// power down
 		set3DHEx(0x20,0x07);	// power down
 	}
@@ -1104,6 +1185,20 @@ void set3DHEx(uchar addr,uchar value)
 	while(CSIIF00==0);CSIIF00=0;
 	disable_3dh();
 }
+
+uchar get3DHEx(uchar addr)
+{
+	uchar reg=0;
+	enable_3dh();
+	SIO00=(addr|0xc0);
+	while(CSIIF00==0);CSIIF00=0;
+	SIO00=0xFF;
+	while(CSIIF00==0);CSIIF00=0;
+	reg=SIO00;
+	disable_3dh();
+	return reg;
+}
+
 
 void init3DH(void)
 {

@@ -25,6 +25,15 @@
 
 #define DATA_BEFORE_TIMESYNC (1)	// is data save without timesynced
 
+#define FLASH_TEST_ADDR1 (0x16000)
+#define FLASH_TEST_DATA1 (0xAA)
+
+#define FLASH_TEST_ADDR2 (0x19000)
+#define FLASH_TEST_DATA2 (0x55)
+
+#define FLASH_TEST_ADDR3 (0x26000)
+#define FLASH_TEST_DATA3 (0xA5)
+
 #define MIN_DELTA_NECKMOVEMENT (0.9)
 #define MIN_ZEROPOINT (5.5)
 

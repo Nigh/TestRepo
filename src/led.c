@@ -1,14 +1,12 @@
 #include "led.h"
 #include "r_cg_timer.h"
 
-#define OSC_FREQ (8000)
-#define PWM50 (OSC_FREQ/2)
-
 static void pwmMClkOn(void);
 static void pwmMClkOff(void);
 void ledAllOff(void);
 
-static uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
+// static uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
+uint* const _PWM[4]={&TDR01,&TDR02,&TDR03,&TDR04};
 // static uint* const _PWM[4]={&TDR01,&TDR02,&TDR04,&TDR03};	//调换3,4位置
 
 
@@ -421,7 +419,7 @@ void led_staticPower(void)
 		if(sLed.times<0x100 && --sLed.times==0) ledSetMode(LED_M_OFF,1);
 	}
 
-	if(sLed.ledCount==1){
+	if(sLed.ledCount==1 && sLed.times<0x100){
 		if(powerLevel>BAT80){
 			temp=4;
 		}else if(powerLevel>BAT60){

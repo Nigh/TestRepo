@@ -4,6 +4,9 @@
 #include "typedef.h"
 #include "r_cg_macrodriver.h"
 
+#define OSC_FREQ (8000)
+#define PWM50 (OSC_FREQ/2)
+
 #define LED_M_OFF		(0xffff)
 #define LED_M_HERATBEAT (0)
 #define LED_M_BREATHE	(1)
@@ -46,6 +49,7 @@
 #define led3On() *(_PWM[2])=PWM50
 #define led4On() *(_PWM[3])=PWM50
 
+extern void ledAllOff(void);
 extern void ledNext(void);
 typedef struct
 {
@@ -56,6 +60,7 @@ typedef struct
 	uint times;	//execute times (1~16) (0xff for infinite loop)
 } sLED;
 extern sLED sLed;
+
 
 void ledSetMode(uint,uint);
 
