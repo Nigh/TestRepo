@@ -892,6 +892,7 @@ void fOAD(void)
 {
 	uint i=0,checkSum=0;
 	uint *ptr=OADLog;
+	static uchar _t=0;
 
 	if(uartRevBuf[1]==0x12)	// SN 烧录(复用了OADlog)
 	{
@@ -936,14 +937,15 @@ void fOAD(void)
 		*ptr=checkSum;
 
 		ledAllOff();
-		if((OADcount&0x3)==0x0)
-			led1On();
-		if((OADcount&0x3)==0x1)
-			led2On();
-		if((OADcount&0x3)==0x2)
-			led3On();
-		if((OADcount&0x3)==0x3)
-			led4On();
+		if((OADcount&0x1F)==0x0){
+			_t++;
+			switch(_t&0x3){
+				case 0: led1On();break;
+				case 1: led2On();break;
+				case 2: led3On();break;
+				case 3: led4On();break;
+			}
+		}
 
 		// flashOpPut(opFlashWait);
 		waitFlashIdle();
