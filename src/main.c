@@ -1138,6 +1138,11 @@ void fAdcEnd(void)
 	if(powerLevel>100)
 		powerLevel=100;
 
+	if(batteryStatu!=BAT_NORMAL){
+		if(powerLevel>95)
+			powerLevel=95;
+	}
+
 	if(localPowerLevel<0xff){
 		if(localPowerLevel>powerLevel){
 			if(localPowerLevel-powerLevel>10)
