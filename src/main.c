@@ -1126,7 +1126,7 @@ void fTransPro(void)
 void fChargeInt(void);
 void fAdcEnd(void)
 {
-	static uint batteryLevelOld=100;
+	static uint batteryLevelOld=0x100;
 	static uchar localPowerLevel=0xff;
 	uint temp;
 	if(sVibrate.en)
@@ -1145,7 +1145,7 @@ void fAdcEnd(void)
 		sVibrate.count=1;
 	}
 
-	if(batteryLevelOld<100){
+	if(batteryLevelOld<0x100){
 		if(batteryStatu==BAT_NORMAL){
 			if(batteryLevel>batteryLevelOld)
 				batteryLevel=batteryLevelOld;

@@ -5,7 +5,6 @@
 
 static unsigned char 		spirxflash[32]={0};
 static unsigned char		spitxflash[32]={0};
-static unsigned long		flash_mcuaddr;
 
 _sFlash				sFlash;
 _sFlashRang			stepFlash;
