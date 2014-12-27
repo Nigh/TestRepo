@@ -651,6 +651,13 @@ void fBLEConfirm(void)
 		if(sUpload.packageRemain<=0){
 			sUpload.statu=UPLOAD_IDLE;
 			uartSendLogCount();
+			if(sUpload.statu==UPLOAD_NECK){
+				neckFlash.startAddr=NECKRANGSTART;
+				neckFlash.endAddr=NECKRANGSTART;
+			}else if(sUpload.statu==UPLOAD_STEP){
+				stepFlash.startAddr=STEPRANGSTART;
+				stepFlash.endAddr=STEPRANGSTART;
+			}
 			addrCache();
 			return;
 		}
