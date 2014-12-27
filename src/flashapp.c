@@ -103,9 +103,12 @@ void fOADSave(void)
 extern void waitFlashIdle(void);
 void fAddrSave(void)
 {
-	flashWrite(&stepFlash.startAddr, 2*sizeof(unsigned long), 94208);
+	static const uchar _AA55[2]={0xAA,0x55};
+	flashWrite(&stepFlash.startAddr, 2*sizeof(unsigned long), ADDR_SAVE_START);
 	waitFlashIdle();
-	flashWrite(&neckFlash.startAddr, 2*sizeof(unsigned long), 94208+2*sizeof(unsigned long));
+	flashWrite(&neckFlash.startAddr, 2*sizeof(unsigned long), ADDR_SAVE_START+2*sizeof(unsigned long));
+	waitFlashIdle();
+	flashWrite(&_AA55, 2, ADDR_SAVE_START+4*sizeof(unsigned long));
 	flashOpFin();
 }
 

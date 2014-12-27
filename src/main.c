@@ -155,12 +155,20 @@ void recoverData(void)
 		unsigned long addrLong[4];
 	}uAddr;
 	waitFlashIdle();
-	readFromFlashBytes(uAddr.addr,4*sizeof(unsigned long),ADDR_SAVE_START);
-	if(uAddr.addrLong[0]!=0xffffffff){
-		stepFlash.startAddr=uAddr.addrLong[0];
-		stepFlash.endAddr=uAddr.addrLong[1];
-		neckFlash.startAddr=uAddr.addrLong[2];
-		neckFlash.endAddr=uAddr.addrLong[3];
+	readFromFlashBytes(temp,2,ADDR_SAVE_START+4*sizeof(unsigned long));
+	if(temp[0]==0xAA && temp[1]==0x55){
+		readFromFlashBytes(uAddr.addr,4*sizeof(unsigned long),ADDR_SAVE_START);
+		if(uAddr.addrLong[0]<=STEPRANGEND
+			&& uAddr.addrLong[1]<=STEPRANGEND
+			&& uAddr.addrLong[0]>=STEPRANGSTART
+			&& uAddr.addrLong[1]>=STEPRANGSTART
+			&& uAddr.addrLong[2]<=NECKRANGEND
+			&& uAddr.addrLong[3]<=NECKRANGEND){
+			stepFlash.startAddr=uAddr.addrLong[0];
+			stepFlash.endAddr=uAddr.addrLong[1];
+			neckFlash.startAddr=uAddr.addrLong[2];
+			neckFlash.endAddr=uAddr.addrLong[3];
+		}
 	}
 	// addr seek
 	// end addr在块尾，或当前无记录则截止
