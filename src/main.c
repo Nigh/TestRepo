@@ -38,8 +38,8 @@ static uint OADcount=0;
 uchar get3DHEx(uchar addr);
 void set3DHEx(uchar addr,uchar value);
 
-uint calcStepLogNum(void);
-uint calcNeckLogNum(void);
+int calcStepLogNum(void);
+int calcNeckLogNum(void);
 void uartSendLogCount(void);
 void OADRequest(uint num);
 void memcpyUser(uchar* src,uchar* dst,const size_t length);
