@@ -1124,10 +1124,10 @@ void fTransPro(void)
 // ***************************************
 // ***************************************
 void fChargeInt(void);
+static uchar localPowerLevel=0xff;
 void fAdcEnd(void)
 {
 	static uint batteryLevelOld=0x100;
-	static uchar localPowerLevel=0xff;
 	uint temp;
 	if(sVibrate.en)
 	{
@@ -1173,10 +1173,15 @@ void fAdcEnd(void)
 
 	if(localPowerLevel<0xff){
 		if(localPowerLevel>powerLevel){
-			if(localPowerLevel-powerLevel>10)
-				localPowerLevel-=10;
-			else
-				localPowerLevel=powerLevel;
+			if(localPowerLevel==100){
+				if(powerLevel<localPowerLevel)
+					powerLevel=99;
+			}else{
+				if(localPowerLevel-powerLevel>10)
+					localPowerLevel-=10;
+				else
+					localPowerLevel=powerLevel;
+			}
 		}else{
 			if(powerLevel-localPowerLevel>3)
 				localPowerLevel+=3;
@@ -1232,7 +1237,7 @@ void fChargeInt(void)
 		batteryStatu&=0xff^BAT_CHARGE;
 	if(P7.1==0){
 		batteryStatu|=BAT_FULL;
-		powerLevel=100;
+		localPowerLevel=100;
 		goActive();
 	}
 	else
