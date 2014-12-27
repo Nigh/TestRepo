@@ -829,7 +829,7 @@ void fGsensorAcc(void)
 }
 
 
-uint calcStepLogNum(void)
+int calcStepLogNum(void)
 {
 	unsigned long temp;
 	if(stepFlash.startAddr>stepFlash.endAddr){
@@ -842,7 +842,7 @@ uint calcStepLogNum(void)
 		return 0;
 }
 
-uint calcNeckLogNum(void)
+int calcNeckLogNum(void)
 {
 	unsigned long temp;
 	if(neckFlash.startAddr>neckFlash.endAddr){

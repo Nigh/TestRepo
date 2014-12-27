@@ -237,7 +237,15 @@ rewriteaddr2:
 			if(flashAddr % 256 == 0 && (i < dataLength)) {
 					//rewrite addr
 redelay2:
-				delay10Nop();
+
+				DI();
+				SIO00=0xFF;
+				NOP();NOP();
+				P2.3=1;
+				EI();
+				while(CSIIF00==0);
+				CSIIF00=0;
+
 				disable_flash();
 				delay10Nop();
 				enable_flash();
@@ -260,6 +268,7 @@ redelay2:
 
 		DI();
 		SIO00=0xFF;
+		NOP();NOP();
 		P2.3=1;
 		EI();
 		while(CSIIF00==0);
