@@ -802,10 +802,7 @@ void fFormatFlash(void)
 	if(uartRevBuf[3]==0xd9){
 		goSleep();
 	}else if(uartRevBuf[3]==0xEA){
-		stepFlash.startAddr=0;
-		stepFlash.endAddr=0;
-		neckFlash.startAddr=0;
-		neckFlash.endAddr=0;
+		initFlash();
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashAddrErase);
 		flashOpFin();

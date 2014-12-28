@@ -5,8 +5,8 @@
 #include "typedef.h"
 #include "apptimer.h"
 
-#define FLASHQUEUE_SIZE 0x8
-#define FLASHQUEUE_SIZEMASK 0x7
+#define FLASHQUEUE_SIZE 0x10
+#define FLASHQUEUE_SIZEMASK (FLASHQUEUE_SIZE-1)
 
 
 typedef struct
