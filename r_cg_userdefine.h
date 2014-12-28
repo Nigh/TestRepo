@@ -74,6 +74,30 @@ User definitions
 #define UPLOAD_NECK (1)
 #define UPLOAD_STEP (2)
 
+
+#define CL_HCLK (0x1)
+#define CL_LCLK (0xFF^0x1)
+
+#define CL_HREQ (0x2|0x4)
+#define CL_LREQ (0x2|0x0)
+#define CL_REQ_CLR (0xFF^0x6)
+
+#define CL_H_OP (0x8|0x10)
+#define CL_L_OP (0x8|0x00)
+#define CL_OP_CLR (0xFF^0x18)
+
+#define SETCLK_HCLK() sClkLevel.level|=CL_HCLK
+#define SETCLK_LCLK() sClkLevel.level&=CL_LCLK
+
+#define SETCLK_HREQ() sClkLevel.level|=CL_HREQ
+// #define SETCLK_LREQ() sClkLevel.level|=CL_LREQ,sClkLevel.level&=(0xFF^0x4)
+#define SETCLK_REQ_CLR() sClkLevel.level&=CL_REQ_CLR
+
+#define SETCLK_H_OP() sClkLevel.level|=CL_H_OP
+#define SETCLK_L_OP() sClkLevel.level|=CL_L_OP,sClkLevel.level&=(0xFF^0x10)
+#define SETCLK_OP_CLR() sClkLevel.level&=CL_OP_CLR
+
+
 #define VibrateOn() P5.0=1
 #define VibrateOff() P5.0=0
 
@@ -105,6 +129,7 @@ extern uchar neckUnhealthCount;
 
 extern uchar BLE_Connect_Timeout;
 
+extern sCLKLEVEL sClkLevel;
 
 /* End user code. Do not edit comment generated here */
 #endif

@@ -16,6 +16,10 @@ typedef unsigned long u32;
 typedef void (*fFUNC)(void);
 typedef int iFUNC(void);
 
+typedef struct
+{
+	uchar level;
+} sCLKLEVEL;
 
 typedef struct
 {
