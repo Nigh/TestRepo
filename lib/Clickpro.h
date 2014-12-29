@@ -1,10 +1,17 @@
 #ifndef _CLICKPRO_H
 #define	_CLICKPRO_H
 
-#define			CLICKSTABLELIMIT		20
-#define			CLICKACTIVELIMIT		30
+
+#define D_LIMIT 3
+
+#define			CLICKSTABLELIMIT_X		25
+#define			CLICKSTABLELIMIT_Y		40
+#define			CLICKSTABLELIMIT_Z		15
+
+#define			CLICKACTIVELIMIT_X		(CLICKSTABLELIMIT_X+D_LIMIT)
+#define			CLICKACTIVELIMIT_Y		(CLICKSTABLELIMIT_Y+D_LIMIT)
+#define			CLICKACTIVELIMIT_Z		(CLICKSTABLELIMIT_Z+D_LIMIT)
+
 unsigned char IsClick(unsigned char *clickdata);
-
-
 
 #endif

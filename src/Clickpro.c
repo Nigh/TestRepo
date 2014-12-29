@@ -192,11 +192,11 @@ unsigned char IsClick(unsigned char *clickdata)
 				{
 					if(StableTimes > 5)
 					{
-						comparedata = CLICKSTABLELIMIT;
+						comparedata = CLICKSTABLELIMIT_X;
 					}
 					else
 					{
-						comparedata = CLICKACTIVELIMIT;
+						comparedata = CLICKACTIVELIMIT_X;
 
 					}
 					if(XAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
@@ -248,11 +248,11 @@ unsigned char IsClick(unsigned char *clickdata)
 				{
 					if(StableTimes > 5)
 					{
-						comparedata = CLICKSTABLELIMIT;
+						comparedata = CLICKSTABLELIMIT_Y;
 					}
 					else
 					{
-						comparedata = CLICKACTIVELIMIT;
+						comparedata = CLICKACTIVELIMIT_Y;
 
 					}
 					if(YAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
@@ -304,11 +304,11 @@ unsigned char IsClick(unsigned char *clickdata)
 				{
 					if(StableTimes > 5)
 					{
-						comparedata = CLICKSTABLELIMIT;
+						comparedata = CLICKSTABLELIMIT_Z;
 					}
 					else
 					{
-						comparedata = CLICKACTIVELIMIT;
+						comparedata = CLICKACTIVELIMIT_Z;
 
 					}
 					if(ZAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
