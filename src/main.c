@@ -1133,8 +1133,10 @@ void fAdcEnd(void)
 	}
 	batteryLevel=((adcValue[0]>>6)+(adcValue[1]>>6)+(adcValue[2]>>6)+(adcValue[3]>>6))>>2;
 	// batteryLevel=batteryLevel-746;	//746~871  batteryLevel:0~125
-	batteryLevel=batteryLevel-745;	//745~920  batteryLevel:0~175
+	// batteryLevel=batteryLevel-745;	//745~920  batteryLevel:0~175
+	batteryLevel=batteryLevel-745;	//745~915  batteryLevel:0~170
 	// 42~125 -> 3.6v~4.2v
+	// 42~170 -> 3.6v~4.2v
 	if(batteryLevel<0)
 		batteryLevel=0;
 	if(batteryLevelOld>50 && batteryLevel<=50){
@@ -1157,7 +1159,7 @@ void fAdcEnd(void)
 	// batteryLevel=batteryLevel-743;	//743~868  batteryLevel:0~125
 
 	if(batteryLevel>42)
-		powerLevel=(float)(batteryLevel-42)*0.75;	//0~100
+		powerLevel=(float)(batteryLevel-42)*0.783;	//0~100
 	else
 		powerLevel=0;
 	if(powerLevel>100)
@@ -1174,14 +1176,14 @@ void fAdcEnd(void)
 				if(powerLevel<localPowerLevel)
 					powerLevel=99;
 			}else{
-				if(localPowerLevel-powerLevel>10)
-					localPowerLevel-=10;
+				if(localPowerLevel-powerLevel>7)
+					localPowerLevel-=7;
 				else
 					localPowerLevel=powerLevel;
 			}
 		}else{
-			if(powerLevel-localPowerLevel>3)
-				localPowerLevel+=3;
+			if(powerLevel-localPowerLevel>2)
+				localPowerLevel+=2;
 			else
 				localPowerLevel=powerLevel;
 		}
