@@ -1202,8 +1202,10 @@ void fAdcEnd(void)
 	uartBufWrite(data_batteryLevel,3);
 	uartSendBuf[3]=powerLevel;
 	calcSendBufSum();
-	uartSend(5);
-	BLEResetCount=1;
+	if(sSelf.mode!=SYS_OAD){
+		uartSend(5);
+		BLEResetCount=1;
+	}
 }
 
 
