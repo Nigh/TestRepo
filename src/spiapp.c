@@ -164,6 +164,7 @@ void _3DH5Hz(void)
 				if(SMAOld>G_SLEEPLIMIT)
 					staticCount=0;
 				SMA=0;
+				SMACount=1;
 			}else{
 				SMA+=accDiff(oldAcc.x,sGAcc.x)+accDiff(oldAcc.y,sGAcc.y)+accDiff(oldAcc.z,sGAcc.z);
 				SMACount++;
