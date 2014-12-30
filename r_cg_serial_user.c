@@ -186,17 +186,19 @@ __interrupt static void int_uartRev(void)
 		if(uartRevBuf[0]!='#')
 			sUart.count=0;
 	}else if(sUart.count>2){
-		if(uartRevBuf[1]+2==sUart.count){
+		if(uartRevBuf[1]>30)
+			sUart.count=0;
+		else if(uartRevBuf[1]+2==sUart.count){
 			sMsg.type=M_TYPE_BLE;
 			sMsg.content=uartRevBuf[2];
 			for(i=2;i<=uartRevBuf[1];i++)
 				checkSum+=uartRevBuf[i];
 			if(checkSum==uartRevBuf[uartRevBuf[1]+1]){
 				fifoPut4ISR(sMsg);
-				sUart.count=0;
 				sUart.statu&=0xFF^UART_REV;
 				// sUart.statu=UART_IDLE;
 			}
+			sUart.count=0;
 		}
 	}
 }
