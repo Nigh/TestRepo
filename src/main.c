@@ -464,6 +464,13 @@ void fRtc2Hz(void)
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
 				neckLogCache();
+				sleepCount=0;
+			}
+		}else{
+			sleepCount++;
+			if(sleepCount>=3600){
+				sleepCount=0;
+				neckUnhealthCount=0;
 			}
 		}
 
@@ -482,11 +489,6 @@ void fRtc2Hz(void)
 		sUtcs.lTime++;
 		if(g_Statu==G_SLEEP){
 			startHClk();
-			sleepCount++;
-			if(sleepCount>=3600){
-				sleepCount=0;
-				neckUnhealthCount=0;
-			}
 			// P2.3=0;
 			read3DHCount();
 			if(receiveMax>0){
@@ -514,8 +516,6 @@ void fRtc2Hz(void)
 					set3DHEx(0x20,0x47);
 				}
 			}
-		}else{
-			sleepCount=0;
 		}
 	}
 }
