@@ -155,6 +155,7 @@ void recoverData(void)
 		unsigned long addrLong[4];
 	}uAddr;
 	waitFlashIdle();
+	readFromFlashBytes(SNCode,16,SN_SAVE_START);
 	readFromFlashBytes(temp,2,ADDR_SAVE_START+4*sizeof(unsigned long));
 	if(temp[0]==0xAA && temp[1]==0x55){
 		readFromFlashBytes(uAddr.addr,4*sizeof(unsigned long),ADDR_SAVE_START);
@@ -169,6 +170,8 @@ void recoverData(void)
 			neckFlash.startAddr=uAddr.addrLong[2];
 			neckFlash.endAddr=uAddr.addrLong[3];
 		}
+	}else{
+		return;
 	}
 	// addr seek
 	// end addr在块尾，或当前无记录则截止
@@ -208,7 +211,6 @@ void recoverData(void)
 		if(neckFlash.endAddr>=NECKRANGEND)
 			break;
 	}
-	readFromFlashBytes(SNCode,16,SN_SAVE_START);
 }
 
 void statuSelect(void)
@@ -441,6 +443,7 @@ void fRtc2Hz(void)
 
 	if((count&0x1)==0)
 	{
+		recoverCount++;
 		if(BLE_Connect_Timeout>0)
 			BLE_Connect_Timeout--;
 		if(batteryStatu!=BAT_NORMAL){
@@ -661,7 +664,6 @@ void fBLEConfirm(void)
 		}
 
 		if(sUpload.packageRemain<=0){
-			uartSendLogCount();
 			if(sUpload.statu==UPLOAD_NECK){
 				neckFlash.startAddr=NECKRANGSTART;
 				neckFlash.endAddr=NECKRANGSTART;
@@ -669,6 +671,7 @@ void fBLEConfirm(void)
 				stepFlash.startAddr=STEPRANGSTART;
 				stepFlash.endAddr=STEPRANGSTART;
 			}
+			uartSendLogCount();
 			sUpload.statu=UPLOAD_IDLE;
 			addrCache();
 			return;
@@ -1186,7 +1189,7 @@ void fAdcEnd(void)
 		if(localPowerLevel>powerLevel){
 			if(localPowerLevel==100){
 				if(powerLevel<localPowerLevel)
-					powerLevel=99;
+					localPowerLevel=99;
 			}else{
 				if(localPowerLevel-powerLevel>7)
 					localPowerLevel-=7;
@@ -1231,6 +1234,8 @@ void chargeScan(void)
 		batteryStatu&=0xff^BAT_CHARGE;
 	if(P7.1==0){
 		batteryStatu|=BAT_FULL;
+		localPowerLevel=100;
+		powerLevel=localPowerLevel;
 		goActive();
 	}else
 		batteryStatu&=0xff^BAT_FULL;
@@ -1251,6 +1256,7 @@ void fChargeInt(void)
 	if(P7.1==0){
 		batteryStatu|=BAT_FULL;
 		localPowerLevel=100;
+		powerLevel=localPowerLevel;
 		goActive();
 	}
 	else
