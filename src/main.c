@@ -29,7 +29,7 @@ fFUNC const msgHandler[]={			// No
 sMSG gMsg={0,0};	//global message
 uchar uartRevTimeout=0;
 uchar OADTimeout=0,OADTimeoutCount=0;
-uchar SNCode[16]={0};
+uchar SNCode[17]="A22AL1B1SUV000";
 
 uchar BLEResetCount=0;
 uchar SNReSendCount=0;
@@ -155,7 +155,16 @@ void recoverData(void)
 		unsigned long addrLong[4];
 	}uAddr;
 	waitFlashIdle();
-	readFromFlashBytes(SNCode,16,SN_SAVE_START);
+	readFromFlashBytes(temp,16,SN_SAVE_START);
+	for(i=0;i<16;i++){
+		if(temp[i]!=0xFF)
+			break;
+	}
+	if(i!=16){
+		for(i=0;i<16;i++){
+			SNCode[i]=temp[i];
+		}
+	}
 	readFromFlashBytes(temp,2,ADDR_SAVE_START+4*sizeof(unsigned long));
 	if(temp[0]==0xAA && temp[1]==0x55){
 		readFromFlashBytes(uAddr.addr,4*sizeof(unsigned long),ADDR_SAVE_START);
