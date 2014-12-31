@@ -1188,7 +1188,7 @@ void fAdcEnd(void)
 	if(localPowerLevel<0xff){
 		if(localPowerLevel>powerLevel){
 			if(localPowerLevel==100){
-				if(powerLevel<localPowerLevel)
+				if(powerLevel<localPowerLevel and (batteryStatu&BAT_FULL)==0)
 					localPowerLevel=99;
 			}else{
 				if(localPowerLevel-powerLevel>7)
@@ -1207,7 +1207,6 @@ void fAdcEnd(void)
 		fChargeInt();
 	}
 	powerLevel=localPowerLevel;
-
 
 	if(batteryStatu==BAT_NORMAL and batteryLevel<48){
 		goSleep();
@@ -1237,9 +1236,11 @@ void chargeScan(void)
 		localPowerLevel=100;
 		powerLevel=localPowerLevel;
 		goActive();
-	}else
+	}else if(P7.0==0){
 		batteryStatu&=0xff^BAT_FULL;
-	setTimer64Hz(&chargeScanTimer,16);
+	}
+	if(batteryStatu!=BAT_NORMAL)
+		setTimer64Hz(&chargeScanTimer,16);
 }
 
 sAPPTIMER chargeScanTimer={0,0,&chargeScan};
@@ -1259,11 +1260,11 @@ void fChargeInt(void)
 		powerLevel=localPowerLevel;
 		goActive();
 	}
-	else
+	else if(P7.0==0){
 		batteryStatu&=0xff^BAT_FULL;
+	}
 
 	setTimer64Hz(&chargeScanTimer,16);
-
 }
 
 
