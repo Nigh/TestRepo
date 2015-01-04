@@ -130,11 +130,13 @@ void selfCheck_flash(void)
 
 void selfCheck(void)
 {
+	unsigned long i=0;
 	ledSetMode(LED_M_STATICPOWER,0x1FF);
 	led1On();
 	led2On();
 	led3On();
 	led4On();
+	while(i++<1000000);
 	selfCheck_sensor();
 	selfCheck_flash();
 	VibrateOn();
