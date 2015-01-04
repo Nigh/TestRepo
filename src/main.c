@@ -528,6 +528,9 @@ void fRtc2Hz(void)
 					set3DHEx(0x20,0x47);
 					set3DHEx(0x20,0x47);
 				}
+			}else{
+				set3DHEx(0x20,0x1f);
+				set3DHEx(0x20,0x1f);
 			}
 		}
 	}

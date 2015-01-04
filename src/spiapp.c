@@ -214,6 +214,9 @@ void _3DH5Hz(void)
 			}
 
 		}
+	}else{
+		set3DHEx(0x20,0x47);
+		set3DHEx(0x20,0x47);
 	}
 
 	if(directGEn && !(sUart.statu&UART_SEND) && !(sUart.statu&UART_WAIT))
