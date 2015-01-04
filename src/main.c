@@ -78,7 +78,7 @@ uchar waitFlashIdleEx(void)
 		y++;
 		if(y>300)
 			return 1;	//time out
-	}	
+	}
 }
 
 extern uint* const _PWM[4];
