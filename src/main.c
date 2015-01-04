@@ -76,7 +76,7 @@ uchar waitFlashIdleEx(void)
 		x=0;
 		while(x++<1000);
 		y++;
-		if(y>300)
+		if(y>600)
 			return 1;	//time out
 	}
 }
@@ -119,11 +119,11 @@ uchar selfCheck_flash_module(uchar data,unsigned long addr)
 
 void selfCheck_flash(void)
 {
-	if(selfCheck_flash_module(FLASH_TEST_ADDR1,FLASH_TEST_DATA1))
+	if(selfCheck_flash_module(FLASH_TEST_DATA1,FLASH_TEST_ADDR1))
 		return;
-	if(selfCheck_flash_module(FLASH_TEST_ADDR2,FLASH_TEST_DATA2))
+	if(selfCheck_flash_module(FLASH_TEST_DATA2,FLASH_TEST_ADDR2))
 		return;
-	if(selfCheck_flash_module(FLASH_TEST_ADDR3,FLASH_TEST_DATA3))
+	if(selfCheck_flash_module(FLASH_TEST_DATA3,FLASH_TEST_ADDR3))
 		return;
 	led2Off();
 }
@@ -136,7 +136,7 @@ void selfCheck(void)
 	led2On();
 	led3On();
 	led4On();
-	while(i++<1000000);
+	while(i++<500000);
 	selfCheck_sensor();
 	selfCheck_flash();
 	VibrateOn();
