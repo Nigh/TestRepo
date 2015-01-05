@@ -124,7 +124,7 @@ void fBlockErase(void){
 	if(gOP.detail==FLASH_S_STEP){
 		flashErase(sizeof(sSTEPLOG),stepFlash.startAddr);
 	}else if(gOP.detail==FLASH_S_NECK){
-		flashErase(2*sizeof(sNECKLOG),neckFlash.startAddr);
+		flashErase(NECK_SAVE_PACKAGE*sizeof(sNECKLOG),neckFlash.startAddr);
 	}else if(gOP.detail==FLASH_S_OAD){
 		flashErase(18,programFlash.endAddr);
 	}else if(gOP.detail==FLASH_S_ADDR){

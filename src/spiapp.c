@@ -284,7 +284,7 @@ void neckLogCache(void)
 
 	memsetUser(&currentNeckLog,0,sizeof(sNECKLOGLONG));
 	// if(i>=1)	// debug
-	if(i>=7)
+	if(i>=NECK_SAVE_PACKAGE-1)
 	{
 		flashOpPut(opFlashWait);
 		if(needErase((i+1)*sizeof(sNECKLOG),neckFlash.endAddr)){

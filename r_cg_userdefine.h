@@ -106,6 +106,8 @@ User definitions
 #define SYS_TEST (2)
 #define SYS_OAD (3)
 
+#define NECK_SAVE_PACKAGE (8)
+
 extern sSELF sSelf;
 extern sUTCS sUtcs,sAlarmTime;
 extern sUPLOAD sUpload;
