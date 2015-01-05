@@ -136,10 +136,10 @@ void selfCheck(void)
 	led2On();
 	led3On();
 	led4On();
+	VibrateOn();
 	while(i++<500000);
 	selfCheck_sensor();
 	selfCheck_flash();
-	VibrateOn();
 	HALT();
 	NOP();
 	HALT();
