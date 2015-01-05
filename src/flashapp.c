@@ -122,9 +122,9 @@ void fSNSave(void)
 // extern flashErase(unsigned short dataLength, unsigned long flashAddr)
 void fBlockErase(void){
 	if(gOP.detail==FLASH_S_STEP){
-		flashErase(sizeof(sSTEPLOG),stepFlash.startAddr);
+		flashErase(sizeof(sSTEPLOG),stepFlash.endAddr);
 	}else if(gOP.detail==FLASH_S_NECK){
-		flashErase(NECK_SAVE_PACKAGE*sizeof(sNECKLOG),neckFlash.startAddr);
+		flashErase(NECK_SAVE_PACKAGE*sizeof(sNECKLOG),neckFlash.endAddr);
 	}else if(gOP.detail==FLASH_S_OAD){
 		flashErase(18,programFlash.endAddr);
 	}else if(gOP.detail==FLASH_S_ADDR){
