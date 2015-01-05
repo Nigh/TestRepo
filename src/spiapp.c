@@ -133,8 +133,9 @@ void _3DH5Hz(void)
 				staticCount=0;
 			}
 			if(stepHalf=!stepHalf && isTimeSync){
-				if(g_Statu==G_INACTIVE)
-					_=_calcStep(temp,1);
+				if(g_Statu==G_INACTIVE){
+					_=_calcStep(temp,1);neckUnhealthCount=0;
+				}
 				else
 					_=_calcStep(temp,0);
 				// _=CalculateStep(temp);
