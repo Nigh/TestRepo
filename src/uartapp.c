@@ -127,7 +127,7 @@ void uartSend(uchar len)
 	// sUart.count=0;
 	// sUart.time=0;
 	wait5msTimer();
-	sUart.statu|=UART_REV;
+	// sUart.statu|=UART_REV;
 	uartRevTimeout=1;
 }
 
