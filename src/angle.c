@@ -64,9 +64,9 @@ tEULER* calcRulerA(sGACC* sGAcc)
 	if(isUpsideDown){
 		if(sGAcc->x<-8000)
 			isUpsideDown=0;
-		tEular.Pitch=axisTan(-sGAcc->z,-sGAcc->x)*57.29577951308232;
+		tEular.Pitch=axisTan(sGAcc->z,-sGAcc->x)*57.29577951308232;
 		tEular.Roll=axisTan(-sGAcc->y,-sGAcc->x)*57.29577951308232;
-		tEular.Yaw=axisTan(-sGAcc->y,-sGAcc->z)*57.29577951308232;
+		tEular.Yaw=axisTan(-sGAcc->y,sGAcc->z)*57.29577951308232;
 	}else{
 		if(sGAcc->x>8000)
 			isUpsideDown=1;
