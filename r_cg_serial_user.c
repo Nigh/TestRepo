@@ -186,7 +186,7 @@ __interrupt static void int_uartRev(void)
 		if(uartRevBuf[0]!='#')
 			sUart.count=0;
 	}else if(sUart.count>2){
-		if(uartRevBuf[1]>30)
+		if(uartRevBuf[1]>30 or uartRevBuf[1]<1 or sUart.count>30)
 			sUart.count=0;
 		else if(uartRevBuf[1]+2==sUart.count){
 			sMsg.type=M_TYPE_BLE;
