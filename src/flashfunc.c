@@ -163,7 +163,7 @@ void flashSeek(unsigned short dataLength, unsigned long flashAddr)
 		if(stepFlash.overwrite) {
 			block = (stepFlash.endAddr / 4096);
 			if(stepFlash.startAddr <= stepFlash.endAddr) {
-				stepFlash.startAddr += (block + 1) * 4096 +
+				stepFlash.startAddr = (block + 1) * 4096 +
 									   flashaddradd[(block - STEPSTARTBLOCK) % 5];
 				if(stepFlash.startAddr >= STEPRANGEND) {
 					stepFlash.startAddr = STEPRANGSTART;
@@ -182,7 +182,7 @@ void flashSeek(unsigned short dataLength, unsigned long flashAddr)
 		if(neckFlash.overwrite) {
 			block = (neckFlash.endAddr / 4096);
 			if(neckFlash.startAddr <= neckFlash.endAddr) {
-				neckFlash.startAddr += (block + 1) * 4096 +
+				neckFlash.startAddr = (block + 1) * 4096 +
 									   flashaddradd[(block - NECKSTARTBLOCK) % 5];
 				if(neckFlash.startAddr >= NECKRANGEND) {
 					neckFlash.startAddr = NECKRANGSTART;

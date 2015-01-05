@@ -637,13 +637,13 @@ void flashReadSeek(void)
 {
 	if(sUpload.statu==UPLOAD_NECK){
 		neckFlash.startAddr+=2*sizeof(sNECKLOG);
-		if(neckFlash.startAddr>NECKRANGEND){
-			neckFlash.startAddr-=NECKRANGEND;
+		if(neckFlash.startAddr>=NECKRANGEND){
+			neckFlash.startAddr-=(NECKRANGEND-NECKRANGSTART);
 		}
 	} else if(sUpload.statu==UPLOAD_STEP){
 		stepFlash.startAddr+=sizeof(sSTEPLOG);
-		if(stepFlash.startAddr>STEPRANGEND){
-			stepFlash.startAddr-=STEPRANGEND;
+		if(stepFlash.startAddr>=STEPRANGEND){
+			stepFlash.startAddr-=(STEPRANGEND-STEPRANGSTART);
 		}
 	}
 }
