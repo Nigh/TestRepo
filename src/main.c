@@ -1251,7 +1251,7 @@ void chargeScan(void)
 		localPowerLevel=100;
 		powerLevel=localPowerLevel;
 		goActive();
-	}else if(P7.0==0){
+	}else if(P7.0==1){
 		batteryStatu&=0xff^BAT_FULL;
 	}
 	if(batteryStatu!=BAT_NORMAL)
@@ -1275,7 +1275,7 @@ void fChargeInt(void)
 		powerLevel=localPowerLevel;
 		goActive();
 	}
-	else if(P7.0==0){
+	else if(P7.0==1){
 		batteryStatu&=0xff^BAT_FULL;
 	}
 
