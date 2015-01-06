@@ -314,8 +314,6 @@ void iMain(void)
 	setADTimer(3);
 	// R_PCLBUZ0_Start();
 	while(1){
-		if(sUart.statu!=UART_IDLE)
-			startHClk();
 		DI();
 		gMsg=fifoGet();
 		EI();
@@ -541,7 +539,6 @@ void fRtc2Hz(void)
 
 void fRtc5Hz(void)
 {
-	startHClk();
 	_3DH5Hz();
 }
 

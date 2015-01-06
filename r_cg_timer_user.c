@@ -79,6 +79,7 @@ __interrupt static void r_tau0_channel5_interrupt(void)
 {
     /* Start user code. Do not edit comment generated here */
     static const sMSG sMsg={M_TYPE_RTC,M_C_CLOCK5HZ};
+    startHClk();
     fifoPut4ISR(sMsg);
     /* End user code. Do not edit comment generated here */
 }
