@@ -1118,6 +1118,8 @@ extern const uchar data_axisDirect[3];
 void fAccUpload(void)
 {
 	sGACC tempAcc;
+	if(sUart.statu&UART_SEND or sUart.statu&UART_WAIT)
+		return;
 	uartBufWrite(data_axisDirect,3);
 	if(sGAcc.x>0)
 		memcpyUser(&sGAcc,&uartSendBuf[3],6);

@@ -222,7 +222,7 @@ void _3DH5Hz(void)
 		set3DHEx(0x20,0x47);
 	}
 
-	if(directGEn && !(sUart.statu&UART_SEND) && !(sUart.statu&UART_WAIT))
+	if(directGEn)
 	{
 		DI();
 		fifoPut4ISR(sAccUpload);
