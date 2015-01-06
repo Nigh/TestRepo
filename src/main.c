@@ -375,6 +375,7 @@ void neckHealthCheck(void)
 
 
 extern void addrCache(void);
+extern void addrClear(void);
 extern tNECK Neck;
 extern sAPPTIMER stopVibrateTimer;
 extern const uchar data_SNCode[3];
@@ -688,7 +689,7 @@ void fBLEConfirm(void)
 			}
 			uartSendLogCount();
 			sUpload.statu=UPLOAD_IDLE;
-			addrCache();
+			addrClear();
 			return;
 		}
 		dataReadSend();

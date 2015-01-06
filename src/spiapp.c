@@ -264,6 +264,14 @@ void addrCache(void)
 	flashOpFin();
 }
 
+void addrClear(void)
+{
+	flashOpPut(opFlashWait);
+	flashOpPut(opFlashAddrErase);
+	flashOpPut(opFlashWait);
+	flashOpFin();
+}
+
 // 缓存颈动量时清理longLog
 // 触发颈动量时配置longLog.UTC
 // 写入flash后，清Log.UTC
