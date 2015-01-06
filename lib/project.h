@@ -18,7 +18,7 @@
 #define G_ACTIVE_TIMEOUT (600)	// x 0.1sec
 #define STEP_ACTIVE_TIMEOUT (50)	// x 0.1sec
 
-#define BLE_CONNECT_TIMEOUT_SET (10)	// x 1sec
+#define BLE_CONNECT_TIMEOUT_SET (30)	// x 1sec
 
 #define HEALTHNECKMOVE (120)
 #define TARGET_STEP (6000)
