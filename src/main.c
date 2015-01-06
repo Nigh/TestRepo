@@ -1257,6 +1257,8 @@ void chargeScan(void)
 	}
 	if(batteryStatu!=BAT_NORMAL)
 		setTimer64Hz(&chargeScanTimer,16);
+	else
+		R_KEY_Start();
 }
 
 sAPPTIMER chargeScanTimer={0,0,&chargeScan};
@@ -1279,7 +1281,7 @@ void fChargeInt(void)
 	else if(P7.0==1){
 		batteryStatu&=0xff^BAT_FULL;
 	}
-
+	R_KEY_Stop();
 	setTimer64Hz(&chargeScanTimer,16);
 }
 
