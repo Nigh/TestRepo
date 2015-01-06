@@ -195,6 +195,8 @@ void _3DH5Hz(void)
 				if(tNeck->PositionID){
 					tNeck->StartTime=time2();
 					iTemp=NeckActivityAlgorithm(tEu,tNeck);
+					if(stopVibrateTimer.en)
+						iTemp=0;
 					if(!sNeckMoveStatu.statu and iTemp){
 						sNeckMoveStatu.statu=1;
 						currentNeckLog.UTC=sUtcs.lTime;
