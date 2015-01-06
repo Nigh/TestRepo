@@ -128,7 +128,7 @@ void uartSend(uchar len)
 	// sUart.time=0;
 	wait5msTimer();
 	// sUart.statu|=UART_REV;
-	uartRevTimeout=1;
+	// uartRevTimeout=1;
 }
 
 void calcSendBufSum(void)
