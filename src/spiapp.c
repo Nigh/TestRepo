@@ -186,9 +186,9 @@ void _3DH5Hz(void)
 						tNeck->PositionID=0x0;
 				}else{
 					if(tEu->Roll>NECK_ROLL_POSITIVE_DOWNLIMIT and tEu->Roll<NECK_ROLL_POSITIVE_UPLIMIT)
-						tNeck->PositionID=HEAD_LEFT;
-					else if(tEu->Roll<NECK_ROLL_NEGATIVE_UPLIMIT and tEu->Roll>NECK_ROLL_NEGATIVE_DOWNLIMIT)
 						tNeck->PositionID=HEAD_RIGHT;
+					else if(tEu->Roll<NECK_ROLL_NEGATIVE_UPLIMIT and tEu->Roll>NECK_ROLL_NEGATIVE_DOWNLIMIT)
+						tNeck->PositionID=HEAD_LEFT;
 					else
 						tNeck->PositionID=0x0;
 				}
