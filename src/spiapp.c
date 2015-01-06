@@ -87,6 +87,7 @@ tNECK Neck={HEAD_DOWN,HEAD_DOWN,{0,0,0,0,0,0},{0,0,0},0};
 sNECKLOGLONG currentNeckLog={0,0,0,0,0,1};
 sNECKMOVESTATU sNeckMoveStatu={0};
 uint currentStepLogSec=0;
+extern sAPPTIMER stopVibrateTimer;
 extern void set3DHEx(uchar addr,uchar value);
 uchar dClick=0;
 sGACC sGAcc;

@@ -1159,7 +1159,7 @@ void fAdcEnd(void)
 {
 	static uint batteryLevelOld=0x100;
 	uint temp;
-	if(sVibrate.en)
+	if(sVibrate.en or directGEn)
 	{
 		setADTimer(10);
 		return;
