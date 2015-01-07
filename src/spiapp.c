@@ -209,7 +209,9 @@ void _3DH5Hz(void)
 					}
 					if(sNeckMoveStatu.statu){
 						if(iTemp){
-							currentNeckLog.neckMove+=iTemp;
+							currentNeckLog.neckMove+=NeckData.Movement.Pitch>NeckData.Movement.Roll
+							?NeckData.Movement.Pitch
+							:NeckData.Movement.Roll;
 						}else{
 							switch(tNeck->PositionID){
 							case HEAD_UP: currentNeckLog.upTime++; break;
@@ -292,14 +294,6 @@ void neckLogCache(void)
 	while(neckLog[i++].UTC!=0 && i<15);
 	i-=1;
 	neckLog[i].UTC=currentNeckLog.UTC;
-
-	currentNeckLog.neckMove=NeckData.Movement.Pitch;
-	currentNeckLog.neckMove+=NeckData.Movement.Roll;
-	if(currentNeckLog.neckMove<NeckData.Movement.Pitch)
-		currentNeckLog.neckMove=0xFFFF;
-	NeckData.Movement.Pitch=0;
-	NeckData.Movement.Roll=0;
-
 	neckLog[i].neckMove=currentNeckLog.neckMove;
 	neckLog[i].leftTime=currentNeckLog.leftTime/10;
 	neckLog[i].rightTime=currentNeckLog.rightTime/10;
