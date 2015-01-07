@@ -212,6 +212,11 @@ void _3DH5Hz(void)
 							currentNeckLog.neckMove+=NeckData.Movement.Pitch>NeckData.Movement.Roll
 							?NeckData.Movement.Pitch
 							:NeckData.Movement.Roll;
+							if(currentNeckLog.neckMove<NeckData.Movement.Pitch>NeckData.Movement.Roll
+							?NeckData.Movement.Pitch
+							:NeckData.Movement.Roll){
+								currentNeckLog.neckMove=0xFFFF;
+							}
 						}else{
 							switch(tNeck->PositionID){
 							case HEAD_UP: currentNeckLog.upTime++; break;
