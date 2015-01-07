@@ -287,8 +287,15 @@ void neckLogCache(void)
 	while(neckLog[i++].UTC!=0 && i<15);
 	i-=1;
 	neckLog[i].UTC=currentNeckLog.UTC;
-	neckLog[i].neckMove=currentNeckLog.neckMove;
 
+	currentNeckLog.neckMove=NeckData.Movement.Pitch;
+	currentNeckLog.neckMove+=NeckData.Movement.Roll;
+	if(currentNeckLog.neckMove<NeckData.Movement.Pitch)
+		currentNeckLog.neckMove=0xFFFF;
+	NeckData.Movement.Pitch=0;
+	NeckData.Movement.Roll=0;
+
+	neckLog[i].neckMove=currentNeckLog.neckMove;
 	neckLog[i].leftTime=currentNeckLog.leftTime/10;
 	neckLog[i].rightTime=currentNeckLog.rightTime/10;
 	neckLog[i].upTime=currentNeckLog.upTime/10;

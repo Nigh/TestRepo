@@ -154,5 +154,9 @@ extern time_t time2(void);
 float SetMinDeltaNeckMovement(float DeltaNeckMovement);
 float SetMinZeroPoint(float ZeroPoint);
 
+extern tEULER LastEuler, NeckMoveCount;
+extern tNECK  NeckData;
+extern tNECK_LOG NeckLogData;
+
 
 #endif
