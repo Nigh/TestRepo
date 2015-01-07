@@ -134,12 +134,17 @@ void _3DH5Hz(void)
 				staticCount=0;
 			}
 			if(stepHalf=!stepHalf && isTimeSync){
+
+				#ifdef USE_TRADITIONAL_ALGORITHM
 				if(g_Statu==G_INACTIVE){
 					_=_calcStep(temp,1);neckUnhealthCount=0;
 				}
 				else
 					_=_calcStep(temp,0);
-				// _=CalculateStep(temp);
+				#else
+				_=CalculateStep(temp);
+				#endif
+
 				if(_>0) {
 					steps+=_;staticCount=0;g_Statu=G_ACTIVE;
 					dayStep+=_;

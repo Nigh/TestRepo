@@ -2,6 +2,8 @@
 #ifndef PROJECT_DEF
 #define PROJECT_DEF
 
+// #define USE_TRADITIONAL_ALGORITHM	//step algorithm switch
+
 #define NECKMOVE_UPLIMIT (256*2.5)	// 2.5G
 #define G_SLEEPLIMIT (256*0.8)	//0.8G
 
