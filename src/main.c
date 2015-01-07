@@ -758,7 +758,8 @@ void fMotorCtl(void)
 		case 3: setVibrate(&sV3);break;
 		case 4: setVibrate(&sV4);break;
 		case 5: setVibrate(&sV5);break;
-		case 6: setVibrate(&sV6);break;
+		// case 6: setVibrate(&sV6);break;
+		case 6: setVibrate(&sV3);break;
 		default: break;
 	}
 	sVibrate.count=uartRevBuf[3]>>4;
