@@ -105,7 +105,7 @@ void _3DH5Hz(void)
 	int iTemp;
 	uint uiTemp;
 	uchar calcCount=0;
-	char _;
+	char _,_PositionID;
 	uchar* pBuf=spiRevBuf;
 	char temp[3];
 	tEULER* tEu;
@@ -201,7 +201,9 @@ void _3DH5Hz(void)
 				}
 				if(tNeck->PositionID){
 					tNeck->StartTime=time2();
+					_PositionID=tNeck->PositionID;
 					iTemp=NeckActivityAlgorithm(tEu,tNeck);
+					tNeck->PositionID=_PositionID;
 					if(stopVibrateTimer.en)
 						iTemp=0;
 					if(!sNeckMoveStatu.statu and iTemp){
