@@ -103,6 +103,7 @@ void _3DH5Hz(void)
 	static int staticCount=0,inactiveCount=0;
 	static uchar stepHalf=0;
 	int iTemp;
+	uint uiTemp;
 	uchar calcCount=0;
 	char _;
 	uchar* pBuf=spiRevBuf;
@@ -142,7 +143,7 @@ void _3DH5Hz(void)
 				else
 					_=_calcStep(temp,0);
 				#else
-				_=CalculateStep(temp);
+				_=CalculateStep(temp);neckUnhealthCount=0;
 				#endif
 
 				if(_>0) {
@@ -209,12 +210,11 @@ void _3DH5Hz(void)
 					}
 					if(sNeckMoveStatu.statu){
 						if(iTemp){
-							currentNeckLog.neckMove+=NeckData.Movement.Pitch>NeckData.Movement.Roll
+							uiTemp=NeckData.Movement.Pitch>NeckData.Movement.Roll
 							?NeckData.Movement.Pitch
 							:NeckData.Movement.Roll;
-							if(currentNeckLog.neckMove<NeckData.Movement.Pitch>NeckData.Movement.Roll
-							?NeckData.Movement.Pitch
-							:NeckData.Movement.Roll){
+							currentNeckLog.neckMove+=uiTemp;
+							if(currentNeckLog.neckMove<uiTemp){
 								currentNeckLog.neckMove=0xFFFF;
 							}
 						}else{
