@@ -1,6 +1,8 @@
 //#include "Clickpro.h"
 #include "Clickpro.h"
 
+
+
 static unsigned char CollectNum = 0;
 static unsigned char CurDataNum = 0;
 static char Xdifdata[8] = {0};
@@ -30,6 +32,8 @@ static unsigned ClickFlag = 0;			//bit0 0: 1: X Click fit;
 										//bit4 0: 1: X Click fit flag should be clear
 										//bit5 0: 1: Y Click fit flag should be clear
 										//bit6 0: 1: Z Click fit flag should be clear
+static unsigned short ClickInvalidCnt = 0;
+
 unsigned char IsClick(unsigned char *clickdata)
 {
 	unsigned char returedata = 0;
@@ -37,16 +41,20 @@ unsigned char IsClick(unsigned char *clickdata)
 	unsigned char temp2 = 0;
 	unsigned char tempA = 0;
 	unsigned char comparedata = 0;
+	unsigned char comparedata1 = 0;
 
-
+	if(ClickInvalidCnt < 300)
+	{
+		ClickInvalidCnt++;
+	}
+	
 	//unsigned char k = 0;
 
-	if(CollectNum == 8)
-	{
+	// if(CollectNum == 8)
+	// {
 		Xdifdata[CurDataNum] = (unsigned char)((signed int)(*clickdata) - XLastdata);
 		Ydifdata[CurDataNum] = (unsigned char)((signed int)(*(clickdata + 1)) - YLastdata);
 		Zdifdata[CurDataNum] = (unsigned char)((signed int)(*(clickdata + 2)) - ZLastdata);
-
 
         XAbsData_2 = XAbsData;
         YAbsData_2 = YAbsData;
@@ -60,6 +68,7 @@ unsigned char IsClick(unsigned char *clickdata)
         {
             XAbsData = (unsigned char)*(clickdata);
         }
+
 
         if(*(clickdata + 1) & 0x80)
         {
@@ -156,7 +165,6 @@ unsigned char IsClick(unsigned char *clickdata)
 
 
 
-
 			if(CurDataNum == 0)
 			{
 				temp1= 7;
@@ -199,12 +207,22 @@ unsigned char IsClick(unsigned char *clickdata)
 						comparedata = CLICKACTIVELIMIT_X;
 
 					}
+					if(ClickInvalidCnt > 290)
+					{
+						comparedata += FIRSTADD;
+					}
+
 					if(XAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
 					{
 						if((Xdifdata[temp1] ^ Xdifdata[temp2]) & 0x80)		//before
 						{
 							ClickFlag |= 0x01;
-							if(XAbsDif[temp1] > 50)
+							comparedata1 = CLICKABSOLUTE;
+							if(ClickInvalidCnt > 290)
+							{
+								comparedata1 = CLICKABSOLUTE + FIRSTADD;
+							}
+							if(XAbsDif[temp1] > comparedata1)
 							{
 								ClickFlag = 0x07;
 							}
@@ -218,7 +236,12 @@ unsigned char IsClick(unsigned char *clickdata)
 							if((XAbsDif[temp1] >> 2) > XAbsDif[temp2])
 							{
 								ClickFlag |= 0x01;
-								if(XAbsDif[temp1] > 50)
+								comparedata1 = CLICKABSOLUTE;
+								if(ClickInvalidCnt > 290)
+								{
+									comparedata1 = CLICKABSOLUTE + FIRSTADD;
+								}
+								if(XAbsDif[temp1] > comparedata1)
 								{
 									ClickFlag = 0x07;
 								}
@@ -253,7 +276,10 @@ unsigned char IsClick(unsigned char *clickdata)
 					else
 					{
 						comparedata = CLICKACTIVELIMIT_Y;
-
+					}
+					if(ClickInvalidCnt > 290)
+					{
+						comparedata += FIRSTADD;
 					}
 					if(YAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
 					{
@@ -264,7 +290,12 @@ unsigned char IsClick(unsigned char *clickdata)
 							{
 								ClickFlag = 0x07;
 							}
-							if(YAbsDif[temp1] > 50)
+							comparedata1 = CLICKABSOLUTE;
+							if(ClickInvalidCnt > 290)
+							{
+								comparedata1 = CLICKABSOLUTE + FIRSTADD;
+							}
+							if(YAbsDif[temp1] > comparedata1)
 							{
 								ClickFlag = 0x07;
 							}
@@ -274,7 +305,12 @@ unsigned char IsClick(unsigned char *clickdata)
 							if((YAbsDif[temp1] >> 2) > YAbsDif[temp2])
 							{
 								ClickFlag |= 0x02;
-								if(YAbsDif[temp1] > 50)
+								comparedata1 = CLICKABSOLUTE;
+								if(ClickInvalidCnt > 290)
+								{
+									comparedata1 = CLICKABSOLUTE + FIRSTADD;
+								}
+								if(YAbsDif[temp1] > comparedata1)
 								{
 									ClickFlag = 0x07;
 								}
@@ -287,7 +323,6 @@ unsigned char IsClick(unsigned char *clickdata)
 					}
 				}
 			}
-
 
 
 			if(((Zdifdata[CurDataNum] ^ Zdifdata[temp1]) & 0x80) == 0x80)		//direction different
@@ -309,14 +344,22 @@ unsigned char IsClick(unsigned char *clickdata)
 					else
 					{
 						comparedata = CLICKACTIVELIMIT_Z;
-
+					}
+					if(ClickInvalidCnt > 290)
+					{
+						comparedata += FIRSTADD;
 					}
 					if(ZAbsDif[temp1] > comparedata)	//the indemitary data change fit the condition
 					{
 						if((Zdifdata[temp1] ^ Zdifdata[temp2]) & 0x80)		//before
 						{
 							ClickFlag |= 0x04;
-							if(ZAbsDif[temp1] > 50)
+							comparedata1 = CLICKABSOLUTE;
+							if(ClickInvalidCnt > 290)
+							{
+								comparedata1 = CLICKABSOLUTE + FIRSTADD;
+							}
+							if(ZAbsDif[temp1] > comparedata1)
 							{
 								ClickFlag = 0x07;
 							}
@@ -331,7 +374,12 @@ unsigned char IsClick(unsigned char *clickdata)
 							if((ZAbsDif[temp1] >> 2) > ZAbsDif[temp2])
 							{
 								ClickFlag |= 0x04;
-								if(ZAbsDif[temp1] > 50)
+								comparedata1 = CLICKABSOLUTE;
+								if(ClickInvalidCnt > 290)
+								{
+									comparedata1 = CLICKABSOLUTE + FIRSTADD;
+								}
+								if(ZAbsDif[temp1] > comparedata1)
 								{
 									ClickFlag = 0x07;
 								}
@@ -352,6 +400,7 @@ unsigned char IsClick(unsigned char *clickdata)
 					ClickInvalidTime = 7;
 					ClickFlag = 0;
 					returedata = 1;
+					ClickInvalidCnt = 0;
 				}
 			}
 			else
@@ -361,8 +410,7 @@ unsigned char IsClick(unsigned char *clickdata)
 					ClickInvalidTime = 5;
 					ClickFlag = 0;
 					returedata = 1;
-
-					//system("pause");
+					ClickInvalidCnt = 0;
 				}
 				else
 				{
@@ -393,46 +441,46 @@ ActivityEndPro:
 		{
 			CurDataNum = 0;
 		}
-	}
-	else
-	{
-		Xdifdata[CollectNum] = (signed char)(*clickdata) - XLastdata;
-		Ydifdata[CollectNum] = (signed char)(*(clickdata + 1)) - YLastdata;
-		Zdifdata[CollectNum] = (signed char)(*(clickdata + 2)) - ZLastdata;
-		if(Xdifdata[CollectNum] & 0x80)
-		{
-			XAbsDif[CollectNum] = (unsigned char)(Xdifdata[CollectNum] ^ 0xff) + 1;
-		}
-		else
-		{
-			XAbsDif[CollectNum] = Xdifdata[CollectNum];
-		}
+	// }
+	// else
+	// {
+	// 	Xdifdata[CollectNum] = (signed char)(*clickdata) - XLastdata;
+	// 	Ydifdata[CollectNum] = (signed char)(*(clickdata + 1)) - YLastdata;
+	// 	Zdifdata[CollectNum] = (signed char)(*(clickdata + 2)) - ZLastdata;
+	// 	if(Xdifdata[CollectNum] & 0x80)
+	// 	{
+	// 		XAbsDif[CollectNum] = (unsigned char)(Xdifdata[CollectNum] ^ 0xff) + 1;
+	// 	}
+	// 	else
+	// 	{
+	// 		XAbsDif[CollectNum] = Xdifdata[CollectNum];
+	// 	}
 
-		if(Ydifdata[CollectNum] & 0x80)
-		{
-			YAbsDif[CollectNum] = (unsigned char)(Ydifdata[CollectNum] ^ 0xff) + 1;
-		}
-		else
-		{
-			YAbsDif[CollectNum] = Ydifdata[CollectNum];
-		}
+	// 	if(Ydifdata[CollectNum] & 0x80)
+	// 	{
+	// 		YAbsDif[CollectNum] = (unsigned char)(Ydifdata[CollectNum] ^ 0xff) + 1;
+	// 	}
+	// 	else
+	// 	{
+	// 		YAbsDif[CollectNum] = Ydifdata[CollectNum];
+	// 	}
 
-		if(Zdifdata[CollectNum] & 0x80)
-		{
-			ZAbsDif[CollectNum] = (unsigned char)(Zdifdata[CollectNum] ^ 0xff) + 1;
-		}
-		else
-		{
-			ZAbsDif[CollectNum] = Zdifdata[CollectNum];
-		}
-		XLastdata = (signed char)(*clickdata);
-		YLastdata = (signed char)(*(clickdata + 1));
-		ZLastdata = (signed char)(*(clickdata + 2));
-		CollectNum++;
-		if(CollectNum == 8)
-		{
-			CurDataNum = 0;
-		}
-	}
+	// 	if(Zdifdata[CollectNum] & 0x80)
+	// 	{
+	// 		ZAbsDif[CollectNum] = (unsigned char)(Zdifdata[CollectNum] ^ 0xff) + 1;
+	// 	}
+	// 	else
+	// 	{
+	// 		ZAbsDif[CollectNum] = Zdifdata[CollectNum];
+	// 	}
+	// 	XLastdata = (signed char)(*clickdata);
+	// 	YLastdata = (signed char)(*(clickdata + 1));
+	// 	ZLastdata = (signed char)(*(clickdata + 2));
+	// 	CollectNum++;
+	// 	if(CollectNum == 8)
+	// 	{
+	// 		CurDataNum = 0;
+	// 	}
+	// }
 	return returedata;
 }
