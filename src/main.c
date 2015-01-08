@@ -31,6 +31,7 @@ uchar uartRevTimeout=0;
 uchar OADTimeout=0,OADTimeoutCount=0;
 uchar SNCode[17]="A22AL1B1SUV000";
 
+uint ADBlockStatu=0,ADBlockCount=0;
 uchar BLEResetCount=0,BLEResetTolerance=0;
 uchar SNReSendCount=0;
 static uint OADcount=0;
@@ -392,6 +393,15 @@ void fRtc2Hz(void)
 
 	// if(count==6 && P5.1==1)
 	// 	P5.1==0;
+
+	if(ADBlockStatu)
+	{
+		if(ADBlockCount==0){
+			ADBlockStatu=0;
+		}else{
+			ADBlockCount--;
+		}
+	}
 
 	if(BLEResetCount>0)
 	{
@@ -928,6 +938,7 @@ static const sFLASHOP opFlashOADSave={FLASH_F_WRITE,FLASH_S_OAD};
 
 void OADRequest(uint num)
 {
+	ADBlockStatu=0;
 	uartBufWrite(data_OADRequest,3);
 	uartSendBuf[3]=num&0xFF;
 	uartSendBuf[4]=num>>8;
@@ -1022,6 +1033,7 @@ void fSNRequest(void)
 {
 	uchar i;
 	if(uartRevBuf[3]==0x01){
+		ADBlockStatu=0;
 		uartBufWrite(data_SNCode,3);
 		for(i=0;i<14;i++)
 			uartSendBuf[i+3]=SNCode[i];
@@ -1030,6 +1042,18 @@ void fSNRequest(void)
 		SNReSendCount=1;
 		SNReSendTimeOutCount=0;
 	}
+}
+
+void fADBlock(void)
+{
+	if(uartRevBuf[3]==0x01){
+		ADBlockStatu=1;
+		ADBlockCount=360;
+	}else{
+		ADBlockStatu=0;
+	}
+
+	uartSuccess(0x12);
 }
 
 fFUNC const bleHandler[]={		// No
@@ -1045,11 +1069,12 @@ fFUNC const bleHandler[]={		// No
 	VECTOR(fOAD),				// 9	(OAD+SN program)
 	VECTOR(fConnectRequest),				// 10
 	VECTOR(fSNRequest),				// 11
+	VECTOR(fADBlock),				// 12
 };
 
 void fBLEPro(void)
 {
-	if(gMsg.content<=11)
+	if(gMsg.content<=12)
 		bleHandler[gMsg.content]();
 }
 
@@ -1166,7 +1191,7 @@ void fAdcEnd(void)
 {
 	static uint batteryLevelOld=0x100;
 	uint temp;
-	if(sVibrate.en or directGEn)
+	if(sVibrate.en or directGEn or ADBlockStatu)
 	{
 		setADTimer(10);
 		return;
