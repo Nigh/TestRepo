@@ -472,8 +472,8 @@ void fRtc2Hz(void)
 				}
 			}
 			sNeckMoveStatu.timeCount++;
-			if(sNeckMoveStatu.timeCount>=240){
-			// if(sNeckMoveStatu.timeCount>=60){	//debug
+			// if(sNeckMoveStatu.timeCount>=240){
+			if(sNeckMoveStatu.timeCount>=10){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
