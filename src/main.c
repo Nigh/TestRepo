@@ -31,7 +31,7 @@ uchar uartRevTimeout=0;
 uchar OADTimeout=0,OADTimeoutCount=0;
 uchar SNCode[17]="A22AL1B1SUV000";
 
-uchar BLEResetCount=0;
+uchar BLEResetCount=0,BLEResetTolerance=0;
 uchar SNReSendCount=0;
 static uint OADcount=0;
 
@@ -397,10 +397,19 @@ void fRtc2Hz(void)
 	{
 		BLEResetCount++;
 		if(BLEResetCount>3){
-			P2.5=1;
 			BLEResetCount=0;
+			if(BLEResetTolerance>2){
+				P2.5=1;
+				BLEResetTolerance=0;
+			}
 		}else if(BLEResetCount>2){
-			P2.5=0;
+			BLEResetTolerance++;
+			if(BLEResetTolerance>2){
+				P2.5=0;
+			}else{
+				BLEResetCount=0;
+				setADTimer(3);
+			}
 		}
 	}
 
@@ -668,7 +677,7 @@ extern int uartTimeOutTask(void);
 extern uchar uartTimeOutTaskStatu;
 void fBLEConfirm(void)
 {
-	BLEResetCount=0;
+	BLEResetCount=0;BLEResetTolerance=0;
 	if((uartRevBuf[3]==0x09 or uartRevBuf[3]==0x0A or uartRevBuf[3]==0x0B)
 		and sUpload.statu!=UPLOAD_IDLE){
 		if(sUpload.packageRemain>0 and uartRevBuf[3]!=0x0B){
