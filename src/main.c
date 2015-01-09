@@ -494,8 +494,8 @@ void fRtc2Hz(void)
 				}
 			}
 			sNeckMoveStatu.timeCount++;
-			// if(sNeckMoveStatu.timeCount>=240){
-			if(sNeckMoveStatu.timeCount>=10){	//debug
+			if(sNeckMoveStatu.timeCount>=240){
+			// if(sNeckMoveStatu.timeCount>=10){	//debug
 				sNeckMoveStatu.timeCount=0;
 				sNeckMoveStatu.statu=0;
 				neckHealthCheck();
@@ -511,8 +511,8 @@ void fRtc2Hz(void)
 		}
 
 		currentStepLogSec++;
-		// if(currentStepLogSec>=300){
-		if(currentStepLogSec>=10){	//debug
+		if(currentStepLogSec>=300){
+		// if(currentStepLogSec>=60){	//debug
 			currentStepLogSec=0;
 			if(isTimeSync)
 				stepLogCache();
