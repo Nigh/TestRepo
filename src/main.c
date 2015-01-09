@@ -750,8 +750,8 @@ void fTimeSync(void)
 	*ptr2++=*ptr1++;
 	*ptr2=*ptr1;
 
-	currentStepLog.UTC=sUtcs.lTime;
-	currentNeckLog.UTC=sUtcs.lTime;
+	// currentStepLog.UTC=sUtcs.lTime;
+	// currentNeckLog.UTC=sUtcs.lTime;
 	daySec=sUtcs.lTime%86400;
 	isTimeSync=1;
 	uartSuccess(0x03);
