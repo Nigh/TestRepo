@@ -44,7 +44,18 @@ void fFlashRead(void)
 
 void flashOpFin(void)
 {
+	uchar a=sMsgFifo.read_pos,b=sMsgFifo.remain_size;
+	uchar i;
 	DI();
+	for(i=0;i<(BUF_SIZE-sMsgFifo.remain_size);i++)
+	{
+		if(msgQueue[(i+sMsgFifo.read_pos)&BUF_SIZE_MASK].type==M_TYPE_TRANS
+			&& msgQueue[(i+sMsgFifo.read_pos)&BUF_SIZE_MASK].content==M_C_FLASHFINISH)
+		{
+			EI();
+			return;
+		}
+	}
 	fifoPut4ISR(sFlashFinishMsg);
 	EI();
 }
