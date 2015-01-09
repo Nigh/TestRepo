@@ -219,6 +219,8 @@ void _3DH5Hz(void)
 							uiTemp=NeckData.Movement.Pitch>NeckData.Movement.Roll
 							?NeckData.Movement.Pitch
 							:NeckData.Movement.Roll;
+							if(uiTemp>5)
+								uitemp=0;
 							currentNeckLog.neckMove+=uiTemp;
 							if(currentNeckLog.neckMove<uiTemp){
 								currentNeckLog.neckMove=0xFFFF;
