@@ -136,14 +136,14 @@ void _3DH5Hz(void)
 			}
 			if(stepHalf=!stepHalf && isTimeSync){
 
-				#ifdef USE_TRADITIONAL_ALGORITHM
+				#ifndef USE_TRADITIONAL_ALGORITHM
 				if(g_Statu==G_INACTIVE){
-					_=_calcStep(temp,1);neckUnhealthCount=0;
+					_=_calcStep(temp,1);if(_)neckUnhealthCount=0;
 				}
 				else
 					_=_calcStep(temp,0);
 				#else
-				_=CalculateStep(temp);neckUnhealthCount=0;
+				_=CalculateStep(temp);if(_)neckUnhealthCount=0;
 				#endif
 
 				if(_>0) {
