@@ -7,10 +7,10 @@
 
 #define			FIRSTADD				40
 
-#define			CLICKABSOLUTE			60
+#define			CLICKABSOLUTE			40
 
 
-#define D_LIMIT 13
+#define D_LIMIT 5
 
 #define			CLICKSTABLELIMIT_X		30
 #define			CLICKSTABLELIMIT_Y		140
