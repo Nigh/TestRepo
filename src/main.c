@@ -532,11 +532,11 @@ void fRtc2Hz(void)
 				read3DH();
 				if(!stopVibrateTimer.en){
 					if(flag){
-						if(gOld[0]-pBuf[1]>20 and gOld[0]-pBuf[1]<240)
+						if(gOld[0]-pBuf[1]>7 and gOld[0]-pBuf[1]<248)
 							g_Statu=G_INACTIVE;
-						else if(gOld[1]-pBuf[3]>20 and gOld[1]-pBuf[3]<240)
+						else if(gOld[1]-pBuf[3]>6 and gOld[1]-pBuf[3]<249)
 							g_Statu=G_INACTIVE;
-						else if(gOld[2]-pBuf[5]>20 and gOld[2]-pBuf[5]<240)
+						else if(gOld[2]-pBuf[5]>7 and gOld[2]-pBuf[5]<248)
 							g_Statu=G_INACTIVE;
 					}else{
 						gOld[0]=pBuf[1];
