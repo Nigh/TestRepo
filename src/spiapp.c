@@ -285,7 +285,7 @@ void addrClear(void)
 {
 	flashOpPut(opFlashWait);
 	flashOpPut(opFlashAddrErase);
-	flashOpPut(opFlashWait);
+	// flashOpPut(opFlashWait);
 	flashOpFin();
 }
 
