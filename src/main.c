@@ -315,6 +315,8 @@ void iMain(void)
 	setADTimer(3);
 	// R_PCLBUZ0_Start();
 	while(1){
+		if(sMsgFifo.remain_size<6)
+			startHClk();
 		DI();
 		gMsg=fifoGet();
 		EI();
