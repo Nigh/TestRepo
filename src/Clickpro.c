@@ -137,36 +137,36 @@ unsigned char IsClick(unsigned char *clickdata)
 		}
 
 
-		if(((Ydifdata[CurDataNum] ^ Ydifdata[temp1]) & 0x80) == 0x80){		//direction different
-			if(YAbsDif[CurDataNum] > YAbsDif[temp1]) tempA = YAbsDif[CurDataNum] - YAbsDif[temp1];
-			else tempA = YAbsDif[temp1] - YAbsDif[CurDataNum];
-			if(tempA < (YAbsDif[temp1] >> 1)){		//two difdata different in 1/2
-				if(StableTimes > 5) comparedata = CLICKSTABLELIMIT_Y;
-				else comparedata = CLICKACTIVELIMIT_Y;
-				if(ClickInvalidCnt > 290) comparedata += FIRSTADD;
-				if(YAbsDif[temp1] > comparedata){	//the indemitary data change fit the condition
+		// if(((Ydifdata[CurDataNum] ^ Ydifdata[temp1]) & 0x80) == 0x80){		//direction different
+		// 	if(YAbsDif[CurDataNum] > YAbsDif[temp1]) tempA = YAbsDif[CurDataNum] - YAbsDif[temp1];
+		// 	else tempA = YAbsDif[temp1] - YAbsDif[CurDataNum];
+		// 	if(tempA < (YAbsDif[temp1] >> 1)){		//two difdata different in 1/2
+		// 		if(StableTimes > 5) comparedata = CLICKSTABLELIMIT_Y;
+		// 		else comparedata = CLICKACTIVELIMIT_Y;
+		// 		if(ClickInvalidCnt > 290) comparedata += FIRSTADD;
+		// 		if(YAbsDif[temp1] > comparedata){	//the indemitary data change fit the condition
 				
-					if((Ydifdata[temp1] ^ Ydifdata[temp2]) & 0x80){		//before
-						ClickFlag |= 0x02;
-						if(ClickFlag & 0x05)
-							ClickFlag = CLICKFLAG_CLEAR_ALL;
-						comparedata1 = CLICKABSOLUTE;
-						if(ClickInvalidCnt > 290)
-							comparedata1 = CLICKABSOLUTE + FIRSTADD;
-						if(YAbsDif[temp1] > comparedata1)
-							ClickFlag = CLICKFLAG_CLEAR_ALL;
-					} else {
-						if((YAbsDif[temp1] >> 2) > YAbsDif[temp2]) {
-							ClickFlag |= 0x02;
-							comparedata1 = CLICKABSOLUTE;
-							if(ClickInvalidCnt > 290) comparedata1 = CLICKABSOLUTE + FIRSTADD;
-							if(YAbsDif[temp1] > comparedata1) ClickFlag = CLICKFLAG_CLEAR_ALL;
-							if(ClickFlag & 0x05) ClickFlag = CLICKFLAG_CLEAR_ALL;
-						}
-					}
-				}
-			}
-		}
+		// 			if((Ydifdata[temp1] ^ Ydifdata[temp2]) & 0x80){		//before
+		// 				ClickFlag |= 0x02;
+		// 				if(ClickFlag & 0x05)
+		// 					ClickFlag = CLICKFLAG_CLEAR_ALL;
+		// 				comparedata1 = CLICKABSOLUTE;
+		// 				if(ClickInvalidCnt > 290)
+		// 					comparedata1 = CLICKABSOLUTE + FIRSTADD;
+		// 				if(YAbsDif[temp1] > comparedata1)
+		// 					ClickFlag = CLICKFLAG_CLEAR_ALL;
+		// 			} else {
+		// 				if((YAbsDif[temp1] >> 2) > YAbsDif[temp2]) {
+		// 					ClickFlag |= 0x02;
+		// 					comparedata1 = CLICKABSOLUTE;
+		// 					if(ClickInvalidCnt > 290) comparedata1 = CLICKABSOLUTE + FIRSTADD;
+		// 					if(YAbsDif[temp1] > comparedata1) ClickFlag = CLICKFLAG_CLEAR_ALL;
+		// 					if(ClickFlag & 0x05) ClickFlag = CLICKFLAG_CLEAR_ALL;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		if(((Zdifdata[CurDataNum] ^ Zdifdata[temp1]) & 0x80) == 0x80){		//direction different
 			if(ZAbsDif[CurDataNum] > ZAbsDif[temp1]) tempA = ZAbsDif[CurDataNum] - ZAbsDif[temp1];
