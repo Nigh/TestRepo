@@ -12,7 +12,7 @@ uint steps=0;
 sSTEPLONGLOG currentStepLog={0};
 uchar directGEn=0;
 uchar batteryStatu=BAT_NORMAL;
-sFLASHOP gOP;
+sFLASHOP gOP={0};
 sUPLOAD sUpload={0};
 sCLKLEVEL sClkLevel={0};
 uchar BLE_Connect_Timeout=0;
