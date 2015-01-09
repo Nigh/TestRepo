@@ -199,7 +199,10 @@ void _3DH5Hz(void)
 					else
 						tNeck->PositionID=0x0;
 				}
-				if(tNeck->PositionID){
+				if(tEu->Roll>NECK_ROLL_POSITIVE_MOVE_DOWNLIMIT
+					or tEu->Roll<NECK_ROLL_NEGATIVE_MOVE_UPLIMIT
+					or tEu->Pitch>NECK_PITCH_POSITIVE_MOVE_DOWNLIMIT
+					or tEu->Pitch<NECK_PITCH_NEGATIVE_MOVE_UPLIMIT){
 					tNeck->StartTime=time2();
 					_PositionID=tNeck->PositionID;
 					iTemp=NeckActivityAlgorithm(tEu,tNeck);
