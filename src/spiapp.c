@@ -281,7 +281,8 @@ void addrCache(void)
 	flashOpPut(opFlashAddrErase);
 	flashOpPut(opFlashWait);
 	flashOpPut(opFlashAddrSave);
-	flashOpFin();
+	fFlashOpStart();
+	// flashOpFin();
 }
 
 void addrClear(void)
@@ -289,7 +290,8 @@ void addrClear(void)
 	flashOpPut(opFlashWait);
 	flashOpPut(opFlashAddrErase);
 	// flashOpPut(opFlashWait);
-	flashOpFin();
+	fFlashOpStart();
+	// flashOpFin();
 }
 
 // 缓存颈动量时清理longLog
@@ -320,7 +322,8 @@ void neckLogCache(void)
 			flashOpPut(opFlashWait);
 		}
 		flashOpPut(opFlashNeckSave);
-		flashOpFin();
+		fFlashOpStart();
+		// flashOpFin();
 	}
 }
 
@@ -346,7 +349,8 @@ void stepLogCache(void)
 				flashOpPut(opFlashWait);
 			}
 			flashOpPut(opFlashStepSave);
-			flashOpFin();
+			fFlashOpStart();
+			// flashOpFin();
 		}
 		memsetUser(&currentStepLog,0,sizeof(sSTEPLONGLOG));
 		currentStepLog.UTC=sUtcs.lTime;
@@ -390,5 +394,6 @@ void dddebug(void)
 		flashOpPut(opFlashWait);
 	}
 	flashOpPut(opFlashNeckSave);
-	flashOpFin();
+	fFlashOpStart();
+	// flashOpFin();
 }

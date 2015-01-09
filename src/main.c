@@ -649,7 +649,8 @@ void dataReadSend(void)
 		flashOpPut(opFlashNeckRead);
 	if(sUpload.statu==UPLOAD_STEP)
 		flashOpPut(opFlashStepRead);
-	flashOpFin();
+	// flashOpFin();
+	fFlashOpStart();
 }
 
 #include "flashfunc.h"
@@ -856,7 +857,8 @@ void fFormatFlash(void)
 		initFlash();
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashAddrErase);
-		flashOpFin();
+		// flashOpFin();
+		fFlashOpStart();
 	}else if(uartRevBuf[3]==0xE1){
 		uartBufWrite(data_UTC,3);
 		memcpyUser(&sUtcs.lTime,&uartSendBuf[3],4);
@@ -969,7 +971,8 @@ void fOAD(void)
 		flashOpPut(opFlashSNSave);
 		flashOpPut(opFlashWait);
 		flashOpPut(opFlashSNRead);
-		flashOpFin();
+		fFlashOpStart();
+		// flashOpFin();
 	}
 
 	if(uartRevBuf[1]!=0x14)
@@ -1019,7 +1022,8 @@ void fOAD(void)
 			flashOpPut(opFlashWait);
 		}
 		flashOpPut(opFlashOADSave);
-		flashOpFin();
+		fFlashOpStart();
+		// flashOpFin();
 	}
 }
 
@@ -1098,16 +1102,15 @@ void fUartRevReq(void)
 
 void fFlashOpStart(void)
 {
-	static const sMSG sMsg={M_TYPE_TRANS,M_C_FLASHFINISH};
-	// if(isFlashAwake())
-	// 	return;
-	// flashAwake();
-	if(isFlashIdle()){
-		DI();
-		fifoPut4ISR(sMsg);
+	DI();
+	if(gOP.opType!=0){
 		EI();
+		return;
 	}
+	fifoPut4ISR(sFlashFinishMsg);
+	EI();
 }
+
 
 extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
 extern sFLASHOP gOP;

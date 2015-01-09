@@ -15,7 +15,7 @@ fFUNC fFlashOp[]={_nop_Ex,fIdleWait,fFlashWrite,fBlockErase,fFlashRead,_nop_Ex};
 
 extern sFLASHOP gOP;
 
-
+extern void fFlashOpStart(void);
 void fFlashWrite(void)
 {
 	if(gOP.detail==FLASH_S_STEP){
@@ -46,10 +46,6 @@ extern sFLASHOP gOP;
 void flashOpFin(void)
 {
 	DI();
-	if(gOP.opType!=0){
-		EI();
-		return;
-	}
 	fifoPut4ISR(sFlashFinishMsg);
 	EI();
 }
