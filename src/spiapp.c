@@ -138,12 +138,12 @@ void _3DH5Hz(void)
 
 				#ifndef USE_TRADITIONAL_ALGORITHM
 				if(g_Statu==G_INACTIVE){
-					_=_calcStep(temp,1);if(_)neckUnhealthCount=0;
+					_=_calcStep(temp,1);if(_>0)neckUnhealthCount=0;
 				}
 				else
 					_=_calcStep(temp,0);
 				#else
-				_=CalculateStep(temp);if(_)neckUnhealthCount=0;
+				_=CalculateStep(temp);if(_>0)neckUnhealthCount=0;
 				#endif
 
 				if(_>0) {
