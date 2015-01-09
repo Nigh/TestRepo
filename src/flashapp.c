@@ -175,9 +175,11 @@ void fReadSN(void){
 int flashIdleWaitTask(void)
 {
 	static uchar count=0;
-	if(!(count&0x4) and isFlashIdle()){
-		flashOpFin();
-		return 0;
+	if(count&0x3){
+		if(isFlashIdle()){
+			flashOpFin();
+			return 0;
+		}
 	}
 	count++;
 	return 1;
