@@ -362,7 +362,7 @@ void neckHealthCheck(void)
 			if(neckUnhealthCount>=5 and neckUnhealthCount%5==0){
 				if(neckUnhealthCount>50)
 					neckUnhealthCount=50;
-				if(g_Statu==G_INACTIVE)
+				if(g_Statu==G_INACTIVE && !directGEn)
 					setVibrate(&sV5);
 				else
 					neckUnhealthCount=0;
