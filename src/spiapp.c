@@ -15,6 +15,7 @@ uchar g_Statu=G_INACTIVE;
 extern time_t time2(void);
 extern void memcpyUser(uchar* src,uchar* dst,const size_t length);
 
+extern void fFlashOpStart(void);
 extern const uchar data_accessConfirm[5];
 void echo(void)
 {

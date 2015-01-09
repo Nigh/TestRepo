@@ -55,6 +55,7 @@ extern int isFlashIdle(void);
 
 extern void readFromFlashBytes(unsigned char *rxbufPointer, unsigned short dataLength, unsigned long flashAddr);
 
+void fFlashOpStart(void);
 void waitFlashIdle(void)
 {
 	unsigned int x=0;
@@ -1099,7 +1100,8 @@ void fUartRevReq(void)
 	uartRevTimeout=1;
 }
 
-
+extern sFLASHOP gOP;
+extern const sMSG sFlashFinishMsg;
 void fFlashOpStart(void)
 {
 	DI();
@@ -1113,7 +1115,6 @@ void fFlashOpStart(void)
 
 
 extern void flashWrite(unsigned char* ptr, unsigned short dataLength, unsigned long flashAddr);
-extern sFLASHOP gOP;
 static uchar AA=0xAA;
 void fFlashOpFinish(void)
 {
