@@ -71,14 +71,15 @@ void progDataSave(uchar* ptr,uchar len)
 	flashWrite(ptr, len, programFlash.endAddr);
 }
 
+extern void memsetUser(uchar* ptr,const uchar ch,const size_t length);
 extern sSTEPLOG stepLog;
 void fStepSave(void){
 	stepDataSave(&stepLog,sizeof(sSTEPLOG));
+	memsetUser(&stepLog,0,sizeof(sSTEPLOG));
 	flashSeek(sizeof(sSTEPLOG),stepFlash.endAddr);
 	flashOpFin();
 }
 
-extern void memsetUser(uchar* ptr,const uchar ch,const size_t length);
 extern sNECKLOG neckLog[16];
 void fNeckSave(void){
 	uchar i=0;
