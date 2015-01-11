@@ -239,7 +239,7 @@ void statuSelect(void)
 	if(temp[1]==0x55)
 		ledSetMode(LED_M_MQ,1);
 	else if(temp[1]==0x44)
-		ledSetMode(LED_M_FLASHALL,5);
+		ledSetMode(LED_M_RANDOM,3);
 }
 
 void afterBoot(void)
@@ -383,6 +383,7 @@ extern tNECK Neck;
 extern sAPPTIMER stopVibrateTimer;
 extern const uchar data_SNCode[3];
 // Neck.PositionID
+const uchar _0044[2]={0x00,0x44};
 unsigned long daySec=0;
 unsigned long dayStep=0;
 uchar SNReSendTimeOutCount=0;
@@ -459,6 +460,9 @@ void fRtc2Hz(void)
 			OADTimeout=0;
 			OADTimeoutCount++;
 			if(OADTimeoutCount>2){
+				waitFlashIdle();
+				flashWrite(_0044,2,PROGRAMFLAGADDR);
+				waitFlashIdle();
 				fReset();
 			}
 		}
