@@ -199,6 +199,8 @@ __interrupt static void int_uartRev(void)
 				// sUart.statu=UART_IDLE;
 			}
 			sUart.count=0;
+		}else if(sUart.count>uartRevBuf[1]+2){
+			sUart.count=0;
 		}
 	}
 }
