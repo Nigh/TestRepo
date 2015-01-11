@@ -362,7 +362,7 @@ void neckHealthCheck(void)
 			if(neckUnhealthCount>=5 and neckUnhealthCount%5==0){
 				if(neckUnhealthCount>50)
 					neckUnhealthCount=50;
-				if(g_Statu==G_INACTIVE && !directGEn)
+				if(g_Statu!=G_ACTIVE && !directGEn)
 					setVibrate(&sV5);
 				else
 					neckUnhealthCount=0;
@@ -509,7 +509,7 @@ void fRtc2Hz(void)
 			}
 		}else{
 			sleepCount++;
-			if(sleepCount>=3600){
+			if(sleepCount>=300){
 				sleepCount=0;
 				neckUnhealthCount=0;
 			}
