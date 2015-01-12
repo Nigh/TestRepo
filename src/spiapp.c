@@ -200,7 +200,7 @@ void _3DH5Hz(void)
 					else
 						tNeck->PositionID=0x0;
 				}
-				if((sGAcc.x>30 or sGAcc.x<-30)
+				if((sGAcc.x>7680 or sGAcc.x<-7680)
 					and(tEu->Roll>NECK_ROLL_POSITIVE_MOVE_DOWNLIMIT
 					or tEu->Roll<NECK_ROLL_NEGATIVE_MOVE_UPLIMIT)
 					and(tEu->Pitch>NECK_PITCH_POSITIVE_MOVE_DOWNLIMIT

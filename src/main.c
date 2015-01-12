@@ -354,7 +354,7 @@ void neckHealthCheck(void)
 		neckUnhealthCount++;
 	else
 		neckUnhealthCount=0;
-	if(sGAcc.x>30 or sGAcc.x<-30){
+	if(sGAcc.x>7680 or sGAcc.x<-7680){
 		if(0){
 		// if(layDownCount<LAYDOWNTIMELIMIT){
 			layDownCount++;
