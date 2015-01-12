@@ -1106,13 +1106,16 @@ void fUartRevReq(void)
 
 extern sFLASHOP gOP;
 extern const sMSG sFlashFinishMsg;
+uchar flashRunning=0;
 void fFlashOpStart(void)
 {
+	flashRunning=0;
 	DI();
-	if(gOP.opType!=0){
+	if(gOP.opType!=0 or flashRunning){
 		EI();
 		return;
 	}
+	flashRunning=1;
 	fifoPut4ISR(sFlashFinishMsg);
 	EI();
 }
@@ -1124,6 +1127,7 @@ void fFlashOpFinish(void)
 {
 	gOP=flashOpGet();
 	if(gOP.opType==0){
+		flashRunning=0;
 		if(sSelf.mode==SYS_OAD){
 			if(OADcount<2)
 				OADcount=2;
