@@ -359,7 +359,7 @@ void neckHealthCheck(void)
 		// if(layDownCount<LAYDOWNTIMELIMIT){
 			layDownCount++;
 		}else{
-			if(neckUnhealthCount>=5 and neckUnhealthCount%5==0){
+			if(neckUnhealthCount>=10 and neckUnhealthCount%10==0){
 				if(neckUnhealthCount>50)
 					neckUnhealthCount=50;
 				if(g_Statu!=G_ACTIVE && !directGEn)
