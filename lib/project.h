@@ -48,6 +48,6 @@
 
 #define LAYDOWNTIMELIMIT (3)
 
-#define STR_VERSION "0.9.95S4"	//v1.0.0
+#define STR_VERSION "0.9.96"	//v1.0.0
 
 #endif
