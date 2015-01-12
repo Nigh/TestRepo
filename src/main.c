@@ -703,7 +703,6 @@ void fBLEConfirm(void)
 			flashReadSeek();
 			sUpload.packageRemain--;
 		}
-
 		if(sUpload.packageRemain<=0){
 			if(sUpload.statu==UPLOAD_NECK){
 				neckFlash.startAddr=NECKRANGSTART;
@@ -717,13 +716,8 @@ void fBLEConfirm(void)
 			addrClear();
 			return;
 		}
+		uartTimeOutTaskStatu=0;
 		dataReadSend();
-		sUpload.timeOut=0;
-		sUpload.timeOutCount=0;
-		if(!uartTimeOutTaskStatu){
-			uartTimeOutTaskStatu=1;
-			taskInsert(&uartTimeOutTask);
-		}
 	}else if(uartRevBuf[3]==0x11){
 		uartBufWrite(data_version,3);
 		memcpyUser(&version,&uartSendBuf[3],16);
@@ -923,7 +917,7 @@ void fDataReqest(void)
 	if(sUpload.statu!=UPLOAD_IDLE)
 		return;
 	sUpload.timeOut=0;
-	sUpload.timeOutCount=0;		
+	sUpload.timeOutCount=0;
 	if(!uartTimeOutTaskStatu){
 		uartTimeOutTaskStatu=1;
 		taskInsert(&uartTimeOutTask);

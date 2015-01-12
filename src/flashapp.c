@@ -136,6 +136,8 @@ void fBlockErase(void){
 	flashOpFin();
 }
 
+extern int uartTimeOutTask(void);
+extern uchar uartTimeOutTaskStatu;
 uchar logCache[20]={0};
 extern const uchar data_neckLog[3];
 extern const uchar data_stepLog[3];
@@ -148,6 +150,12 @@ void fReadStepLog(void){
 	calcSendBufSum();
 	uartSend(sizeof(sSTEPLOG)+4);
 	flashOpFin();
+	sUpload.timeOut=0;
+	sUpload.timeOutCount=0;
+	if(!uartTimeOutTaskStatu){
+		uartTimeOutTaskStatu=1;
+		taskInsert(&uartTimeOutTask);
+	}
 }
 
 void fReadNeckLog(void){
@@ -159,6 +167,12 @@ void fReadNeckLog(void){
 	calcSendBufSum();
 	uartSend(2*sizeof(sNECKLOG)+4);
 	flashOpFin();
+	sUpload.timeOut=0;
+	sUpload.timeOutCount=0;
+	if(!uartTimeOutTaskStatu){
+		uartTimeOutTaskStatu=1;
+		taskInsert(&uartTimeOutTask);
+	}
 }
 
 extern const uchar data_SNCode[3];

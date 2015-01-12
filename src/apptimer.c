@@ -85,9 +85,11 @@ extern void uartSendLogCount(void);
 uchar uartTimeOutTaskStatu=0;
 int uartTimeOutTask(void)
 {
+	if(uartTimeOutTaskStatu==0)
+		return 0;
 	if(sUpload.statu!=UPLOAD_IDLE)
 	{
-		if(sUpload.timeOut++>4){
+		if(sUpload.timeOut++>10){
 			sUpload.timeOut=0;
 			sUpload.timeOutCount++;
 			if(sUpload.timeOutCount<3)
